@@ -18,7 +18,7 @@ namespace OSVR {
 			// library name.
 			const string OSVR_CORE_DLL = "__Internal";
 			#else
-			const string OSVR_CORE_DLL = "osvrCore";
+			const string OSVR_CORE_DLL = "osvrClientKit";
 			#endif
 
 			public static char OSVR_RETURN_SUCCESS = '\x0';

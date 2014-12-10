@@ -43,4 +43,9 @@
       <Name>ClientKit</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\..\..\..\osvr\bin\osvrClientKit.dll">
+      <Link>osvrClientKit.dll</Link>
+    </None>
+  </ItemGroup>
 </Project>
