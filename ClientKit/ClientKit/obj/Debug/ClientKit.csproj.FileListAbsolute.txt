@@ -1,3 +1,9 @@
+C:\Users\KevinGodby\Documents\Projects\OSVR\ClientKit\bin\Debug\ClientKit.dll
+C:\Users\KevinGodby\Documents\Projects\OSVR\ClientKit\bin\Debug\ClientKit.pdb
+C:\Users\KevinGodby\Documents\Projects\OSVR\ClientKit\obj\Debug\ClientKit.dll
+C:\Users\KevinGodby\Documents\Projects\OSVR\ClientKit\obj\Debug\ClientKit.pdb
+C:\Users\KevinGodby\Documents\GitHub\OSVR-Unity\ClientKit\ClientKit\bin\Debug\ClientKit.dll
+C:\Users\KevinGodby\Documents\GitHub\OSVR-Unity\ClientKit\ClientKit\bin\Debug\ClientKit.pdb
 C:\Users\KevinGodby\Documents\GitHub\OSVR-Unity\ClientKit\ClientKit\obj\Debug\ClientKit.csprojResolveAssemblyReference.cache
-C:\Users\KevinGodby\Documents\GitHub\OSVR-Unity\ClientKit\ClientKit\obj\Debug\ClientKit.Properties.Resources.resources
-C:\Users\KevinGodby\Documents\GitHub\OSVR-Unity\ClientKit\ClientKit\obj\Debug\ClientKit.csproj.GenerateResource.Cache
+C:\Users\KevinGodby\Documents\GitHub\OSVR-Unity\ClientKit\ClientKit\obj\Debug\ClientKit.dll
+C:\Users\KevinGodby\Documents\GitHub\OSVR-Unity\ClientKit\ClientKit\obj\Debug\ClientKit.pdb

@@ -2,14 +2,14 @@
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9AB9F53D-1F42-4045-8DFC-9D389D44BB35}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>ClientKit</RootNamespace>
-    <AssemblyName>ClientKit</AssemblyName>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProjectGuid>{45AB7E24-AFDA-4188-B05F-6EF0E12D1622}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>ExampleClient</RootNamespace>
+    <AssemblyName>ExampleClient</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -17,23 +17,30 @@
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
+    <PlatformTarget>x86</PlatformTarget>
+    <Externalconsole>true</Externalconsole>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>full</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
+    <PlatformTarget>x86</PlatformTarget>
+    <Externalconsole>true</Externalconsole>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ClientKit.cs" />
-    <Compile Include="Interface.cs" />
+    <Compile Include="ExampleClient.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\ClientKit\ClientKit\ClientKit.csproj">
+      <Project>{9AB9F53D-1F42-4045-8DFC-9D389D44BB35}</Project>
+      <Name>ClientKit</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>
