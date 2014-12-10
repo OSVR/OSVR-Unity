@@ -1,0 +1,3 @@
+C:\Users\KevinGodby\Documents\GitHub\OSVR-Unity\ClientKit\ClientKit\obj\Debug\ClientKit.csprojResolveAssemblyReference.cache
+C:\Users\KevinGodby\Documents\GitHub\OSVR-Unity\ClientKit\ClientKit\obj\Debug\ClientKit.Properties.Resources.resources
+C:\Users\KevinGodby\Documents\GitHub\OSVR-Unity\ClientKit\ClientKit\obj\Debug\ClientKit.csproj.GenerateResource.Cache
