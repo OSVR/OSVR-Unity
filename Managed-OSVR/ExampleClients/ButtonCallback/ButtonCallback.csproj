@@ -39,9 +39,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\ClientKit\ClientKit.csproj">
       <Project>{9ab9f53d-1f42-4045-8dfc-9d389d44bb35}</Project>
       <Name>ClientKit</Name>
