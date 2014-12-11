@@ -1,8 +1,3 @@
-		public delegate void PositionCallback(IntPtr /*void*/ userdata, ref TimeValue timestamp, ref PositionReport report);
-		public delegate void PoseCallback(IntPtr /*void*/ userdata, ref TimeValue timestamp, ref PoseReport report);
-		public delegate void OrientationCallback(IntPtr /*void*/ userdata, ref TimeValue timestamp, ref OrientationReport report);
-		public delegate void ButtonCallback(IntPtr /*void*/ userdata, ref TimeValue timestamp, ref ButtonReport report);
-		public delegate void AnalogCallback(IntPtr /*void*/ userdata, ref TimeValue timestamp, ref AnalogReport report);
 ﻿using System;
 using System.Runtime.InteropServices;
 
@@ -11,6 +6,20 @@ namespace OSVR
 
     namespace ClientKit
     {
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate void PositionCallback(IntPtr /*void*/ userdata, ref TimeValue timestamp, ref PositionReport report);
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate void PoseCallback(IntPtr /*void*/ userdata, ref TimeValue timestamp, ref PoseReport report);
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate void OrientationCallback(IntPtr /*void*/ userdata, ref TimeValue timestamp, ref OrientationReport report);
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate void ButtonCallback(IntPtr /*void*/ userdata, ref TimeValue timestamp, ref ButtonReport report);
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate void AnalogCallback(IntPtr /*void*/ userdata, ref TimeValue timestamp, ref AnalogReport report);
 
         /// @brief Interface handle object. Typically acquired from a ClientContext.
         /// @ingroup ClientKitCPP
