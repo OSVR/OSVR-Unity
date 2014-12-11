@@ -43,7 +43,7 @@ namespace TrackerCallback
     {
         public static void Main(string[] args)
         {
-            OSVR.ClientKit.ClientContext context = new OSVR.ClientKit.ClientContext("org.opengoggles.exampleclients.ExampleClient");
+            OSVR.ClientKit.ClientContext context = new OSVR.ClientKit.ClientContext("org.opengoggles.exampleclients.managed.TrackerCallback");
 
             // This is just one of the paths. You can also use:
             // /me/hands/right
