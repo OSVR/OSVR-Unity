@@ -5,8 +5,8 @@
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProjectGuid>{45AB7E24-AFDA-4188-B05F-6EF0E12D1622}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>ExampleClient</RootNamespace>
-    <AssemblyName>ExampleClient</AssemblyName>
+    <RootNamespace>TrackerCallback</RootNamespace>
+    <AssemblyName>TrackerCallback</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -34,11 +34,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ExampleClient.cs" />
+    <Compile Include="TrackerCallback.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\ClientKit\ClientKit\ClientKit.csproj">
+    <ProjectReference Include="..\..\ClientKit\ClientKit.csproj">
       <Project>{9AB9F53D-1F42-4045-8DFC-9D389D44BB35}</Project>
       <Name>ClientKit</Name>
     </ProjectReference>
