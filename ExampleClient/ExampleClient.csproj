@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -42,10 +42,5 @@
       <Project>{9AB9F53D-1F42-4045-8DFC-9D389D44BB35}</Project>
       <Name>ClientKit</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\..\..\..\..\osvr\bin\osvrClientKit.dll">
-      <Link>osvrClientKit.dll</Link>
-    </None>
   </ItemGroup>
 </Project>
