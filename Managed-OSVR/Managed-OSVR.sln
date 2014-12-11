@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ButtonCallback", "ExampleCl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnalogCallback", "ExampleClients\AnalogCallback\AnalogCallback.csproj", "{1F7CB7B1-2920-4FCA-A219-4D4B5C7BE399}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DisplayParameter", "ExampleClients\DisplayParameter\DisplayParameter.csproj", "{F7EA489E-0F33-43DE-B622-C30CB856CB19}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,16 @@ Global
 		{1F7CB7B1-2920-4FCA-A219-4D4B5C7BE399}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{1F7CB7B1-2920-4FCA-A219-4D4B5C7BE399}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{1F7CB7B1-2920-4FCA-A219-4D4B5C7BE399}.Release|x86.ActiveCfg = Release|Any CPU
+		{F7EA489E-0F33-43DE-B622-C30CB856CB19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7EA489E-0F33-43DE-B622-C30CB856CB19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7EA489E-0F33-43DE-B622-C30CB856CB19}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F7EA489E-0F33-43DE-B622-C30CB856CB19}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F7EA489E-0F33-43DE-B622-C30CB856CB19}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F7EA489E-0F33-43DE-B622-C30CB856CB19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7EA489E-0F33-43DE-B622-C30CB856CB19}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7EA489E-0F33-43DE-B622-C30CB856CB19}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{F7EA489E-0F33-43DE-B622-C30CB856CB19}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{F7EA489E-0F33-43DE-B622-C30CB856CB19}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -71,5 +83,6 @@ Global
 		{45AB7E24-AFDA-4188-B05F-6EF0E12D1622} = {1DD13E86-1023-4530-9F16-1BDD7CC43467}
 		{137C4AC1-664A-4E0A-BEA8-10DDC29EA661} = {1DD13E86-1023-4530-9F16-1BDD7CC43467}
 		{1F7CB7B1-2920-4FCA-A219-4D4B5C7BE399} = {1DD13E86-1023-4530-9F16-1BDD7CC43467}
+		{F7EA489E-0F33-43DE-B622-C30CB856CB19} = {1DD13E86-1023-4530-9F16-1BDD7CC43467}
 	EndGlobalSection
 EndGlobal
