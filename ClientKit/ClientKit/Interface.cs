@@ -30,26 +30,26 @@ namespace OSVR {
 			//typedef char OSVR_ReturnCode; (0 == OSVR_RETURN_SUCCESS; 1 == OSVR_RETURN_FAILURE)
 
 
-			[DllImport (OSVR_CORE_DLL)]
-			public extern static char osvrRegisterPositionCallback(IntPtr /*OSVR_ClientInterface*/ iface, [MarshalAs(UnmanagedType.FunctionPtr)] PositionCallback cb, IntPtr /*void**/ userdata);
+            [DllImport(OSVR_CORE_DLL, CallingConvention = CallingConvention.Cdecl)]
+			public extern static Byte osvrRegisterPositionCallback(IntPtr /*OSVR_ClientInterface*/ iface, [MarshalAs(UnmanagedType.FunctionPtr)] PositionCallback cb, IntPtr /*void**/ userdata);
 
-			[DllImport (OSVR_CORE_DLL)]
-			public extern static char osvrRegisterPoseCallback(IntPtr /*OSVR_ClientInterface*/ iface, [MarshalAs(UnmanagedType.FunctionPtr)] PoseCallback cb, IntPtr /*void**/ userdata);
+            [DllImport(OSVR_CORE_DLL, CallingConvention = CallingConvention.Cdecl)]
+			public extern static Byte osvrRegisterPoseCallback(IntPtr /*OSVR_ClientInterface*/ iface, [MarshalAs(UnmanagedType.FunctionPtr)] PoseCallback cb, IntPtr /*void**/ userdata);
 
-			[DllImport (OSVR_CORE_DLL)]
-			public extern static char osvrRegisterOrientationCallback(IntPtr /*OSVR_ClientInterface*/ iface, [MarshalAs(UnmanagedType.FunctionPtr)] OrientationCallback cb, IntPtr /*void**/ userdata);
+            [DllImport(OSVR_CORE_DLL, CallingConvention = CallingConvention.Cdecl)]
+			public extern static Byte osvrRegisterOrientationCallback(IntPtr /*OSVR_ClientInterface*/ iface, [MarshalAs(UnmanagedType.FunctionPtr)] OrientationCallback cb, IntPtr /*void**/ userdata);
 
-			[DllImport (OSVR_CORE_DLL)]
-			public extern static char osvrRegisterButtonCallback(IntPtr /*OSVR_ClientInterface*/ iface, [MarshalAs(UnmanagedType.FunctionPtr)] ButtonCallback cb, IntPtr /*void**/ userdata);
+            [DllImport(OSVR_CORE_DLL, CallingConvention = CallingConvention.Cdecl)]
+			public extern static Byte osvrRegisterButtonCallback(IntPtr /*OSVR_ClientInterface*/ iface, [MarshalAs(UnmanagedType.FunctionPtr)] ButtonCallback cb, IntPtr /*void**/ userdata);
 
-			[DllImport (OSVR_CORE_DLL)]
-			public extern static char osvrRegisterAnalogCallback(IntPtr /*OSVR_ClientInterface*/ iface, [MarshalAs(UnmanagedType.FunctionPtr)] AnalogCallback cb, IntPtr /*void**/ userdata);
+            [DllImport(OSVR_CORE_DLL, CallingConvention = CallingConvention.Cdecl)]
+			public extern static Byte osvrRegisterAnalogCallback(IntPtr /*OSVR_ClientInterface*/ iface, [MarshalAs(UnmanagedType.FunctionPtr)] AnalogCallback cb, IntPtr /*void**/ userdata);
 
-			[DllImport (OSVR_CORE_DLL)]
-			static public extern char osvrClientGetInterface(IntPtr /*OSVR_ClientContext*/ ctx, string path, ref IntPtr /*OSVR_ClientInterface*/ iface);
+            [DllImport(OSVR_CORE_DLL, CallingConvention = CallingConvention.Cdecl)]
+			static public extern Byte osvrClientGetInterface(IntPtr /*OSVR_ClientContext*/ ctx, string path, ref IntPtr /*OSVR_ClientInterface*/ iface);
 
-			[DllImport (OSVR_CORE_DLL)]
-			static public extern char osvrClientFreeInterface(IntPtr /*OSVR_ClientInterface*/ iface);
+            [DllImport(OSVR_CORE_DLL, CallingConvention = CallingConvention.Cdecl)]
+			static public extern Byte osvrClientFreeInterface(IntPtr /*OSVR_ClientInterface*/ iface);
 
 			#endregion
 

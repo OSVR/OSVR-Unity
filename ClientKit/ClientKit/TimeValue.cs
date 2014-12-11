@@ -9,7 +9,7 @@ namespace OSVR
 		public struct TimeValue
 		{
 			public Int64 seconds;
-			public Int64 microseconds;
+			public Int32 microseconds;
 		}
 	}
 }

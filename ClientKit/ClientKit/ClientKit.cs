@@ -21,23 +21,23 @@ namespace OSVR {
 			const string OSVR_CORE_DLL = "osvrClientKit";
 			#endif
 
-			public static char OSVR_RETURN_SUCCESS = '\x0';
-			public static char OSVR_RETURN_FAILURE = '\x1';
+			public static Byte OSVR_RETURN_SUCCESS = 0x0;
+            public static Byte OSVR_RETURN_FAILURE = 0x1;
 
-			[DllImport (OSVR_CORE_DLL)]
-			public extern static IntPtr /*OSVR_ClientContext*/ osvrClientInit(string applicationIdentifier, uint flags);
+			[DllImport(OSVR_CORE_DLL, CallingConvention=CallingConvention.Cdecl)]
+            public extern static IntPtr /*OSVR_ClientContext*/ osvrClientInit([MarshalAs(UnmanagedType.LPStr)] string applicationIdentifier, [MarshalAs(UnmanagedType.U4)] uint flags);
 
-			[DllImport (OSVR_CORE_DLL)]
-			public extern static char osvrClientUpdate(IntPtr /*OSVR_ClientContext*/ ctx);
+            [DllImport(OSVR_CORE_DLL, CallingConvention = CallingConvention.Cdecl)]
+            public extern static Byte osvrClientUpdate(IntPtr /*OSVR_ClientContext*/ ctx);
 
-			[DllImport (OSVR_CORE_DLL)]
-			public extern static char osvrClientShutdown(IntPtr /*OSVR_ClientContext*/ ctx);
+            [DllImport(OSVR_CORE_DLL, CallingConvention = CallingConvention.Cdecl)]
+            public extern static Byte osvrClientShutdown(IntPtr /*OSVR_ClientContext*/ ctx);
 
-			[DllImport (OSVR_CORE_DLL)]
-			public extern static char osvrClientGetStringParameterLength (IntPtr /*OSVR_ClientContext*/ ctx, string path, ref UInt64 len);
+            [DllImport(OSVR_CORE_DLL, CallingConvention = CallingConvention.Cdecl)]
+            public extern static Byte osvrClientGetStringParameterLength(IntPtr /*OSVR_ClientContext*/ ctx, string path, ref UInt64 len);
 
-			[DllImport (OSVR_CORE_DLL)]
-			public extern static char osvrClientGetStringParameter (IntPtr /*OSVR_ClientContext*/ ctx, string path, ref string buf, UInt64 len);
+            [DllImport(OSVR_CORE_DLL, CallingConvention = CallingConvention.Cdecl)]
+            public extern static Byte osvrClientGetStringParameter(IntPtr /*OSVR_ClientContext*/ ctx, string path, ref string buf, UInt64 len);
 
 			#endregion
 
@@ -80,7 +80,7 @@ namespace OSVR {
 			/// mainloop.
 			public void update()
 			{
-				char ret = osvrClientUpdate(this.m_context);
+                Byte ret = osvrClientUpdate(this.m_context);
 				if (OSVR_RETURN_SUCCESS != ret) {
 					throw new ApplicationException("Error updating context.");
 				}
@@ -92,7 +92,7 @@ namespace OSVR {
 			public Interface getInterface(string path)
 			{
 				IntPtr /*OSVR_ClientInterface*/ iface = IntPtr.Zero;
-				char ret = Interface.osvrClientGetInterface(this.m_context, path, ref iface);
+                Byte ret = Interface.osvrClientGetInterface(this.m_context, path, ref iface);
 				if (OSVR_RETURN_SUCCESS != ret) {
 					throw new ArgumentException("Couldn't create interface because the path was invalid.");
 				}
@@ -107,7 +107,7 @@ namespace OSVR {
 			public string getStringParameter(string path)
 			{
 				UInt64 length = 0;
-				char ret = osvrClientGetStringParameterLength(m_context, path, ref length);
+                Byte ret = osvrClientGetStringParameterLength(m_context, path, ref length);
 				if (OSVR_RETURN_SUCCESS != ret) {
 					throw new ArgumentException("Invalid context or null reference to length variable.");
 				}

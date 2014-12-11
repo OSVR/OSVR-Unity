@@ -27,7 +27,7 @@ namespace OSVR
 		[StructLayout(LayoutKind.Sequential)]
 		public struct ButtonReport {
 			public Int32 sensor;
-			public char state;
+			public Byte state;
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
