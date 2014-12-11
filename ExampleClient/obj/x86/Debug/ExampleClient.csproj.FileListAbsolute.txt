@@ -1,7 +1,0 @@
-C:\Users\KevinGodby\Documents\GitHub\OSVR-Unity\ExampleClient\obj\x86\Debug\ExampleClient.csprojResolveAssemblyReference.cache
-C:\Users\KevinGodby\Documents\GitHub\OSVR-Unity\ExampleClient\bin\Debug\ExampleClient.exe
-C:\Users\KevinGodby\Documents\GitHub\OSVR-Unity\ExampleClient\bin\Debug\ExampleClient.pdb
-C:\Users\KevinGodby\Documents\GitHub\OSVR-Unity\ExampleClient\bin\Debug\ClientKit.dll
-C:\Users\KevinGodby\Documents\GitHub\OSVR-Unity\ExampleClient\bin\Debug\ClientKit.pdb
-C:\Users\KevinGodby\Documents\GitHub\OSVR-Unity\ExampleClient\obj\x86\Debug\ExampleClient.exe
-C:\Users\KevinGodby\Documents\GitHub\OSVR-Unity\ExampleClient\obj\x86\Debug\ExampleClient.pdb
