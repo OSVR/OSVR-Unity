@@ -1,7 +1,7 @@
 ﻿using System;
 using OSVR.ClientKit;
 
-namespace ExampleClient
+namespace TrackerCallback
 {
 
     public class TrackerCallbacks

@@ -4,12 +4,12 @@ using System.Runtime.CompilerServices;
 // Information about this assembly is defined by the following attributes.
 // Change them to the values specific to your project.
 
-[assembly: AssemblyTitle ("ClientKit")]
+[assembly: AssemblyTitle("Managed-OSVR ClientKit")]
 [assembly: AssemblyDescription ("")]
 [assembly: AssemblyConfiguration ("")]
-[assembly: AssemblyCompany ("")]
+[assembly: AssemblyCompany("Sensics, Inc.")]
 [assembly: AssemblyProduct ("")]
-[assembly: AssemblyCopyright ("KevinGodby")]
+[assembly: AssemblyCopyright("Copyright © 2014 Sensics, Inc.")]
 [assembly: AssemblyTrademark ("")]
 [assembly: AssemblyCulture ("")]
 
