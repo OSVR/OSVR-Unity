@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using OSVR.ClientKit;
+using System.Text;
 
 namespace OSVR
 {
@@ -37,10 +38,10 @@ namespace OSVR
             public extern static Byte osvrClientShutdown(IntPtr /*OSVR_ClientContext*/ ctx);
 
             [DllImport(OSVR_CORE_DLL, CallingConvention = CallingConvention.Cdecl)]
-            public extern static Byte osvrClientGetStringParameterLength(IntPtr /*OSVR_ClientContext*/ ctx, string path, ref UInt64 len);
+            public extern static Byte osvrClientGetStringParameterLength(IntPtr /*OSVR_ClientContext*/ ctx, string path, out int /* TODO size_t */ len);
 
             [DllImport(OSVR_CORE_DLL, CallingConvention = CallingConvention.Cdecl)]
-            public extern static Byte osvrClientGetStringParameter(IntPtr /*OSVR_ClientContext*/ ctx, string path, ref string buf, UInt64 len);
+            public extern static Byte osvrClientGetStringParameter(IntPtr /*OSVR_ClientContext*/ ctx, string path, StringBuilder buf, int /* TODO size_t */ len);
 
             #endregion
 
@@ -113,8 +114,8 @@ namespace OSVR
             /// exist or is not a string.
             public string getStringParameter(string path)
             {
-                UInt64 length = 0;
-                Byte ret = osvrClientGetStringParameterLength(m_context, path, ref length);
+                int length = 0;
+                Byte ret = osvrClientGetStringParameterLength(m_context, path, out length);
                 if (OSVR_RETURN_SUCCESS != ret)
                 {
                     throw new ArgumentException("Invalid context or null reference to length variable.");
@@ -125,14 +126,14 @@ namespace OSVR
                     return "";
                 }
 
-                String buf = "";
-                ret = osvrClientGetStringParameter(m_context, path, ref buf, length);
+                StringBuilder buf = new StringBuilder(length);
+                ret = osvrClientGetStringParameter(m_context, path, buf, length);
                 if (OSVR_RETURN_SUCCESS != ret)
                 {
                     throw new ApplicationException("Invalid context, null reference to buffer, or buffer is too small.");
                 }
 
-                return buf;
+                return buf.ToString();
             }
 
             private IntPtr /*OSVR_ClientContext*/ m_context;
