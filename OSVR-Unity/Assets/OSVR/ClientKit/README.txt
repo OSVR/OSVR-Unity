@@ -1,0 +1,1 @@
+You can either paste all `.cs` files from `Managed-OSVR/ClientKit` in this directory, or place a built `ClientKit.dll` in `Assets/plugins/x86`
