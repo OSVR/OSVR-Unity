@@ -70,4 +70,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <PropertyGroup>
+    <PostBuildEvent>$(ProjectDir)CopyToUnity.cmd "$(TargetPath)" "$(TargetDir)" $(PlatformName)</PostBuildEvent>
+  </PropertyGroup>
 </Project>
