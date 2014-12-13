@@ -49,9 +49,14 @@ namespace OSVR
             /// @param applicationIdentifier A string identifying your application.
             /// Reverse DNS format strongly suggested.
             /// @param flags initialization options (reserved) - pass 0 for now.
-            public ClientContext(string applicationIdentifier, uint flags = 0)
+            public ClientContext(string applicationIdentifier, uint flags)
             {
                 this.m_context = osvrClientInit(applicationIdentifier, flags);
+            }
+
+            public ClientContext(string applicationIdentifier)
+            {
+                this.m_context = osvrClientInit(applicationIdentifier, 0);
             }
 
             ~ClientContext()
