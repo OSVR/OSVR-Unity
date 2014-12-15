@@ -187,3 +187,4 @@ FakesAssemblies/
 # MonoDevelop
 *.userprefs
 OSVR-Unity-Dist/
+*.unitypackage
