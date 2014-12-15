@@ -462,6 +462,8 @@ GameObject:
   - 65: {fileID: 1821252383}
   - 23: {fileID: 1821252382}
   - 114: {fileID: 1821252381}
+  - 114: {fileID: 1821252387}
+  - 114: {fileID: 1821252386}
   m_Layer: 0
   m_Name: LeftHand
   m_TagString: Untagged
@@ -533,3 +535,27 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 4
+--- !u!114 &1821252386
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1821252380}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc8bf9674dadeb94d8465e8ff8225ce7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1821252387
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1821252380}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04d1894a6e02f944f9d5f1dc618059aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  path: /controller/left/1
+  ClientKit: {fileID: 71585510}

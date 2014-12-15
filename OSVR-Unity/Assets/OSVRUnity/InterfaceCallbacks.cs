@@ -38,112 +38,107 @@ namespace OSVR
 			public void RegisterCallback(PoseMatrixCallback callback) {
 				Start(); // make sure the interface is initialized.
 				if (null == poseMatrixCallbacks) {
-					poseMatrixCallbacks = new List<PoseMatrixCallback>();
+					poseMatrixCallbacks = callback;
 					iface.registerCallback (PoseMatrixCb, System.IntPtr.Zero);
+				} else {
+					poseMatrixCallbacks += callback;
 				}
-				poseMatrixCallbacks.Add (callback);
 			}
 			
-			private List<PoseMatrixCallback> poseMatrixCallbacks;
+			private PoseMatrixCallback poseMatrixCallbacks;
 			
 			public void RegisterCallback(PoseCallback callback) {
 				Start(); // make sure the interface is initialized.
 				if (null == poseCallbacks) {
-					poseCallbacks = new List<PoseCallback>();
+					poseCallbacks = callback;
 					iface.registerCallback (PoseCb, System.IntPtr.Zero);
+				} else {
+					poseCallbacks += callback;
 				}
-				poseCallbacks.Add (callback);
 			}
 			
-			private List<PoseCallback> poseCallbacks;
+			private PoseCallback poseCallbacks;
 			
 			public void RegisterCallback(PositionCallback callback) {
 				Start(); // make sure the interface is initialized.
 				if (null == positionCallbacks) {
-					positionCallbacks = new List<PositionCallback>();
+					positionCallbacks = callback;
 					iface.registerCallback (PositionCb, System.IntPtr.Zero);
+				} else {
+					positionCallbacks += callback;
 				}
-				positionCallbacks.Add (callback);
 			}
 			
-			private List<PositionCallback> positionCallbacks;
+			private PositionCallback positionCallbacks;
 			
 			public void RegisterCallback(OrientationCallback callback) {
 				Start(); // make sure the interface is initialized.
 				if (null == orientationCallbacks) {
-					orientationCallbacks = new List<OrientationCallback>();
+					orientationCallbacks = callback;
 					iface.registerCallback (OrientationCb, System.IntPtr.Zero);
+				} else {
+					orientationCallbacks += callback;
 				}
-				orientationCallbacks.Add (callback);
 			}
 			
-			private List<OrientationCallback> orientationCallbacks;
+			private OrientationCallback orientationCallbacks;
 			
 			public void RegisterCallback(ButtonCallback callback) {
 				Start(); // make sure the interface is initialized.
 				if (null == buttonCallbacks) {
-					buttonCallbacks = new List<ButtonCallback>();
 					iface.registerCallback (ButtonCb, System.IntPtr.Zero);
 				}
-				buttonCallbacks.Add (callback);
+				buttonCallbacks += callback;
 			}
 			
-			private List<ButtonCallback> buttonCallbacks;
+			private ButtonCallback buttonCallbacks;
 			
 			public void RegisterCallback(AnalogCallback callback) {
 				Start(); // make sure the interface is initialized.
 				if (null == analogCallbacks) {
-					analogCallbacks = new List<AnalogCallback>();
+					analogCallbacks = callback;
 					iface.registerCallback (AnalogCb, System.IntPtr.Zero);
+				} else {
+					analogCallbacks += callback;
 				}
-				analogCallbacks.Add (callback);
 			}
 			
-			private List<AnalogCallback> analogCallbacks;
+			private AnalogCallback analogCallbacks;
 			
 			/* END GENERATED CODE - unity-generate.lua */
 			
 			private void PoseCb(System.IntPtr userdata, ref OSVR.ClientKit.TimeValue timestamp, ref OSVR.ClientKit.PoseReport report) {
 				Vector3 position = Math.ConvertPosition (report.pose.translation);
 				Quaternion rotation = Math.ConvertOrientation (report.pose.rotation);
-				foreach (PoseCallback cb in poseCallbacks) {
-					cb(path, position, rotation);
-				}
+				poseCallbacks (path, position, rotation);
 			}
 
 			private void PoseMatrixCb(System.IntPtr userdata, ref OSVR.ClientKit.TimeValue timestamp, ref OSVR.ClientKit.PoseReport report) {
 				Matrix4x4 matPose = Math.ConvertPose(report.pose);
-				foreach (PoseMatrixCallback cb in poseMatrixCallbacks) {
-					cb(path, matPose);
-				}
+				poseMatrixCallbacks (path, matPose);
 			}
 
 			private void PositionCb(System.IntPtr userdata, ref OSVR.ClientKit.TimeValue timestamp, ref OSVR.ClientKit.PositionReport report) {
 				Vector3 position = Math.ConvertPosition (report.xyz);
-				foreach (PositionCallback cb in positionCallbacks) {
-					cb (path, position);
-				}
+				positionCallbacks (path, position);
 			}
 
 			private void OrientationCb(System.IntPtr userdata, ref OSVR.ClientKit.TimeValue timestamp, ref OSVR.ClientKit.OrientationReport report) {
 				Quaternion rotation = Math.ConvertOrientation (report.rotation);
-				foreach (OrientationCallback cb in orientationCallbacks) {
-					cb (path, rotation);
-				}
+				orientationCallbacks (path, rotation);
 			}
 
 			private void ButtonCb(System.IntPtr userdata, ref OSVR.ClientKit.TimeValue timestamp, ref OSVR.ClientKit.ButtonReport report) {
 				bool pressed = (report.state == 1);
-				foreach (ButtonCallback cb in buttonCallbacks) {
-					cb (path, pressed);
+				if (buttonCallbacks != null)
+				{
+					buttonCallbacks (path, pressed);
 				}
 			}
 
 			private void AnalogCb(System.IntPtr userdata, ref OSVR.ClientKit.TimeValue timestamp, ref OSVR.ClientKit.AnalogReport report) {
 				float val = (float)report.state;
-				foreach (AnalogCallback cb in analogCallbacks) {
-					cb (path, val);
-				}
+				analogCallbacks (path, val);
 			}
 
 			private OSVR.ClientKit.Interface iface;

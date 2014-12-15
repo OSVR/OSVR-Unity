@@ -3,13 +3,14 @@ template = [[
 			public void RegisterCallback($WrappedCallback callback) {
 				Start(); // make sure the interface is initialized.
 				if (null == $WrappedList) {
-					$WrappedList = new List<$WrappedCallback>();
+					$WrappedList = callback;
 					iface.registerCallback ($RawCallback, System.IntPtr.Zero);
+				} else {
+					$WrappedList += callback;
 				}
-				$WrappedList.Add (callback);
 			}
 			
-			private List<$WrappedCallback> $WrappedList;
+			private $WrappedCallback $WrappedList;
 ]]
 function generate(data)
 	s = string.gsub(template, "$(%w+)", function (n)
