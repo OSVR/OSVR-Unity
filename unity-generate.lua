@@ -1,6 +1,7 @@
 
 template = [[
 			public void RegisterCallback($WrappedCallback callback) {
+				Start(); // make sure the interface is initialized.
 				if (null == $WrappedList) {
 					$WrappedList = new List<$WrappedCallback>();
 					iface.registerCallback ($RawCallback, System.IntPtr.Zero);

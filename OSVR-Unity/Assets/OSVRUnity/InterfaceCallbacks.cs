@@ -29,11 +29,14 @@ namespace OSVR
 
 			
 			void Start () {
-				iface = ClientKit.GetContext().getInterface (path);
+				if (null == iface) {
+					iface = ClientKit.GetContext ().getInterface (path);
+				}
 			}
 
 			/* BEGIN GENERATED CODE - unity-generate.lua */
 			public void RegisterCallback(PoseMatrixCallback callback) {
+				Start(); // make sure the interface is initialized.
 				if (null == poseMatrixCallbacks) {
 					poseMatrixCallbacks = new List<PoseMatrixCallback>();
 					iface.registerCallback (PoseMatrixCb, System.IntPtr.Zero);
@@ -44,6 +47,7 @@ namespace OSVR
 			private List<PoseMatrixCallback> poseMatrixCallbacks;
 			
 			public void RegisterCallback(PoseCallback callback) {
+				Start(); // make sure the interface is initialized.
 				if (null == poseCallbacks) {
 					poseCallbacks = new List<PoseCallback>();
 					iface.registerCallback (PoseCb, System.IntPtr.Zero);
@@ -54,6 +58,7 @@ namespace OSVR
 			private List<PoseCallback> poseCallbacks;
 			
 			public void RegisterCallback(PositionCallback callback) {
+				Start(); // make sure the interface is initialized.
 				if (null == positionCallbacks) {
 					positionCallbacks = new List<PositionCallback>();
 					iface.registerCallback (PositionCb, System.IntPtr.Zero);
@@ -64,6 +69,7 @@ namespace OSVR
 			private List<PositionCallback> positionCallbacks;
 			
 			public void RegisterCallback(OrientationCallback callback) {
+				Start(); // make sure the interface is initialized.
 				if (null == orientationCallbacks) {
 					orientationCallbacks = new List<OrientationCallback>();
 					iface.registerCallback (OrientationCb, System.IntPtr.Zero);
@@ -74,6 +80,7 @@ namespace OSVR
 			private List<OrientationCallback> orientationCallbacks;
 			
 			public void RegisterCallback(ButtonCallback callback) {
+				Start(); // make sure the interface is initialized.
 				if (null == buttonCallbacks) {
 					buttonCallbacks = new List<ButtonCallback>();
 					iface.registerCallback (ButtonCb, System.IntPtr.Zero);
@@ -84,6 +91,7 @@ namespace OSVR
 			private List<ButtonCallback> buttonCallbacks;
 			
 			public void RegisterCallback(AnalogCallback callback) {
+				Start(); // make sure the interface is initialized.
 				if (null == analogCallbacks) {
 					analogCallbacks = new List<AnalogCallback>();
 					iface.registerCallback (AnalogCb, System.IntPtr.Zero);
