@@ -1,42 +1,53 @@
-﻿using UnityEngine;
+/* OSVR-Unity Connection
+ * 
+ * <http://sensics.com/osvr>
+ * Copyright 2014 Sensics, Inc.
+ * All rights reserved.
+ * 
+ * Final version intended to be licensed under Apache v2.0
+ */
+
+using UnityEngine;
 
 namespace OSVR
 {
-	namespace Unity
-	{
-		public class ClientKit : MonoBehaviour
-		{
-			public string AppID;
+    namespace Unity
+    {
+        public class ClientKit : MonoBehaviour
+        {
+            public string AppID;
 
-			private OSVR.ClientKit.ClientContext context;
+            private OSVR.ClientKit.ClientContext context;
 
-			public OSVR.ClientKit.ClientContext GetContext()
-			{
-				if (context == null) {
-					if (0 == AppID.Length) {
-						Debug.LogError("OSVR ClientKit instance needs AppID set to a reverse-order DNS name! Using dummy name...");
-						AppID = "org.opengoggles.osvr-unity.dummy";
-					}
-					Debug.Log ("Starting OSVR with app ID: " + AppID);
-					context = new OSVR.ClientKit.ClientContext (AppID, 0);
-				}
-				return context;
-			}
+            public OSVR.ClientKit.ClientContext GetContext()
+            {
+                if (context == null)
+                {
+                    if (0 == AppID.Length)
+                    {
+                        Debug.LogError("OSVR ClientKit instance needs AppID set to a reverse-order DNS name! Using dummy name...");
+                        AppID = "org.opengoggles.osvr-unity.dummy";
+                    }
+                    Debug.Log("Starting OSVR with app ID: " + AppID);
+                    context = new OSVR.ClientKit.ClientContext(AppID, 0);
+                }
+                return context;
+            }
 
-			static ClientKit ()
-			{
-				DLLSearchPathFixer.fix ();
-			}
+            static ClientKit()
+            {
+                DLLSearchPathFixer.fix();
+            }
 
-			void Start()
-			{
-				GetContext();
-			}
+            void Start()
+            {
+                GetContext();
+            }
 
-			void FixedUpdate ()
-			{
-				context.update ();
-			}
-		}
-	}
+            void FixedUpdate()
+            {
+                context.update();
+            }
+        }
+    }
 }
