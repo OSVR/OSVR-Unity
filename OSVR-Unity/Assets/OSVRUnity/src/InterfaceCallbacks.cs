@@ -8,6 +8,8 @@ namespace OSVR
 	{
 		/// <summary>
 		/// OSVR Interface, supporting generic callbacks that provide the source path and a Unity-native datatype.
+		/// 
+		/// Note that right now, this doesn't work right.
 		/// </summary>
 		public class InterfaceCallbacks : MonoBehaviour {
 			/// <summary>
@@ -18,7 +20,7 @@ namespace OSVR
 			/// <summary>
 			/// This should be a reference to the single ClientKit instance in your project.
 			/// </summary>
-			public OSVRClientKit ClientKit;
+			public ClientKit clientKit;
 
 			public delegate void PoseMatrixCallback(string source, Matrix4x4 pose);
 			public delegate void PoseCallback(string source, Vector3 position, Quaternion rotation);
@@ -26,11 +28,10 @@ namespace OSVR
 			public delegate void OrientationCallback(string source, Quaternion rotation);
 			public delegate void ButtonCallback(string source, bool pressed);
 			public delegate void AnalogCallback(string source, float value);
-
 			
 			void Start () {
 				if (null == iface) {
-					iface = ClientKit.GetContext ().getInterface (path);
+					iface = clientKit.GetContext ().getInterface (path);
 				}
 			}
 

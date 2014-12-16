@@ -17,14 +17,23 @@ namespace OSVR
 			/// <summary>
 			/// This should be a reference to the single ClientKit instance in your project.
 			/// </summary>
-			public OSVRClientKit ClientKit;
+			public ClientKit clientKit;
 			
 			private OSVR.ClientKit.Interface iface;
 			private OSVR.ClientKit.OrientationCallback cb;
 
 			// Use this for initialization
 			void Start () {
-				iface = ClientKit.GetContext().getInterface (path);
+				if (0 == path.Length) {
+					Debug.LogError("Missing path for OrientationInterface " + gameObject.name);
+					return;
+				}
+				
+				if (null == clientKit) {
+					Debug.LogError("Missing ClientKit reference for OrientationInterface " + gameObject.name);
+					return;
+				}
+				iface = clientKit.GetContext().getInterface (path);
 				cb = new OSVR.ClientKit.OrientationCallback (callback);
 				iface.registerCallback (cb, IntPtr.Zero);
 			}
