@@ -3,6 +3,8 @@
 > _This is an Alpha Release, and probably not entirely idiomatic for Unity. Check back for updates often._
 
 ## Basic Principles and Files
+On a machine where you're running an OSVR-Unity application, you need to run an OSVR server. This is found in the OSVR-Core builds. [Contact us](mailto:support@opengoggles.org) if you need help.
+
 The `OSVR-Unity.unitypackage` package should contain the x86 binary plugins, the compiled Managed-OSVR wrapper, the OSVRUnity scripts (in the `Assets` directory), and a prefab called just OSVR. Import this package into your project, and drag in the prefab for sample versions of the currently-handled scripted game objects.
 
 There is a second Unity package file that should contain roughly a complete demo application, though minimal.
