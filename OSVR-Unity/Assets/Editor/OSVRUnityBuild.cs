@@ -11,8 +11,5 @@ public class OSVRUnityBuild {
 		AssetDatabase.ExportPackage(assets,
 		                            "OSVR-Unity.unitypackage",
 		                            ExportPackageOptions.IncludeDependencies | ExportPackageOptions.Recurse);
-		AssetDatabase.ExportPackage("Assets/_scenes/minigame.unity",
-		                            "OSVR-Unity-sample.unitypackage",
-		                            ExportPackageOptions.IncludeDependencies | ExportPackageOptions.Recurse | ExportPackageOptions.IncludeLibraryAssets);
 	}
 }
