@@ -8,4 +8,4 @@ Contained in `Managed-OSVR/ClientKit`. The `Managed-OSVR` directory contains a s
 ## Bundled binary snapshot
 Windows x86 native DLLs are bundled in the `Managed-OSVR/ClientKit` directory. The are presently from the snapshot identified as:
 
-> `OSVR-Core-Snapshot-v0.1-270-g7d75178-build30-vs12-32bit`
+> `OSVR-Core-Snapshot-v0.1-287-g510dd2c-build32-vs12-32bit`
