@@ -7,7 +7,7 @@ namespace TrackerCallback
     public class TrackerCallbacks
     {
         // Pose callback
-        public void myTrackerCallback(IntPtr userdata, ref TimeValue timestamp, ref PoseReport report)
+        public static void myTrackerCallback(IntPtr userdata, ref TimeValue timestamp, ref PoseReport report)
         {
             Console.WriteLine("Got POSE report: Position = ({0}, {1}, {2}), orientation ({3}, {4}, {5}, {6})",
                 report.pose.translation.x,
@@ -20,7 +20,7 @@ namespace TrackerCallback
         }
 
         // Orientation callback
-        public void myOrientationCallback(IntPtr userdata, ref TimeValue timestamp, ref OrientationReport report)
+        public static void myOrientationCallback(IntPtr userdata, ref TimeValue timestamp, ref OrientationReport report)
         {
             Console.WriteLine("Got ORIENTATION report: Orientation = ({0}, {1}, {2}, {3})",
                 report.rotation.w,
@@ -30,7 +30,7 @@ namespace TrackerCallback
         }
 
         // Position callback
-        public void myPositionCallback(IntPtr userdata, ref TimeValue timestamp, ref PositionReport report)
+        public static void myPositionCallback(IntPtr userdata, ref TimeValue timestamp, ref PositionReport report)
         {
             Console.WriteLine("Got POSITION report: Position = ({0}, {1}, {2})",
                 report.xyz.x,
@@ -51,15 +51,17 @@ namespace TrackerCallback
             Interface lefthand = context.getInterface("/me/hands/left");
 
             TrackerCallbacks callbacks = new TrackerCallbacks();
-
             // The coordinate system is right-handed, withX to the right, Y up, and Z near.
-            lefthand.registerCallback(callbacks.myTrackerCallback, IntPtr.Zero);
+            OSVR.ClientKit.PoseCallback poseCb = new PoseCallback(TrackerCallbacks.myTrackerCallback);
+            lefthand.registerCallback(poseCb, IntPtr.Zero);
 
             // If you just want orientation
-            lefthand.registerCallback(callbacks.myOrientationCallback, IntPtr.Zero);
+            OSVR.ClientKit.OrientationCallback oriCb = new OrientationCallback(TrackerCallbacks.myOrientationCallback);
+            lefthand.registerCallback(oriCb, IntPtr.Zero);
 
             // or position
-            lefthand.registerCallback(callbacks.myPositionCallback, IntPtr.Zero);
+            OSVR.ClientKit.PositionCallback posCb = new PositionCallback(TrackerCallbacks.myPositionCallback);
+            lefthand.registerCallback(posCb, IntPtr.Zero);
 
             // Pretend that this is your application's main loop
             for (int i = 0; i < 1000000; ++i)
