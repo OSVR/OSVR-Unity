@@ -29,7 +29,7 @@ namespace OSVR
             /// <summary>
             /// This should be a reference to the single ClientKit instance in your project.
             /// </summary>
-            public ClientKit clientKit;
+            private ClientKit clientKit;
 
             private OSVR.ClientKit.Interface iface;
             private OSVR.ClientKit.PositionCallback cb;
@@ -45,8 +45,7 @@ namespace OSVR
 
                 if (null == clientKit)
                 {
-                    Debug.LogError("Missing ClientKit reference for PositionInterface " + gameObject.name);
-                    return;
+                    clientKit = OSVR.Unity.ClientKit.Get();
                 }
                 iface = clientKit.GetContext().getInterface(path);
                 cb = new OSVR.ClientKit.PositionCallback(callback);

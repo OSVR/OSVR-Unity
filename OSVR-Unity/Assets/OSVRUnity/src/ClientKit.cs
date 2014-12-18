@@ -19,6 +19,21 @@ namespace OSVR
 
             private OSVR.ClientKit.ClientContext context;
 
+            /// <summary>
+            /// Use to find the single instance of this object/script in your game.
+            /// </summary>
+            /// <returns>The instance, or null in case of error</returns>
+            public static ClientKit Get()
+            {
+                GameObject candidate = GameObject.FindGameObjectWithTag("OSVRClientKit");
+                if (null == candidate)
+                {
+                    Debug.LogError("You need a game object with the OSVRClientKit tag and the OSVRUnity/ClientKit.cs script attached!");
+                    return null;
+                }
+                return candidate.GetComponent<ClientKit>();
+            }
+
             public OSVR.ClientKit.ClientContext GetContext()
             {
                 if (context == null)

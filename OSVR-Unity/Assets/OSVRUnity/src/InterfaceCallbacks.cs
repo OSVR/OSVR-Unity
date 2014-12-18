@@ -25,11 +25,6 @@ namespace OSVR
             /// </summary>
             public string path;
 
-            /// <summary>
-            /// This should be a reference to the single ClientKit instance in your project.
-            /// </summary>
-            public ClientKit clientKit;
-
             public delegate void PoseMatrixCallback(string source, Matrix4x4 pose);
             public delegate void PoseCallback(string source, Vector3 position, Quaternion rotation);
             public delegate void PositionCallback(string source, Vector3 position);
@@ -37,8 +32,14 @@ namespace OSVR
             public delegate void ButtonCallback(string source, bool pressed);
             public delegate void AnalogCallback(string source, float value);
 
+            private OSVR.Unity.ClientKit clientKit;
+
             void Start()
             {
+                if (null == clientKit)
+                {
+                    clientKit = OSVR.Unity.ClientKit.Get();
+                }
                 if (null == iface)
                 {
                     iface = clientKit.GetContext().getInterface(path);
