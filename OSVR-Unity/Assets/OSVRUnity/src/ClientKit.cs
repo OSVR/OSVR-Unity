@@ -25,13 +25,12 @@ namespace OSVR
             /// <returns>The instance, or null in case of error</returns>
             public static ClientKit Get()
             {
-                GameObject candidate = GameObject.FindGameObjectWithTag("OSVRClientKit");
+                ClientKit candidate = GameObject.FindObjectOfType<ClientKit>();
                 if (null == candidate)
                 {
-                    Debug.LogError("You need a game object with the OSVRClientKit tag and the OSVRUnity/ClientKit.cs script attached!");
-                    return null;
+                    Debug.LogError("You need the ClientKit prefab!");
                 }
-                return candidate.GetComponent<ClientKit>();
+                return candidate;
             }
 
             public OSVR.ClientKit.ClientContext GetContext()

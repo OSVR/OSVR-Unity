@@ -10,7 +10,7 @@ The `OSVR-Unity.unitypackage` package should contain the x86 binary plugins, the
 There is also a few sample/demo application included (that is also used for development of the code/prefabs).
 
 ### ClientKit object
-You need exactly one instance of `OSVR.Unity.ClientKit` on an object tagged `OSVRClientKit` in your project: get one using the `ClientKit` prefab. You need to set the app ID: use a reversed DNS name as seen elsewhere (Java, Android, etc). This just uniquely identifies your application to the OSVR software. If you fail to do this, you'll see an error in the Unity console.
+You need exactly one instance of `OSVR.Unity.ClientKit` in your project: get one using the `ClientKit` prefab. You need to set the app ID: use a reversed DNS name as seen elsewhere (Java, Android, etc). This just uniquely identifies your application to the OSVR software. If you fail to do this, you'll see an error in the Unity console.
 
 ### Tracking
 For trackers (Pose, Position, Orientation), there are prefabs of nodes that update their transform accordingly. You'll need to set the path you want to use. Please see the C/C++ documentation for client apps to find valid interface paths. (Note that the OSVR-Unity package handles normalization of the coordinate system to the Unity standard: ignore the one seen in the C++ documentation.)
