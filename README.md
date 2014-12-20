@@ -13,4 +13,4 @@ It contains its own README with some basic documentation.
 ## Bundled binary snapshot
 Windows x86 native DLLs are bundled in the `Managed-OSVR/ClientKit` directory. The are presently from the snapshot identified as:
 
-> `OSVR-Core-Snapshot-v0.1-303-ge40b8c3-vs12-32bit`
+> `OSVR-Core-Snapshot-v0.1-304-g1da32e5-vs12-32bit`
