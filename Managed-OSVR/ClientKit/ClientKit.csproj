@@ -66,6 +66,7 @@
     <Content Include="osvrClient.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="osvrTransform.dll" />
     <Content Include="osvrUtil.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
