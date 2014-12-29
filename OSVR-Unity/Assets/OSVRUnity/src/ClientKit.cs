@@ -62,6 +62,12 @@ namespace OSVR
             {
                 context.update();
             }
+
+            void OnDestroy()
+            {
+                Debug.Log("Disconnecting from OSVR server.");
+                context = null;
+            }
         }
     }
 }
