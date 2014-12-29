@@ -4,12 +4,14 @@ template = [[
 				Start(); // make sure the interface is initialized.
 				if (null == $WrappedList) {
 					$WrappedList = callback;
-					iface.registerCallback ($RawCallback, System.IntPtr.Zero);
+					raw$WrappedCallback = new OSVR.ClientKit.$RawCallbackType($RawCallback);
+					iface.registerCallback (raw$WrappedCallback, System.IntPtr.Zero);
 				} else {
 					$WrappedList += callback;
 				}
 			}
 			
+			private OSVR.ClientKit.$RawCallbackType raw$WrappedCallback;
 			private $WrappedCallback $WrappedList;
 ]]
 function generate(data)
@@ -24,6 +26,7 @@ print(generate{
 	WrappedCallback = "PoseMatrixCallback";
 	WrappedList = "poseMatrixCallbacks";
 	RawCallback = "PoseMatrixCb";
+	RawCallbackType = "PoseCallback";
 })
 
 for _, v in ipairs{"Pose", "Position", "Orientation", "Button", "Analog"} do
@@ -33,6 +36,7 @@ for _, v in ipairs{"Pose", "Position", "Orientation", "Button", "Analog"} do
 		WrappedCallback = CapsName .. "Callback";
 		WrappedList = nocapsName .. "Callbacks";
 		RawCallback = CapsName .. "Cb";
+		RawCallbackType = CapsName .. "Callback";
 	}
 	print(generate(vals))
 end

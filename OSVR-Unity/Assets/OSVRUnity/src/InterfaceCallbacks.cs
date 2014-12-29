@@ -53,7 +53,8 @@ namespace OSVR
                 if (null == poseMatrixCallbacks)
                 {
                     poseMatrixCallbacks = callback;
-                    iface.registerCallback(PoseMatrixCb, System.IntPtr.Zero);
+                    rawPoseMatrixCallback = new OSVR.ClientKit.PoseCallback(PoseMatrixCb);
+                    iface.registerCallback(rawPoseMatrixCallback, System.IntPtr.Zero);
                 }
                 else
                 {
@@ -61,6 +62,7 @@ namespace OSVR
                 }
             }
 
+            private OSVR.ClientKit.PoseCallback rawPoseMatrixCallback;
             private PoseMatrixCallback poseMatrixCallbacks;
 
             public void RegisterCallback(PoseCallback callback)
@@ -69,7 +71,8 @@ namespace OSVR
                 if (null == poseCallbacks)
                 {
                     poseCallbacks = callback;
-                    iface.registerCallback(PoseCb, System.IntPtr.Zero);
+                    rawPoseCallback = new OSVR.ClientKit.PoseCallback(PoseCb);
+                    iface.registerCallback(rawPoseCallback, System.IntPtr.Zero);
                 }
                 else
                 {
@@ -77,6 +80,7 @@ namespace OSVR
                 }
             }
 
+            private OSVR.ClientKit.PoseCallback rawPoseCallback;
             private PoseCallback poseCallbacks;
 
             public void RegisterCallback(PositionCallback callback)
@@ -85,7 +89,8 @@ namespace OSVR
                 if (null == positionCallbacks)
                 {
                     positionCallbacks = callback;
-                    iface.registerCallback(PositionCb, System.IntPtr.Zero);
+                    rawPositionCallback = new OSVR.ClientKit.PositionCallback(PositionCb);
+                    iface.registerCallback(rawPositionCallback, System.IntPtr.Zero);
                 }
                 else
                 {
@@ -93,6 +98,7 @@ namespace OSVR
                 }
             }
 
+            private OSVR.ClientKit.PositionCallback rawPositionCallback;
             private PositionCallback positionCallbacks;
 
             public void RegisterCallback(OrientationCallback callback)
@@ -101,7 +107,8 @@ namespace OSVR
                 if (null == orientationCallbacks)
                 {
                     orientationCallbacks = callback;
-                    iface.registerCallback(OrientationCb, System.IntPtr.Zero);
+                    rawOrientationCallback = new OSVR.ClientKit.OrientationCallback(OrientationCb);
+                    iface.registerCallback(rawOrientationCallback, System.IntPtr.Zero);
                 }
                 else
                 {
@@ -109,6 +116,7 @@ namespace OSVR
                 }
             }
 
+            private OSVR.ClientKit.OrientationCallback rawOrientationCallback;
             private OrientationCallback orientationCallbacks;
 
             public void RegisterCallback(ButtonCallback callback)
@@ -116,11 +124,17 @@ namespace OSVR
                 Start(); // make sure the interface is initialized.
                 if (null == buttonCallbacks)
                 {
-                    iface.registerCallback(ButtonCb, System.IntPtr.Zero);
+                    buttonCallbacks = callback;
+                    rawButtonCallback = new OSVR.ClientKit.ButtonCallback(ButtonCb);
+                    iface.registerCallback(rawButtonCallback, System.IntPtr.Zero);
                 }
-                buttonCallbacks += callback;
+                else
+                {
+                    buttonCallbacks += callback;
+                }
             }
 
+            private OSVR.ClientKit.ButtonCallback rawButtonCallback;
             private ButtonCallback buttonCallbacks;
 
             public void RegisterCallback(AnalogCallback callback)
@@ -129,7 +143,8 @@ namespace OSVR
                 if (null == analogCallbacks)
                 {
                     analogCallbacks = callback;
-                    iface.registerCallback(AnalogCb, System.IntPtr.Zero);
+                    rawAnalogCallback = new OSVR.ClientKit.AnalogCallback(AnalogCb);
+                    iface.registerCallback(rawAnalogCallback, System.IntPtr.Zero);
                 }
                 else
                 {
@@ -137,9 +152,12 @@ namespace OSVR
                 }
             }
 
+            private OSVR.ClientKit.AnalogCallback rawAnalogCallback;
             private AnalogCallback analogCallbacks;
 
             /* END GENERATED CODE - unity-generate.lua */
+
+
 
             private void PoseCb(System.IntPtr userdata, ref OSVR.ClientKit.TimeValue timestamp, ref OSVR.ClientKit.PoseReport report)
             {
