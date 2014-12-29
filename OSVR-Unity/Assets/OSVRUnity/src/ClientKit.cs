@@ -15,6 +15,7 @@ namespace OSVR
     {
         public class ClientKit : MonoBehaviour
         {
+            [Tooltip("A string uniquely identifying your application, in reverse domain-name format.")]
             public string AppID;
 
             private OSVR.ClientKit.ClientContext context;
