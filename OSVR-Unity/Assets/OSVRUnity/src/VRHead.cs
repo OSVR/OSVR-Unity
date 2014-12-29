@@ -14,107 +14,116 @@
 using UnityEngine;
 using System.Collections;
 
-public enum ViewMode{ stereo, mono };
-
-[RequireComponent( typeof( Camera ) ) ]
-public class VRHead : MonoBehaviour
+namespace OSVR
 {
-	#region Public Variables
-	public ViewMode viewMode;
-	[Range( 0, 1 )]
-	public float stereoAmount;
-	public float maxStereo = .03f;
-	#endregion
+    namespace Unity
+    {
 
-	#region Private Variables
-	VREye _leftEye;
-	VREye _rightEye;
-	float _previousStereoAmount;
-	ViewMode _previousViewMode;
-	#endregion
+        public enum ViewMode { stereo, mono };
 
-	#region Init
-	void Start()
-	{
-		Init();
-		CatalogEyes();
-	}
-	#endregion
+        [RequireComponent(typeof(Camera))]
+        public class VRHead : MonoBehaviour
+        {
+            #region Public Variables
+            public ViewMode viewMode;
 
-	#region Loop
-	void Update()
-	{
-		UpdateStereoAmount();
-		UpdateViewMode();
-	}
-	#endregion
+            [Range(0, 1)]
+            public float stereoAmount;
 
-	#region Public Methods
-	#endregion
+            public float maxStereo = .03f;
+            #endregion
 
-	#region Private Methods
-	void UpdateViewMode()
-	{
-		if( Time.realtimeSinceStartup < 100 || _previousViewMode != viewMode )
-		{
-			switch( viewMode )
-			{
-			case ViewMode.mono:
-				camera.enabled = true;
-				_leftEye.camera.enabled = false;
-				_rightEye.camera.enabled = false;
-				break;
+            #region Private Variables
+            VREye _leftEye;
+            VREye _rightEye;
+            float _previousStereoAmount;
+            ViewMode _previousViewMode;
+            #endregion
 
-			case ViewMode.stereo:
-				camera.enabled = false;
-				_leftEye.camera.enabled = true;
-				_rightEye.camera.enabled = true;
-				break;
-			}
-		}
+            #region Init
+            void Start()
+            {
+                Init();
+                CatalogEyes();
+            }
+            #endregion
 
-		_previousViewMode = viewMode;
-	}
+            #region Loop
+            void Update()
+            {
+                UpdateStereoAmount();
+                UpdateViewMode();
+            }
+            #endregion
 
-	void UpdateStereoAmount()
-	{
-		if( stereoAmount != _previousStereoAmount )
-		{
-			stereoAmount = Mathf.Clamp( stereoAmount, 0, 1 );
-			_rightEye.cachedTransform.localPosition = Vector3.right * ( maxStereo * stereoAmount );
-			_leftEye.cachedTransform.localPosition = Vector3.left * ( maxStereo * stereoAmount );
-			_previousStereoAmount = stereoAmount;
-		}
-	}
+            #region Public Methods
+            #endregion
 
-	void CatalogEyes()
-	{
-		foreach( VREye currentEye in GetComponentsInChildren<VREye>() )
-		{
-			//match:
-			currentEye.MatchCamera( camera );
+            #region Private Methods
+            void UpdateViewMode()
+            {
+                if (Time.realtimeSinceStartup < 100 || _previousViewMode != viewMode)
+                {
+                    switch (viewMode)
+                    {
+                        case ViewMode.mono:
+                            camera.enabled = true;
+                            _leftEye.camera.enabled = false;
+                            _rightEye.camera.enabled = false;
+                            break;
 
-			//catalog:
-			switch( currentEye.eye )
-			{
-			case Eye.left:
-				_leftEye = currentEye;
-				break;
-				
-			case Eye.right:
-				_rightEye = currentEye;
-				break;
-			}
-		}
-	}
+                        case ViewMode.stereo:
+                            camera.enabled = false;
+                            _leftEye.camera.enabled = true;
+                            _rightEye.camera.enabled = true;
+                            break;
+                    }
+                }
 
-	void Init()
-	{
-		//VR should never timeout the screen:
-		Screen.sleepTimeout = SleepTimeout.NeverSleep;
+                _previousViewMode = viewMode;
+            }
 
-		//60 FPS whenever possible:
-		Application.targetFrameRate = 60;
-	}
-	#endregion
+            void UpdateStereoAmount()
+            {
+                if (stereoAmount != _previousStereoAmount)
+                {
+                    stereoAmount = Mathf.Clamp(stereoAmount, 0, 1);
+                    _rightEye.cachedTransform.localPosition = Vector3.right * (maxStereo * stereoAmount);
+                    _leftEye.cachedTransform.localPosition = Vector3.left * (maxStereo * stereoAmount);
+                    _previousStereoAmount = stereoAmount;
+                }
+            }
+
+            void CatalogEyes()
+            {
+                foreach (VREye currentEye in GetComponentsInChildren<VREye>())
+                {
+                    //match:
+                    currentEye.MatchCamera(camera);
+
+                    //catalog:
+                    switch (currentEye.eye)
+                    {
+                        case Eye.left:
+                            _leftEye = currentEye;
+                            break;
+
+                        case Eye.right:
+                            _rightEye = currentEye;
+                            break;
+                    }
+                }
+            }
+
+            void Init()
+            {
+                //VR should never timeout the screen:
+                Screen.sleepTimeout = SleepTimeout.NeverSleep;
+
+                //60 FPS whenever possible:
+                Application.targetFrameRate = 60;
+            }
+            #endregion
+        }
+    }
 }

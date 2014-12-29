@@ -32,17 +32,11 @@ namespace OSVR
             public delegate void ButtonCallback(string source, bool pressed);
             public delegate void AnalogCallback(string source, float value);
 
-            private OSVR.Unity.ClientKit clientKit;
-
             void Start()
             {
-                if (null == clientKit)
-                {
-                    clientKit = OSVR.Unity.ClientKit.Get();
-                }
                 if (null == iface)
                 {
-                    iface = clientKit.GetContext().getInterface(path);
+                    iface = OSVR.Unity.ClientKit.instance.context.getInterface(path);
                 }
             }
 

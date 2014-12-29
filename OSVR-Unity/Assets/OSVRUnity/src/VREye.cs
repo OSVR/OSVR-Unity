@@ -14,52 +14,59 @@
 using UnityEngine;
 using System.Collections;
 
-public enum Eye{ left, right };
-
-public class VREye : MonoBehaviour
+namespace OSVR
 {
-	#region Public Variables
-	public Eye eye;
-	[HideInInspector]
-	public Transform cachedTransform;
-	#endregion
+    namespace Unity
+    {
+        public enum Eye { left, right };
 
-	#region Init
-	void Awake()
-	{
-		Init();
-	}
-	#endregion
+        public class VREye : MonoBehaviour
+        {
+            #region Public Variables
+            public Eye eye;
 
-	#region Public Methods
-	public void MatchCamera( Camera sourceCamera )
-	{
-		camera.nearClipPlane = sourceCamera.nearClipPlane;
-		camera.farClipPlane = sourceCamera.farClipPlane;
-		camera.backgroundColor = sourceCamera.backgroundColor;
-		camera.clearFlags = sourceCamera.clearFlags;
-		camera.cullingMask = sourceCamera.cullingMask;
-	}
-	#endregion
+            [HideInInspector]
+            public Transform cachedTransform;
+            #endregion
 
-	#region Private Methods
-	void Init()
-	{
-		//cache:
-		cachedTransform = transform;
+            #region Init
+            void Awake()
+            {
+                Init();
+            }
+            #endregion
 
-		if ( camera == null ) gameObject.AddComponent<Camera>();
+            #region Public Methods
+            public void MatchCamera(Camera sourceCamera)
+            {
+                camera.nearClipPlane = sourceCamera.nearClipPlane;
+                camera.farClipPlane = sourceCamera.farClipPlane;
+                camera.backgroundColor = sourceCamera.backgroundColor;
+                camera.clearFlags = sourceCamera.clearFlags;
+                camera.cullingMask = sourceCamera.cullingMask;
+            }
+            #endregion
 
-		//camera setups:
-		switch( eye )
-		{
-		case Eye.left:
-			camera.rect = new Rect( 0, 0, .5f, 1 );
-			break;
-		case Eye.right:
-			camera.rect = new Rect( .5f, 0, .5f, 1 );
-			break;
-		}
-	}
-	#endregion
+            #region Private Methods
+            void Init()
+            {
+                //cache:
+                cachedTransform = transform;
+
+                if (camera == null) gameObject.AddComponent<Camera>();
+
+                //camera setups:
+                switch (eye)
+                {
+                    case Eye.left:
+                        camera.rect = new Rect(0, 0, .5f, 1);
+                        break;
+                    case Eye.right:
+                        camera.rect = new Rect(.5f, 0, .5f, 1);
+                        break;
+                }
+            }
+            #endregion
+        }
+    }
 }
