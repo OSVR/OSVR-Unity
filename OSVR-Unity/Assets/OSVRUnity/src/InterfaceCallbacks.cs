@@ -15,8 +15,6 @@ namespace OSVR
     {
         /// <summary>
         /// OSVR Interface, supporting generic callbacks that provide the source path and a Unity-native datatype.
-        /// 
-        /// Note that right now, this doesn't work right.
         /// </summary>
         public class InterfaceCallbacks : MonoBehaviour
         {
@@ -25,12 +23,14 @@ namespace OSVR
             /// </summary>
             public string path;
 
+            #region Callback (delegate) types
             public delegate void PoseMatrixCallback(string source, Matrix4x4 pose);
             public delegate void PoseCallback(string source, Vector3 position, Quaternion rotation);
             public delegate void PositionCallback(string source, Vector3 position);
             public delegate void OrientationCallback(string source, Quaternion rotation);
             public delegate void ButtonCallback(string source, bool pressed);
             public delegate void AnalogCallback(string source, float value);
+            #endregion
 
             void Start()
             {
@@ -44,6 +44,8 @@ namespace OSVR
             {
                 iface = null;
             }
+
+            #region Generated RegisterCallback overloads and associated data
             /* BEGIN GENERATED CODE - unity-generate.lua */
             public void RegisterCallback(PoseMatrixCallback callback)
             {
@@ -154,9 +156,15 @@ namespace OSVR
             private AnalogCallback analogCallbacks;
 
             /* END GENERATED CODE - unity-generate.lua */
+            #endregion
 
-
-
+            #region Private wrapper callbacks/trampolines
+            /// <summary>
+            /// Pose (as position and orientation) wrapper callback, interfacing Managed-OSVR's signatures and more Unity-native datatypes, including coordinate system conversion.
+            /// </summary>
+            /// <param name="userdata">Unused</param>
+            /// <param name="timestamp">Unused</param>
+            /// <param name="report">Tracker pose report</param>
             private void PoseCb(System.IntPtr userdata, ref OSVR.ClientKit.TimeValue timestamp, ref OSVR.ClientKit.PoseReport report)
             {
                 Vector3 position = Math.ConvertPosition(report.pose.translation);
@@ -164,24 +172,48 @@ namespace OSVR
                 poseCallbacks(path, position, rotation);
             }
 
+            /// <summary>
+            /// Pose (as a 4x4 matrix) wrapper callback, interfacing Managed-OSVR's signatures and more Unity-native datatypes, including coordinate system conversion.
+            /// </summary>
+            /// <param name="userdata">Unused</param>
+            /// <param name="timestamp">Unused</param>
+            /// <param name="report">Tracker pose report</param>
             private void PoseMatrixCb(System.IntPtr userdata, ref OSVR.ClientKit.TimeValue timestamp, ref OSVR.ClientKit.PoseReport report)
             {
                 Matrix4x4 matPose = Math.ConvertPose(report.pose);
                 poseMatrixCallbacks(path, matPose);
             }
 
+            /// <summary>
+            /// Position wrapper callback, interfacing Managed-OSVR's signatures and more Unity-native datatypes, including coordinate system conversion.
+            /// </summary>
+            /// <param name="userdata">Unused</param>
+            /// <param name="timestamp">Unused</param>
+            /// <param name="report">Tracker position report</param>
             private void PositionCb(System.IntPtr userdata, ref OSVR.ClientKit.TimeValue timestamp, ref OSVR.ClientKit.PositionReport report)
             {
                 Vector3 position = Math.ConvertPosition(report.xyz);
                 positionCallbacks(path, position);
             }
 
+            /// <summary>
+            /// Orientation wrapper callback, interfacing Managed-OSVR's signatures and more Unity-native datatypes, including coordinate system conversion.
+            /// </summary>
+            /// <param name="userdata">Unused</param>
+            /// <param name="timestamp">Unused</param>
+            /// <param name="report">Tracker orientation report</param>
             private void OrientationCb(System.IntPtr userdata, ref OSVR.ClientKit.TimeValue timestamp, ref OSVR.ClientKit.OrientationReport report)
             {
                 Quaternion rotation = Math.ConvertOrientation(report.rotation);
                 orientationCallbacks(path, rotation);
             }
 
+            /// <summary>
+            /// Button wrapper callback, interfacing Managed-OSVR's signatures and more Unity-native datatypes.
+            /// </summary>
+            /// <param name="userdata">Unused</param>
+            /// <param name="timestamp">Unused</param>
+            /// <param name="report">Button report</param>
             private void ButtonCb(System.IntPtr userdata, ref OSVR.ClientKit.TimeValue timestamp, ref OSVR.ClientKit.ButtonReport report)
             {
                 bool pressed = (report.state == 1);
@@ -191,13 +223,22 @@ namespace OSVR
                 }
             }
 
+            /// <summary>
+            /// Analog wrapper callback, interfacing Managed-OSVR's signatures and more Unity-native datatypes.
+            /// </summary>
+            /// <param name="userdata">Unused</param>
+            /// <param name="timestamp">Unused</param>
+            /// <param name="report">Analog report</param>
             private void AnalogCb(System.IntPtr userdata, ref OSVR.ClientKit.TimeValue timestamp, ref OSVR.ClientKit.AnalogReport report)
             {
                 float val = (float)report.state;
                 analogCallbacks(path, val);
             }
+            #endregion
 
+            #region Private variables
             private OSVR.ClientKit.Interface iface;
+            #endregion
         }
     }
 }
