@@ -1,9 +1,10 @@
-Place at least these files here:
+The OSVR-Unity plugin requires the following files in this directory:
 
 - `osvrClientKit.dll`
 - `osvrClient.dll`
 - `osvrUtil.dll`
+- `osvrTransform.dll`
 
-and, if you aren't including the Managed-OSVR source files, also place here:
+In the typical case, where the Managed-OSVR source is separately compiled, this directory also must contain:
 
 - `ClientKit.dll`
