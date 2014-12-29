@@ -19,3 +19,6 @@ For trackers (Pose, Position, Orientation), there are prefabs of nodes that upda
 Any other interaction with the OSVR framework goes directly through the Managed-OSVR (.NET) wrapper without any Unity-specific adaptations. See that source for examples of button and analog callbacks, as well as display parameter access (ideally used to set up the display properly. In terms of API, the Managed-OSVR API is effectively a direct translation of the C++ wrappers of OSVR `ClientKit`, so please see the main OSVR-Core client documentation for more information.
 
 There is a prototype of a more Unity-adapted button callback - it does not presently work, but your assistance in fixing it would be greatly appreciated!
+
+### Execution
+A standalone player built for Windows may end up needing the `-adapter N` argument, where `N` is a Direct3D display adapter, to put the rendered output on the HMD display.
