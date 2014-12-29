@@ -26,11 +26,6 @@ namespace OSVR
             /// </summary>
             public string path;
 
-            /// <summary>
-            /// This should be a reference to the single ClientKit instance in your project.
-            /// </summary>
-            private ClientKit clientKit;
-
             private OSVR.ClientKit.Interface iface;
             private OSVR.ClientKit.PositionCallback cb;
 
@@ -43,11 +38,7 @@ namespace OSVR
                     return;
                 }
 
-                if (null == clientKit)
-                {
-                    clientKit = OSVR.Unity.ClientKit.Get();
-                }
-                iface = clientKit.GetContext().getInterface(path);
+                iface = OSVR.Unity.ClientKit.instance.context.getInterface(path);
                 cb = new OSVR.ClientKit.PositionCallback(callback);
                 iface.registerCallback(cb, IntPtr.Zero);
             }

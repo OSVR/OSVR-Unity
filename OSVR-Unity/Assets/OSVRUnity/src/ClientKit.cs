@@ -18,25 +18,41 @@ namespace OSVR
             [Tooltip("A string uniquely identifying your application, in reverse domain-name format.")]
             public string AppID;
 
-            private OSVR.ClientKit.ClientContext context;
+            private OSVR.ClientKit.ClientContext contextObject;
 
             /// <summary>
-            /// Use to find the single instance of this object/script in your game.
+            /// Use to access the single instance of this object/script in your game.
             /// </summary>
             /// <returns>The instance, or null in case of error</returns>
-            public static ClientKit Get()
+            public static ClientKit instance
             {
-                ClientKit candidate = GameObject.FindObjectOfType<ClientKit>();
-                if (null == candidate)
+                get
                 {
-                    Debug.LogError("You need the ClientKit prefab!");
+                    ClientKit candidate = GameObject.FindObjectOfType<ClientKit>();
+                    if (null == candidate)
+                    {
+                        Debug.LogError("OSVR Error: You need the ClientKit prefab in your game!!");
+                    }
+                    return candidate;
+
                 }
-                return candidate;
             }
 
-            public OSVR.ClientKit.ClientContext GetContext()
+            /// <summary>
+            /// Access the underlying Managed-OSVR client context object.
+            /// </summary>
+            public OSVR.ClientKit.ClientContext context
             {
-                if (context == null)
+                get
+                {
+                    EnsureStarted();
+                    return contextObject;
+                }
+            }
+
+            private void EnsureStarted()
+            {
+                if (contextObject == null)
                 {
                     if (0 == AppID.Length)
                     {
@@ -44,11 +60,13 @@ namespace OSVR
                         AppID = "org.opengoggles.osvr-unity.dummy";
                     }
                     Debug.Log("Starting OSVR with app ID: " + AppID);
-                    context = new OSVR.ClientKit.ClientContext(AppID, 0);
+                    contextObject = new OSVR.ClientKit.ClientContext(AppID, 0);
                 }
-                return context;
             }
 
+            /// <summary>
+            /// Static constructor that enhances the DLL search path to ensure dependent native dlls are found.
+            /// </summary>
             static ClientKit()
             {
                 DLLSearchPathFixer.fix();
@@ -56,18 +74,19 @@ namespace OSVR
 
             void Start()
             {
-                GetContext();
+                EnsureStarted();
             }
 
             void FixedUpdate()
             {
-                context.update();
+                contextObject.update();
             }
 
             void OnDestroy()
             {
-                Debug.Log("Disconnecting from OSVR server.");
-                context = null;
+                Debug.Log("Shutting down OSVR.");
+				contextObject.Dispose ();
+                contextObject = null;
             }
         }
     }
