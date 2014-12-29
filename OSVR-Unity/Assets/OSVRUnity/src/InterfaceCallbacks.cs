@@ -40,6 +40,10 @@ namespace OSVR
                 }
             }
 
+            void OnDestroy()
+            {
+                iface = null;
+            }
             /* BEGIN GENERATED CODE - unity-generate.lua */
             public void RegisterCallback(PoseMatrixCallback callback)
             {

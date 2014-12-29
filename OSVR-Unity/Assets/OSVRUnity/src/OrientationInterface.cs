@@ -45,7 +45,12 @@ namespace OSVR
 
             private void callback(IntPtr userdata, ref OSVR.ClientKit.TimeValue timestamp, ref OSVR.ClientKit.OrientationReport report)
             {
-                transform.rotation = Math.ConvertOrientation(report.rotation);
+                transform.localRotation = Math.ConvertOrientation(report.rotation);
+            }
+
+            void OnDestroy()
+            {
+                iface = null;
             }
         }
     }
