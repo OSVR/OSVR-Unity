@@ -2326,6 +2326,10 @@ Prefab:
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 11436198, guid: 0b82dd794175b304a87805e4b38fbe84, type: 2}
+      propertyPath: AppID
+      value: org.opengoggles.osvr-unity.sample.demo
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0b82dd794175b304a87805e4b38fbe84, type: 2}
   m_RootGameObject: {fileID: 1796457541}
@@ -2442,7 +2446,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2550bc6af558044baf4aa2ee88d5e8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AppID: 
+  AppID: org.opengoggles.osvr-unity.sample.demo
 --- !u!1 &1818608091
 GameObject:
   m_ObjectHideFlags: 0
