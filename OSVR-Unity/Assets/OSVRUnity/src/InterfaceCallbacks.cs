@@ -16,7 +16,7 @@ namespace OSVR
         /// <summary>
         /// OSVR Interface, supporting generic callbacks that provide the source path and a Unity-native datatype.
         /// </summary>
-        public class InterfaceCallbacks : MonoBehaviour
+        public class InterfaceCallbacks : ScriptableObject
         {
             /// <summary>
             /// The interface path you want to connect to.
