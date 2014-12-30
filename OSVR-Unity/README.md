@@ -15,10 +15,16 @@ You need exactly one instance of `OSVR.Unity.ClientKit` in your project: get one
 ### Tracking
 For trackers (Pose, Position, Orientation), there are prefabs of nodes that update their transform accordingly. You'll need to set the path you want to use. Please see the C/C++ documentation for client apps to find valid interface paths. (Note that the OSVR-Unity package handles normalization of the coordinate system to the Unity standard: ignore the one seen in the C++ documentation.)
 
+### Manually handling callbacks
+This involves two pieces:
+
+- Adding an `OSVR.Unity.InterfaceGameObject` script component, in which you can specify the path. There is a prefab for this.
+- Adding your own script component (which should inherit from `OSVR.Unity.InterfaceBase` instead of `MonoBehaviour` for simplest usage) that uses the `InterfaceGameObject` to register a callback.
+
+Examples for buttons and analog triggers are included in the `minigame` scene.
+
 ### Other interaction
 Any other interaction with the OSVR framework goes directly through the Managed-OSVR (.NET) wrapper without any Unity-specific adaptations. See that source for examples of button and analog callbacks, as well as display parameter access (ideally used to set up the display properly. In terms of API, the Managed-OSVR API is effectively a direct translation of the C++ wrappers of OSVR `ClientKit`, so please see the main OSVR-Core client documentation for more information.
-
-There is a prototype of a more Unity-adapted button callback - it does not presently work, but your assistance in fixing it would be greatly appreciated!
 
 ### Execution
 A standalone player built for Windows may end up needing the `-adapter N` argument, where `N` is a Direct3D display adapter, to put the rendered output on the HMD display.
