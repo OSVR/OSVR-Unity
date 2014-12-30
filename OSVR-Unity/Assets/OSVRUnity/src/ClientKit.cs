@@ -82,11 +82,24 @@ namespace OSVR
                 contextObject.update();
             }
 
+            void Stop()
+            {
+                if (null != contextObject)
+                {
+                    Debug.Log("Shutting down OSVR.");
+                    contextObject.Dispose();
+                    contextObject = null;
+                }
+            }
+
             void OnDestroy()
             {
-                Debug.Log("Shutting down OSVR.");
-				contextObject.Dispose ();
-                contextObject = null;
+                Stop();
+            }
+
+            void OnApplicationQuit()
+            {
+                Stop();
             }
         }
     }
