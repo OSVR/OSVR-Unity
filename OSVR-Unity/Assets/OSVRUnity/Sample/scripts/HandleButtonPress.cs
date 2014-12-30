@@ -1,12 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class HandleButtonPress : MonoBehaviour {
-	public void Start() {
-		GetComponent<OSVR.Unity.InterfaceCallbacks> ().RegisterCallback (handleButton);
-	}
+/// <summary>
+/// This is a manual way of accessing the InterfaceGameObject component. See SampleButtonScript for the slightly more elegant solution.
+/// </summary>
+[RequireComponent(typeof(OSVR.Unity.InterfaceGameObject))]
+public class HandleButtonPress : MonoBehaviour
+{
+    public void Start()
+    {
+        gameObject.GetComponent<OSVR.Unity.InterfaceGameObject>().osvrInterface.RegisterCallback(handleButton);
+    }
 
-	public void handleButton(string path, bool state) {
-		Debug.Log ("Got button: " + path + " state is " + state);
-	}
+    public void handleButton(string path, bool state)
+    {
+        Debug.Log("Got button: " + path + " state is " + state);
+    }
 }
