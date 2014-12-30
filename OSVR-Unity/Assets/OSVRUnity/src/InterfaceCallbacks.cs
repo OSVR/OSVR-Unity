@@ -32,7 +32,8 @@ namespace OSVR
             public delegate void AnalogCallback(string source, float value);
             #endregion
 
-            void Start()
+            #region Event methods
+            public void Start()
             {
                 if (null == iface)
                 {
@@ -40,7 +41,22 @@ namespace OSVR
                 }
             }
 
-            void OnDestroy()
+            public void OnDestroy()
+            {
+                Stop();
+            }
+
+            public void OnApplicationQuit()
+            {
+                Stop();
+            }
+
+            #endregion
+
+            /// <summary>
+            /// Used in the end-of-life method, this can also be called manually to free the internal interface.
+            /// </summary>
+            public void Stop()
             {
                 iface = null;
             }
