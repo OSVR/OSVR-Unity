@@ -2,6 +2,11 @@
 
 > _This is an Alpha Release, and probably not entirely idiomatic for Unity. Check back for updates often._
 
+## Known Issues
+This list only includes Unity-specific issues that have a substantial impact on the development experience. For a full list of issues, see the [GitHub issue tracker](https://github.com/sensics/OSVR-Unity/issues)
+
+- The second time an application is run in a single Unity Editor session no events will occur and so no tracking or other data will come in. ([GitHub issue](https://github.com/sensics/OSVR-Unity/issues/1))
+
 ## Basic Principles and Files
 On a machine where you're running an OSVR-Unity application, you need to run an OSVR server. This is found in the OSVR-Core builds. [Contact us](mailto:support@opengoggles.org) if you need help.
 
