@@ -7,7 +7,7 @@ On a machine where you're running an OSVR-Unity application, you need to run an 
 
 The `OSVR-Unity.unitypackage` package should contain the x86 binary plugins, the compiled Managed-OSVR wrapper, the OSVRUnity scripts (in the `Assets` directory), and a directory of prefabs. Import this package into your project.
 
-There is also a few sample/demo application included (that is also used for development of the code/prefabs).
+There is also a few sample/demo applications included, ranging from fairly sparse environments also used for development of the code/prefabs, to a high-detail demo.
 
 ### ClientKit object
 You need exactly one instance of `OSVR.Unity.ClientKit` in your project: get one using the `ClientKit` prefab. You need to set the app ID: use a reversed DNS name as seen elsewhere (Java, Android, etc). This just uniquely identifies your application to the OSVR software. If you fail to do this, you'll see an error in the Unity console.
