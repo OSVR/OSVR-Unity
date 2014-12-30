@@ -19,38 +19,17 @@ namespace OSVR
         /// 
         /// Attach to a GameObject that you'd like to have updated in this way.
         /// </summary>
-        public class PoseInterface : MonoBehaviour
+        public class PoseInterface : InterfaceGameObject
         {
-            /// <summary>
-            /// The interface path you want to connect to.
-            /// </summary>
-            public string path;
-
-            private OSVR.ClientKit.Interface iface;
-            private OSVR.ClientKit.PoseCallback cb;
-
-            void Start()
+            new void Start()
             {
-                if (0 == path.Length)
-                {
-                    Debug.LogError("Missing path for PoseInterface " + gameObject.name);
-                    return;
-                }
-
-                iface = OSVR.Unity.ClientKit.instance.context.getInterface(path);
-                cb = new OSVR.ClientKit.PoseCallback(callback);
-                iface.registerCallback(cb, IntPtr.Zero);
+                osvrInterface.RegisterCallback(callback);
             }
 
-            private void callback(IntPtr userdata, ref OSVR.ClientKit.TimeValue timestamp, ref OSVR.ClientKit.PoseReport report)
+            private void callback(string source, Vector3 position, Quaternion rotation)
             {
-                transform.localPosition = Math.ConvertPosition(report.pose.translation);
-                transform.localRotation = Math.ConvertOrientation(report.pose.rotation);
-            }
-
-            void OnDestroy()
-            {
-                iface = null;
+                transform.localPosition = position;
+                transform.localRotation = rotation;
             }
         }
     }
