@@ -40,7 +40,7 @@ namespace OSVR
             {
                 get
                 {
-                    return this;
+                    return GetComponent<InterfaceGameObject>();
                 }
             }
 
