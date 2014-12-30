@@ -59,6 +59,12 @@ namespace OSVR
             public void Stop()
             {
                 iface = null;
+                poseMatrixCallbacks = null;
+                poseCallbacks = null;
+                positionCallbacks = null;
+                orientationCallbacks = null;
+                buttonCallbacks = null;
+                analogCallbacks = null;
             }
 
             #region Generated RegisterCallback overloads and associated data
@@ -185,7 +191,10 @@ namespace OSVR
             {
                 Vector3 position = Math.ConvertPosition(report.pose.translation);
                 Quaternion rotation = Math.ConvertOrientation(report.pose.rotation);
-                poseCallbacks(path, position, rotation);
+                if (null != poseCallbacks)
+                {
+                    poseCallbacks(path, position, rotation);
+                }
             }
 
             /// <summary>
@@ -197,7 +206,10 @@ namespace OSVR
             private void PoseMatrixCb(System.IntPtr userdata, ref OSVR.ClientKit.TimeValue timestamp, ref OSVR.ClientKit.PoseReport report)
             {
                 Matrix4x4 matPose = Math.ConvertPose(report.pose);
-                poseMatrixCallbacks(path, matPose);
+                if (null != poseMatrixCallbacks)
+                {
+                    poseMatrixCallbacks(path, matPose);
+                }
             }
 
             /// <summary>
@@ -209,7 +221,10 @@ namespace OSVR
             private void PositionCb(System.IntPtr userdata, ref OSVR.ClientKit.TimeValue timestamp, ref OSVR.ClientKit.PositionReport report)
             {
                 Vector3 position = Math.ConvertPosition(report.xyz);
-                positionCallbacks(path, position);
+                if (null != positionCallbacks)
+                {
+                    positionCallbacks(path, position);
+                }
             }
 
             /// <summary>
@@ -221,7 +236,10 @@ namespace OSVR
             private void OrientationCb(System.IntPtr userdata, ref OSVR.ClientKit.TimeValue timestamp, ref OSVR.ClientKit.OrientationReport report)
             {
                 Quaternion rotation = Math.ConvertOrientation(report.rotation);
-                orientationCallbacks(path, rotation);
+                if (null != orientationCallbacks)
+                {
+                    orientationCallbacks(path, rotation);
+                }
             }
 
             /// <summary>
@@ -248,7 +266,10 @@ namespace OSVR
             private void AnalogCb(System.IntPtr userdata, ref OSVR.ClientKit.TimeValue timestamp, ref OSVR.ClientKit.AnalogReport report)
             {
                 float val = (float)report.state;
-                analogCallbacks(path, val);
+                if (null != analogCallbacks)
+                {
+                    analogCallbacks(path, val);
+                }
             }
             #endregion
 
