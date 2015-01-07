@@ -64,27 +64,31 @@ namespace OSVR
                 Dispose(false);
             }
 
-            /// @brief Destructor: Shutdown the library.
-            public void Dispose()
-            {
-                Dispose(true);
-                osvrClientShutdown(m_context);
-            }
-
-            protected virtual void Dispose(bool disposing)
+            public void shutdown()
             {
                 if (this.m_context != IntPtr.Zero)
                 {
+                    System.Diagnostics.Debug.WriteLine("Client shutdown");
                     osvrClientShutdown(this.m_context);
                     this.m_context = IntPtr.Zero;
                 }
 
-                if (disposing)
-                {
-                    // No need to call the finalizer since we've now cleaned
-                    // up the unmanaged memory.
-                    GC.SuppressFinalize(this);
-                }
+            }
+
+            /// @brief Destructor: Shutdown the library.
+            public void Dispose()
+            {
+                System.Diagnostics.Debug.WriteLine("In Dispose()");
+                Dispose(true);
+                // No need to call the finalizer since we've now cleaned
+                // up the unmanaged memory.
+                GC.SuppressFinalize(this);
+            }
+
+            protected virtual void Dispose(bool disposing)
+            {
+                System.Diagnostics.Debug.WriteLine(String.Format("In Dispose({0})", disposing));
+                shutdown();
             }
 
             /// @brief Updates the state of the context - call regularly in your
