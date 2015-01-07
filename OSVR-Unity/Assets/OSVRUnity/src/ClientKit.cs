@@ -74,11 +74,19 @@ namespace OSVR
 
             void Start()
             {
+                Debug.Log("[OSVR] In Start()");
+                EnsureStarted();
+            }
+
+            void OnEnable()
+            {
+                Debug.Log("[OSVR] In OnEnable()");
                 EnsureStarted();
             }
 
             void FixedUpdate()
             {
+                EnsureStarted();
                 contextObject.update();
             }
 
