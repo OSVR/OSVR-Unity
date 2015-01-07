@@ -72,6 +72,10 @@ namespace OSVR
                 DLLSearchPathFixer.fix();
             }
 
+            void Awake()
+            {
+                DontDestroyOnLoad(gameObject);
+            }
             void Start()
             {
                 Debug.Log("[OSVR] In Start()");
@@ -98,6 +102,11 @@ namespace OSVR
                     contextObject.Dispose();
                     contextObject = null;
                 }
+            }
+
+            void OnDisable()
+            {
+                Stop();
             }
 
             void OnDestroy()
