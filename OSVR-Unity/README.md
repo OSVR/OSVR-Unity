@@ -5,10 +5,10 @@
 ## Known Issues
 This list only includes Unity-specific issues that have a substantial impact on the development experience. For a full list of issues, see the [GitHub issue tracker](https://github.com/sensics/OSVR-Unity/issues)
 
-- The second time an application is run in a single Unity Editor session no events will occur and so no tracking or other data will come in. ([GitHub issue](https://github.com/sensics/OSVR-Unity/issues/1))
+- Display configuration is currently hardcoded, rather than receiving data from the OSVR server. ([GitHub issue](https://github.com/OSVR/OSVR-Unity/issues/2))
 
 ## Basic Principles and Files
-On a machine where you're running an OSVR-Unity application, you need to run an OSVR server. This is found in the OSVR-Core builds. [Contact us](mailto:support@opengoggles.org) if you need help.
+On a machine where you're running an OSVR-Unity application, you need to run an OSVR server, part of the OSVR-Core builds. For convenience, a 32-bit OSVR Server install is bundled in the OSVR-Unity snapshot archives. [Contact us](mailto:support@osvr.org) if you need help.
 
 The `OSVR-Unity.unitypackage` package should contain the x86 binary plugins, the compiled Managed-OSVR wrapper, the OSVRUnity scripts (in the `Assets` directory), and a directory of prefabs. Import this package into your project.
 
@@ -28,8 +28,10 @@ This involves two pieces:
 
 Examples for buttons and analog triggers are included in the `minigame` scene.
 
+Paths for these callbacks that provide useful information can be found in the main OSVR-Core documentation on the "Writing a client application" page.
+
 ### Other interaction
-Any other interaction with the OSVR framework goes directly through the Managed-OSVR (.NET) wrapper without any Unity-specific adaptations. See that source for examples of button and analog callbacks, as well as display parameter access (ideally used to set up the display properly. In terms of API, the Managed-OSVR API is effectively a direct translation of the C++ wrappers of OSVR `ClientKit`, so please see the main OSVR-Core client documentation for more information.
+Any other interaction with the OSVR framework should go directly through the Managed-OSVR (.NET) wrapper without any Unity-specific adaptations. See that source for examples of button and analog callbacks, as well as display parameter access (ideally used to set up the display properly). In terms of API, the Managed-OSVR API is effectively a direct translation of the C++ wrappers of OSVR `ClientKit`, so please see the main OSVR-Core client documentation for more information.
 
 ### Execution
 A standalone player built for Windows may end up needing the `-adapter N` argument, where `N` is a Direct3D display adapter, to put the rendered output on the HMD display.
