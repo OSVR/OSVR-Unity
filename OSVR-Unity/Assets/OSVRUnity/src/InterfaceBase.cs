@@ -15,6 +15,7 @@ namespace OSVR
     {
         /// <summary>
         /// Base class for a script that requires an OSVR interface.
+        /// It primarily takes care of requiring that there is an InterfaceGameObject component in the current game object.
         /// </summary>
         [RequireComponent(typeof(InterfaceGameObject))]
         public class InterfaceBase : MonoBehaviour

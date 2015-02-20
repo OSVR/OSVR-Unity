@@ -21,7 +21,9 @@ namespace OSVR
         public class InterfaceGameObject : MonoBehaviour
         {
             /// <summary>
-            /// The interface path you want to connect to.
+            /// The interface path you want to connect to. If you end up with a parent-child relationship between two InterfaceGameObjects
+            /// in your scene, there is the ability to inherit the path. There are a few instances where this might be useful, but typically
+            /// each instance would have the path explicitly specified.
             /// </summary>
             [Tooltip("The interface path you want to access. If left blank, the path of the nearest ancestor with a path will be used.")]
             public string path;

@@ -68,6 +68,8 @@ namespace OSVR
             }
 
             #region Generated RegisterCallback overloads and associated data
+            /// The section between the BEGIN and END generated code can be replaced with the output of running
+            /// the unity-generate.lua script to update it.
             /* BEGIN GENERATED CODE - unity-generate.lua */
             public void RegisterCallback(PoseMatrixCallback callback)
             {
@@ -180,6 +182,8 @@ namespace OSVR
             /* END GENERATED CODE - unity-generate.lua */
             #endregion
 
+            /// These wrappers sadly have to be mostly hand-written, despite their similarity, since they convert data types
+            /// and also data conventions (into Unity's left-handed coordinate system)
             #region Private wrapper callbacks/trampolines
             /// <summary>
             /// Pose (as position and orientation) wrapper callback, interfacing Managed-OSVR's signatures and more Unity-native datatypes, including coordinate system conversion.
