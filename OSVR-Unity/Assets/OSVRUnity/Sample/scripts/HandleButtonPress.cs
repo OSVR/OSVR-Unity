@@ -2,7 +2,7 @@
 using System.Collections;
 
 /// <summary>
-/// This is a manual way of accessing the InterfaceGameObject component. See SampleButtonScript for the slightly more elegant solution.
+/// This is a manual way of accessing the InterfaceGameObject component. See SampleButtonScript for the recommended, more elegant solution.
 /// </summary>
 [RequireComponent(typeof(OSVR.Unity.InterfaceGameObject))]
 public class HandleButtonPress : MonoBehaviour
