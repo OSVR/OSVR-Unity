@@ -21,16 +21,20 @@ namespace OSVR
         /// Currently parses a JSON descriptor file provided by developer in the Unity scene.
         /// If a file is not provided, it reads from /display, which will eventually be the default way that this class works.
         /// </summary>
-        public class DisplayInterface : InterfaceGameObject
+        public class DisplayInterface : MonoBehaviour
         {
             private string deviceDescriptorJson;
             public TextAsset jsonDescriptorFile;
             new void Awake()
             {
                 if (jsonDescriptorFile != null)
+                {
                     deviceDescriptorJson = jsonDescriptorFile.text; //read JSON file directly from Unity if provided
+                }
                 else
-                    deviceDescriptorJson = ClientKit.instance.context.getStringParameter("/display"); //otherwise read from /display               
+                {
+                    deviceDescriptorJson = ClientKit.instance.context.getStringParameter("/display"); //otherwise read from /display    
+                }
             }
 
             /// <summary>
