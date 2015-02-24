@@ -13,6 +13,7 @@
 
 using UnityEngine;
 using System.Collections;
+using System.Reflection;
 
 namespace OSVR
 {
@@ -39,12 +40,17 @@ namespace OSVR
             #region Public Methods
             public void MatchCamera(Camera sourceCamera)
             {
-                camera.nearClipPlane = sourceCamera.nearClipPlane;
+
+                /*camera.nearClipPlane = sourceCamera.nearClipPlane;
                 camera.farClipPlane = sourceCamera.farClipPlane;
                 camera.backgroundColor = sourceCamera.backgroundColor;
                 camera.clearFlags = sourceCamera.clearFlags;
-                camera.cullingMask = sourceCamera.cullingMask;
+                camera.cullingMask = sourceCamera.cullingMask;*/
+                camera.CopyFrom(sourceCamera);
+                SetViewportRects();
             }
+
+            
             #endregion
 
             #region Private Methods
@@ -55,6 +61,12 @@ namespace OSVR
 
                 if (camera == null) gameObject.AddComponent<Camera>();
 
+                SetViewportRects();
+            }
+
+            //helper method to set correct viewport for each eye
+            private void SetViewportRects()
+            {
                 //camera setups:
                 switch (eye)
                 {

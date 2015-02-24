@@ -44,6 +44,7 @@ GameObject:
   - 81: {fileID: 8131736}
   - 114: {fileID: 11431734}
   - 114: {fileID: 11431736}
+  - 114: {fileID: 11400556}
   m_Layer: 0
   m_Name: VRDisplayTracked
   m_TagString: Untagged
@@ -128,6 +129,19 @@ AudioListener:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 131736}
   m_Enabled: 1
+--- !u!114 &11400556
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 131736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a288e4aec9950634b83d232abc73d1bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  path: /display
+  jsonDescriptorFile: {fileID: 4900000, guid: 6c4ce626027a5de4692d184d6a1b6db3, type: 3}
 --- !u!114 &11431730
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -176,7 +190,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 131736}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ee225769fa78e894c970514b2f2e1f90, type: 3}
+  m_Script: {fileID: 11500000, guid: d819a5e6a69cc5c46be733d8a56d387e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/head
