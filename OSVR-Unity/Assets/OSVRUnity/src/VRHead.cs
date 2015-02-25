@@ -129,8 +129,8 @@ namespace OSVR
 
             private void GetDeviceDescription()
             {
-                DeviceDescriptor dd = GetComponent<DisplayInterface>().GetDeviceDescription();
-                switch (dd.getDisplayMode())
+                DeviceDescriptor deviceDescriptor = GetComponent<DisplayInterface>().GetDeviceDescription();
+                switch (deviceDescriptor.DisplayMode)
                 {
                     case "full_screen":
                         viewMode = ViewMode.mono;
@@ -141,12 +141,12 @@ namespace OSVR
                         viewMode = ViewMode.stereo;
                         break;
                 }
-                stereoAmount = Mathf.Clamp(dd.getOverlapPercent(), 0, 100);
-                camera.fieldOfView = Mathf.Clamp(dd.getMonocularVertical(), 0, 180); //unity camera FOV is vertical
-                SetResolution(dd.getWidth(), dd.getHeight());    
+                stereoAmount = Mathf.Clamp(deviceDescriptor.OverlapPercent, 0, 100);
+                camera.fieldOfView = Mathf.Clamp(deviceDescriptor.MonocularVertical, 0, 180); //unity camera FOV is vertical
+                SetResolution(deviceDescriptor.Width, deviceDescriptor.Height);    
   
                 //if the view needs to be rotated 180 degrees, create a parent game object that is flipped 180 degrees on the z axis.
-                if(dd.getRotate180() > 0)
+                if(deviceDescriptor.Rotate180 > 0)
                 {
                     GameObject vrHeadParent = new GameObject();
                     vrHeadParent.name = this.transform.name + "_parent";

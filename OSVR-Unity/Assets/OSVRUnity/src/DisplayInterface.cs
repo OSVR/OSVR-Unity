@@ -23,17 +23,17 @@ namespace OSVR
         /// </summary>
         public class DisplayInterface : MonoBehaviour
         {
-            private string deviceDescriptorJson;
-            public TextAsset jsonDescriptorFile;
-            new void Awake()
+            private string _deviceDescriptorJson;
+            public TextAsset JsonDescriptorFile;
+            void Awake()
             {
-                if (jsonDescriptorFile != null)
+                if (JsonDescriptorFile != null)
                 {
-                    deviceDescriptorJson = jsonDescriptorFile.text; //read JSON file directly from Unity if provided
+                    _deviceDescriptorJson = JsonDescriptorFile.text; //read JSON file directly from Unity if provided
                 }
                 else
                 {
-                    deviceDescriptorJson = ClientKit.instance.context.getStringParameter("/display"); //otherwise read from /display    
+                    _deviceDescriptorJson = ClientKit.instance.context.getStringParameter("/display"); //otherwise read from /display    
                 }
             }
 
@@ -44,7 +44,7 @@ namespace OSVR
             /// </summary>
             public DeviceDescriptor GetDisplayParameters(TextAsset jsonDescriptor)
             {
-                deviceDescriptorJson = jsonDescriptor.text;
+                _deviceDescriptorJson = jsonDescriptor.text;
                 return GetDeviceDescription();
             }
 
@@ -56,76 +56,76 @@ namespace OSVR
             public DeviceDescriptor GetDeviceDescription()
             {
                 
-                JSONNode parsedJsonDisplayParams = JSON.Parse(deviceDescriptorJson);
+                JSONNode parsedJsonDisplayParams = JSON.Parse(_deviceDescriptorJson);
 
                 //field of view
-                float monocular_horizontal = parsedJsonDisplayParams["hmd"]["field_of_view"]["monocular_horizontal"].AsFloat;
-                float monocular_vertical = parsedJsonDisplayParams["hmd"]["field_of_view"]["monocular_vertical"].AsFloat;
-                float overlap_percent = parsedJsonDisplayParams["hmd"]["field_of_view"]["overlap_percent"].AsFloat;
-                float pitch_tilt = parsedJsonDisplayParams["hmd"]["field_of_view"]["pitch_tilt"].AsFloat;
+                float monocularHorizontal = parsedJsonDisplayParams["hmd"]["field_of_view"]["monocular_horizontal"].AsFloat;
+                float monocularVertical = parsedJsonDisplayParams["hmd"]["field_of_view"]["monocular_vertical"].AsFloat;
+                float overlapPercent = parsedJsonDisplayParams["hmd"]["field_of_view"]["overlap_percent"].AsFloat;
+                float pitchTilt = parsedJsonDisplayParams["hmd"]["field_of_view"]["pitch_tilt"].AsFloat;
               
                 //resolutions
                 int width = parsedJsonDisplayParams["hmd"]["resolutions"][0]["width"].AsInt;
                 int height = parsedJsonDisplayParams["hmd"]["resolutions"][0]["height"].AsInt;
-                int video_inputs = parsedJsonDisplayParams["hmd"]["resolutions"][0]["video_inputs"].AsInt;
-                string display_mode = parsedJsonDisplayParams["hmd"]["resolutions"][0]["display_mode"].Value;
+                int videoInputs = parsedJsonDisplayParams["hmd"]["resolutions"][0]["video_inputs"].AsInt;
+                string displayMode = parsedJsonDisplayParams["hmd"]["resolutions"][0]["display_mode"].Value;
 
                 //distortion
-                float k1_red = parsedJsonDisplayParams["hmd"]["distortion"]["k1_red"].AsFloat;
-                float k1_green = parsedJsonDisplayParams["hmd"]["distortion"]["k1_red"].AsFloat;
-                float k1_blue = parsedJsonDisplayParams["hmd"]["distortion"]["k1_red"].AsFloat;
+                float k1Red = parsedJsonDisplayParams["hmd"]["distortion"]["k1_red"].AsFloat;
+                float k1Green = parsedJsonDisplayParams["hmd"]["distortion"]["k1_red"].AsFloat;
+                float k1Blue = parsedJsonDisplayParams["hmd"]["distortion"]["k1_red"].AsFloat;
 
                 //rendering
-                float left_roll = parsedJsonDisplayParams["hmd"]["rendering"]["left_roll"].AsFloat;
-                float right_roll = parsedJsonDisplayParams["hmd"]["rendering"]["right_roll"].AsFloat;
+                float leftRoll = parsedJsonDisplayParams["hmd"]["rendering"]["left_roll"].AsFloat;
+                float rightRoll = parsedJsonDisplayParams["hmd"]["rendering"]["right_roll"].AsFloat;
 
                 //eyes
-                float center_proj_x = parsedJsonDisplayParams["hmd"]["eyes"][0]["center_proj_x"].AsFloat;
-                float center_proj_y = parsedJsonDisplayParams["hmd"]["eyes"][0]["center_proj_y"].AsFloat;
-                int rotate_180 = parsedJsonDisplayParams["hmd"]["eyes"][0]["rotate_180"].AsInt;
+                float centerProjX = parsedJsonDisplayParams["hmd"]["eyes"][0]["center_proj_x"].AsFloat;
+                float centerProjY = parsedJsonDisplayParams["hmd"]["eyes"][0]["center_proj_y"].AsFloat;
+                int rotate180 = parsedJsonDisplayParams["hmd"]["eyes"][0]["rotate_180"].AsInt;
 
                 //print
                 string parsedJson = "FIELD OF VIEW:\n";
-                parsedJson += "monocular_horizontal = " + monocular_horizontal + "\n";
-                parsedJson += "monocular_vertical = " + monocular_vertical + "\n";
-                parsedJson += "overlap_percent = " + overlap_percent + "\n";
-                parsedJson += "pitch_tilt = " + pitch_tilt + "\n";
+                parsedJson += "monocular_horizontal = " + monocularHorizontal + "\n";
+                parsedJson += "monocular_vertical = " + monocularVertical + "\n";
+                parsedJson += "overlap_percent = " + overlapPercent + "\n";
+                parsedJson += "pitch_tilt = " + pitchTilt + "\n";
                 parsedJson += "\nRESOLUTION\n";
                 parsedJson += "width = " + width + "\n";
                 parsedJson += "height = " + width + "\n";
-                parsedJson += "video_inputs = " + video_inputs + "\n";
-                parsedJson += "display_mode = " + display_mode + "\n";
+                parsedJson += "video_inputs = " + videoInputs + "\n";
+                parsedJson += "display_mode = " + displayMode + "\n";
                 parsedJson += "\nDISTORTION\n";
-                parsedJson += "k1_red = " + k1_red + "\n";
-                parsedJson += "k1_green = " + k1_green + "\n";
-                parsedJson += "k1_blue = " + k1_blue + "\n";
+                parsedJson += "k1_red = " + k1Red + "\n";
+                parsedJson += "k1_green = " + k1Green + "\n";
+                parsedJson += "k1_blue = " + k1Blue + "\n";
                 parsedJson += "\nRENDERING\n";
-                parsedJson += "left_roll = " + left_roll + "\n";
-                parsedJson += "right_roll = " + right_roll + "\n";
+                parsedJson += "left_roll = " + leftRoll + "\n";
+                parsedJson += "right_roll = " + rightRoll + "\n";
                 parsedJson += "\nEYES\n";
-                parsedJson += "center_proj_x = " + center_proj_x + "\n";
-                parsedJson += "center_proj_y = " + center_proj_y + "\n";
-                parsedJson += "rotate_180 = " + rotate_180 + "\n";
-                Debug.Log("Parsed " + jsonDescriptorFile.name + ".json:\n" + parsedJson);
+                parsedJson += "center_proj_x = " + centerProjX + "\n";
+                parsedJson += "center_proj_y = " + centerProjY + "\n";
+                parsedJson += "rotate_180 = " + rotate180 + "\n";
+                Debug.Log("Parsed " + JsonDescriptorFile.name + ".json:\n" + parsedJson);
 
                 //create a device descriptor object and store the parsed json
                 DeviceDescriptor deviceDescriptor = new DeviceDescriptor();
-                deviceDescriptor.setMonocularHorizontal(monocular_horizontal);
-                deviceDescriptor.setMonocularVertical(monocular_vertical);
-                deviceDescriptor.setOverlapPercent(overlap_percent);
-                deviceDescriptor.setPitchTilt(pitch_tilt);
-                deviceDescriptor.setWidth(width);
-                deviceDescriptor.setHeight(height);
-                deviceDescriptor.setVideoInputs(video_inputs);
-                deviceDescriptor.setDisplayMode(display_mode);
-                deviceDescriptor.setK1Red(k1_red);
-                deviceDescriptor.setK1Green(k1_green);
-                deviceDescriptor.setK1Blue(k1_blue);
-                deviceDescriptor.setLeftRoll(left_roll);
-                deviceDescriptor.setRightRoll(right_roll);
-                deviceDescriptor.setCenterProjX(center_proj_x);
-                deviceDescriptor.setCenterProjY(center_proj_y);
-                deviceDescriptor.setRotate180(rotate_180);
+                deviceDescriptor.MonocularHorizontal = monocularHorizontal;
+                deviceDescriptor.MonocularVertical = monocularVertical;
+                deviceDescriptor.OverlapPercent = overlapPercent;
+                deviceDescriptor.PitchTilt = pitchTilt;
+                deviceDescriptor.Width = width;
+                deviceDescriptor.Height = height;
+                deviceDescriptor.VideoInputs = videoInputs;
+                deviceDescriptor.DisplayMode = displayMode;
+                deviceDescriptor.K1Red = k1Red;
+                deviceDescriptor.K1Green = k1Green;
+                deviceDescriptor.K1Blue = k1Blue;
+                deviceDescriptor.LeftRoll = leftRoll;
+                deviceDescriptor.RightRoll = rightRoll;
+                deviceDescriptor.CenterProjX = centerProjX;
+                deviceDescriptor.CenterProjY = centerProjY;
+                deviceDescriptor.Rotate180 = rotate180;
                 return deviceDescriptor;
             }      
         }
