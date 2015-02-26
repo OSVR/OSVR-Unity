@@ -22,6 +22,7 @@ namespace OSVR
         public enum ViewMode { stereo, mono };
 
         [RequireComponent(typeof(Camera))]
+        [RequireComponent(typeof(DisplayInterface))]
         public class VRHead : MonoBehaviour
         {
             #region Public Variables
@@ -44,8 +45,10 @@ namespace OSVR
             void Start()
             {
                 Init();
+                GetDeviceDescription();
                 CatalogEyes();
             }
+
             #endregion
 
             #region Loop
@@ -122,6 +125,51 @@ namespace OSVR
 
                 //60 FPS whenever possible:
                 Application.targetFrameRate = 60;
+            }
+
+            private void GetDeviceDescription()
+            {
+                DeviceDescriptor deviceDescriptor = GetComponent<DisplayInterface>().GetDeviceDescription();
+                switch (deviceDescriptor.DisplayMode)
+                {
+                    case "full_screen":
+                        viewMode = ViewMode.mono;
+                        break;
+                    case "horz_side_by_side":
+                    case "vert_side_by_side":
+                    default:
+                        viewMode = ViewMode.stereo;
+                        break;
+                }
+                stereoAmount = Mathf.Clamp(deviceDescriptor.OverlapPercent, 0, 100);
+                camera.fieldOfView = Mathf.Clamp(deviceDescriptor.MonocularVertical, 0, 180); //unity camera FOV is vertical
+                SetResolution(deviceDescriptor.Width, deviceDescriptor.Height);    
+  
+                //if the view needs to be rotated 180 degrees, create a parent game object that is flipped 180 degrees on the z axis.
+                if(deviceDescriptor.Rotate180 > 0)
+                {
+                    GameObject vrHeadParent = new GameObject();
+                    vrHeadParent.name = this.transform.name + "_parent";
+                    vrHeadParent.transform.position = this.transform.position;
+                    vrHeadParent.transform.rotation = this.transform.rotation;
+                    if(this.transform.parent != null)
+                    {
+                        vrHeadParent.transform.parent = this.transform.parent;
+                    }
+                    this.transform.parent = vrHeadParent.transform;
+                    vrHeadParent.transform.Rotate(0, 0, 180, Space.Self);
+                }
+            }
+
+            private void SetResolution(int width, int height)
+            {
+                //set the resolution
+                Screen.SetResolution(width, height, true);
+#if UNITY_EDITOR
+                UnityEditor.PlayerSettings.defaultScreenWidth = width;
+                UnityEditor.PlayerSettings.defaultScreenHeight = height;
+                UnityEditor.PlayerSettings.defaultIsFullScreen = true;
+#endif
             }
             #endregion
         }
