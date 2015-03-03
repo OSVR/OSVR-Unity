@@ -5,7 +5,8 @@
 ## Known Issues
 This list only includes Unity-specific issues that have a substantial impact on the development experience. For a full list of issues, see the [GitHub issue tracker](https://github.com/sensics/OSVR-Unity/issues)
 
-- Display configuration is currently hardcoded, rather than receiving data from the OSVR server. ([GitHub issue](https://github.com/OSVR/OSVR-Unity/issues/2))
+- Stereo will not work unless you load a display `.json` file manually into the display prefab. A number of these are bundled with the plugin: drag and drop the appropriate one into the slot in the Inspector.
+- Display configuration is not always falling back to data from OSVR. ([GitHub issue](https://github.com/OSVR/OSVR-Unity/issues/2))
 
 ## Basic Principles and Files
 On a machine where you're running an OSVR-Unity application, you need to run an OSVR server, part of the OSVR-Core builds. For convenience, a 32-bit OSVR Server install is bundled in the OSVR-Unity snapshot archives. [Contact us](mailto:support@osvr.org) if you need help.
