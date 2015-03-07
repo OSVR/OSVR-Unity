@@ -18,7 +18,7 @@
 /// limitations under the License.
 /// </copyright>
 
-﻿/// <summary>
+/// <summary>
 /// Author: Bob Berkebile
 /// Email: bob@bullyentertainment.com || bobb@pixelplacement.com
 /// </summary>

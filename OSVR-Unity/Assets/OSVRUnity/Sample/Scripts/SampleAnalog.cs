@@ -18,7 +18,7 @@
 /// limitations under the License.
 /// </copyright>
 
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 /// <summary>
