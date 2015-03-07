@@ -1,4 +1,9 @@
 # OSVR-Unity
+> Maintained at <https://github.com/OSVR/OSVR-Unity>
+>
+> For details, see <http://osvr.github.io>
+>
+> For support, see <http://support.osvr.com>
 
 ## .NET Binding for OSVR - "Managed-OSVR"
 Contained in `Managed-OSVR/ClientKit`. The `Managed-OSVR` directory contains a solution with both the ClientKit wrapper and ported examples based on the C++ examples from the core.
@@ -29,3 +34,7 @@ This contains the source project used to generate `.unitypackage` files, since t
 - `prep-package.cmd` - Used by CI to create a directory that will eventually be packed as a snapshot, copy the source into it, and format the Unity readme markdown file as HTML. Not used in the course of normal development.
 - `build-unity-packages.cmd` - Used by CI (but potentially others as well) to invoke the Unity editor script that packs the Unity plugin into a `.unitypackage` file. Requires that the Managed-OSVR build already have been run to copy over the .NET assembly and native DLLs into the right place in the tree. It copies that `.unitypackage` file into the distribution directory made by `prep-package.cmd` if that directory exists.
 - `unity-generate.lua` - Generates some very repetitive code wrapping the raw C-style pinvoke callbacks in something more .NET-idiomatic. It can be run with any reasonably recent version of a Lua interpreter, and its output should be placed into `OSVR-Unity/Assets/OSVRUnity/src/InterfaceCallbacks.cs` in the designated area (see comments in that file)
+
+## License
+
+This project: Licensed under the Apache License, Version 2.0.
