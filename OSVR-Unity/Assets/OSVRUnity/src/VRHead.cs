@@ -1,19 +1,22 @@
-﻿/* OSVR-Unity Connection
- * 
- * <http://sensics.com/osvr>
- * Copyright 2014 Sensics, Inc.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+/// OSVR-Unity Connection
+///
+/// http://sensics.com/osvr
+///
+/// <copyright>
+/// Copyright 2014 Sensics, Inc.
+///
+/// Licensed under the Apache License, Version 2.0 (the "License");
+/// you may not use this file except in compliance with the License.
+/// You may obtain a copy of the License at
+///
+///     http://www.apache.org/licenses/LICENSE-2.0
+///
+/// Unless required by applicable law or agreed to in writing, software
+/// distributed under the License is distributed on an "AS IS" BASIS,
+/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+/// See the License for the specific language governing permissions and
+/// limitations under the License.
+/// </copyright>
 /// <summary>
 /// Author: Bob Berkebile
 /// Email: bob@bullyentertainment.com || bobb@pixelplacement.com
@@ -151,8 +154,8 @@ namespace OSVR
                 }
                 stereoAmount = Mathf.Clamp(deviceDescriptor.OverlapPercent, 0, 100);
                 camera.fieldOfView = Mathf.Clamp(deviceDescriptor.MonocularVertical, 0, 180); //unity camera FOV is vertical
-                SetResolution(deviceDescriptor.Width, deviceDescriptor.Height);    
-  
+                SetResolution(deviceDescriptor.Width, deviceDescriptor.Height);
+
                 //if the view needs to be rotated 180 degrees, create a parent game object that is flipped 180 degrees on the z axis.
                 if(deviceDescriptor.Rotate180 > 0)
                 {

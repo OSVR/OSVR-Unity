@@ -1,3 +1,23 @@
+/// OSVR-Unity Demo
+///
+/// http://sensics.com/osvr
+///
+/// <copyright>
+/// Copyright 2014 Sensics, Inc.
+///
+/// Licensed under the Apache License, Version 2.0 (the "License");
+/// you may not use this file except in compliance with the License.
+/// You may obtain a copy of the License at
+///
+///     http://www.apache.org/licenses/LICENSE-2.0
+///
+/// Unless required by applicable law or agreed to in writing, software
+/// distributed under the License is distributed on an "AS IS" BASIS,
+/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+/// See the License for the specific language governing permissions and
+/// limitations under the License.
+/// </copyright>
+
 ﻿/// <summary>
 /// Author: Bob Berkebile
 /// Email: bob@bullyentertainment.com || bobb@pixelplacement.com
@@ -29,11 +49,11 @@ public class ColorManager : MonoBehaviour
 {
 	void OnGUI()
 	{
-		if ( GUILayout.Button( "Color Up" ) ) 
+		if ( GUILayout.Button( "Color Up" ) )
 		{
 			ChangeColorNext();
 		}
-		if ( GUILayout.Button( "Color Down" ) ) 
+		if ( GUILayout.Button( "Color Down" ) )
 		{
 			ChangeColorPrevious();
 		}
@@ -74,13 +94,13 @@ public class ColorManager : MonoBehaviour
 
 	public void ChangeColor( int index )
 	{
-		if ( index > colors.Length - 1 || index < 0 ) 
+		if ( index > colors.Length - 1 || index < 0 )
 		{
 			Debug.LogError( "Color value out of range." );
 			return;
 		}
 
-		ApplyColor( colors[ index ].color ); 
+		ApplyColor( colors[ index ].color );
 	}
 
 	public void ChangeColor( string name )
@@ -96,7 +116,7 @@ public class ColorManager : MonoBehaviour
 			}
 		}
 
-		if ( found != null ) 
+		if ( found != null )
 		{
 			ApplyColor( found.color );
 		}else{
@@ -120,7 +140,7 @@ public class ColorManager : MonoBehaviour
 	#region Private Methods
 	void ApplyColor( Color color )
 	{
-		foreach( IColorChanger item in _colorChangers ) 
+		foreach( IColorChanger item in _colorChangers )
 		{
 			item.ChangeColor( color );
 		}

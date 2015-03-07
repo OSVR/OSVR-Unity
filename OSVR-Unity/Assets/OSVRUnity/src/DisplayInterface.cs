@@ -1,19 +1,22 @@
-/* OSVR-Unity Connection
- * 
- * <http://sensics.com/osvr>
- * Copyright 2014 Sensics, Inc.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+/// OSVR-Unity Connection
+///
+/// http://sensics.com/osvr
+///
+/// <copyright>
+/// Copyright 2014 Sensics, Inc.
+///
+/// Licensed under the Apache License, Version 2.0 (the "License");
+/// you may not use this file except in compliance with the License.
+/// You may obtain a copy of the License at
+///
+///     http://www.apache.org/licenses/LICENSE-2.0
+///
+/// Unless required by applicable law or agreed to in writing, software
+/// distributed under the License is distributed on an "AS IS" BASIS,
+/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+/// See the License for the specific language governing permissions and
+/// limitations under the License.
+/// </copyright>
 
 using System;
 using UnityEngine;
@@ -25,7 +28,7 @@ namespace OSVR
     {
         /// <summary>
         /// Display interface: provides information about the device display that is needed to set correct values in Unity scene.
-        /// 
+        ///
         /// Currently parses a JSON descriptor file provided by developer in the Unity scene.
         /// If a file is not provided, it reads from /display, which will eventually be the default way that this class works.
         /// </summary>
@@ -41,13 +44,13 @@ namespace OSVR
                 }
                 else
                 {
-                    _deviceDescriptorJson = ClientKit.instance.context.getStringParameter("/display"); //otherwise read from /display    
+                    _deviceDescriptorJson = ClientKit.instance.context.getStringParameter("/display"); //otherwise read from /display
                 }
             }
 
             /// <summary>
             /// This function will parse the device parameters from a device descriptor json file.
-            /// 
+            ///
             /// Returns a DeviceDescriptor object containing stored json values.
             /// </summary>
             public DeviceDescriptor GetDisplayParameters(TextAsset jsonDescriptor)
@@ -58,12 +61,12 @@ namespace OSVR
 
             /// <summary>
             /// This function will parse the device parameters from a device descriptor json file.
-            /// 
+            ///
             /// Returns a DeviceDescriptor object containing stored json values.
             /// </summary>
             public DeviceDescriptor GetDeviceDescription()
             {
-                
+
                 JSONNode parsedJsonDisplayParams = JSON.Parse(_deviceDescriptorJson);
 
                 //field of view
@@ -71,7 +74,7 @@ namespace OSVR
                 float monocularVertical = parsedJsonDisplayParams["hmd"]["field_of_view"]["monocular_vertical"].AsFloat;
                 float overlapPercent = parsedJsonDisplayParams["hmd"]["field_of_view"]["overlap_percent"].AsFloat;
                 float pitchTilt = parsedJsonDisplayParams["hmd"]["field_of_view"]["pitch_tilt"].AsFloat;
-              
+
                 //resolutions
                 int width = parsedJsonDisplayParams["hmd"]["resolutions"][0]["width"].AsInt;
                 int height = parsedJsonDisplayParams["hmd"]["resolutions"][0]["height"].AsInt;
@@ -135,7 +138,7 @@ namespace OSVR
                 deviceDescriptor.CenterProjY = centerProjY;
                 deviceDescriptor.Rotate180 = rotate180;
                 return deviceDescriptor;
-            }      
+            }
         }
     }
 }
