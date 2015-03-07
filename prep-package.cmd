@@ -17,4 +17,3 @@ move CONTRIBUTING.html OSVR-Unity-Dist\
 rem Copy the license and the notice
 xcopy LICENSE OSVR-Unity-Dist /Y
 xcopy NOTICE OSVR-Unity-Dist /Y
-xcopy CONTRIBUTING OSVR-Unity-Dist /Y
