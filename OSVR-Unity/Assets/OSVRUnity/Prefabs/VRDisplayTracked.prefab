@@ -140,8 +140,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a288e4aec9950634b83d232abc73d1bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  path: /display
-  jsonDescriptorFile: {fileID: 4900000, guid: 6c4ce626027a5de4692d184d6a1b6db3, type: 3}
+  JsonDescriptorFile: {fileID: 4900000, guid: 903a53a7997a82c42b329c472b623a4e, type: 3}
 --- !u!114 &11431730
 MonoBehaviour:
   m_ObjectHideFlags: 1

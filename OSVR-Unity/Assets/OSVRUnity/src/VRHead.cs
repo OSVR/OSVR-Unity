@@ -50,6 +50,7 @@ namespace OSVR
             VREye _rightEye;
             float _previousStereoAmount;
             ViewMode _previousViewMode;
+            private Camera _camera;
             #endregion
 
             #region Init
@@ -81,15 +82,15 @@ namespace OSVR
                     switch (viewMode)
                     {
                         case ViewMode.mono:
-                            camera.enabled = true;
-                            _leftEye.camera.enabled = false;
-                            _rightEye.camera.enabled = false;
+                            _camera.enabled = true;
+                            _leftEye.Camera.enabled = false;
+                            _rightEye.Camera.enabled = false;
                             break;
 
                         case ViewMode.stereo:
-                            camera.enabled = false;
-                            _leftEye.camera.enabled = true;
-                            _rightEye.camera.enabled = true;
+                            _camera.enabled = false;
+                            _leftEye.Camera.enabled = true;
+                            _rightEye.Camera.enabled = true;
                             break;
                     }
                 }
@@ -113,7 +114,7 @@ namespace OSVR
                 foreach (VREye currentEye in GetComponentsInChildren<VREye>())
                 {
                     //match:
-                    currentEye.MatchCamera(camera);
+                    currentEye.MatchCamera(_camera);
 
                     //catalog:
                     switch (currentEye.eye)
@@ -131,6 +132,14 @@ namespace OSVR
 
             void Init()
             {
+                if (_camera == null)
+                {                   
+                    if((_camera = GetComponent<Camera>()) == null)
+                    {
+                        _camera = gameObject.AddComponent<Camera>();
+                    }               
+                }
+
                 //VR should never timeout the screen:
                 Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
@@ -138,40 +147,49 @@ namespace OSVR
                 Application.targetFrameRate = 60;
             }
 
+            /// <summary>
+            /// GetDeviceDescription: Get a Description of the HMD and apply appropriate settings
+            /// 
+            /// </summary>
             private void GetDeviceDescription()
             {
                 DeviceDescriptor deviceDescriptor = GetComponent<DisplayInterface>().GetDeviceDescription();
-                switch (deviceDescriptor.DisplayMode)
+               // Debug.Log(deviceDescriptor.ToString());
+                if (deviceDescriptor != null)
                 {
-                    case "full_screen":
-                        viewMode = ViewMode.mono;
-                        break;
-                    case "horz_side_by_side":
-                    case "vert_side_by_side":
-                    default:
-                        viewMode = ViewMode.stereo;
-                        break;
-                }
-                stereoAmount = Mathf.Clamp(deviceDescriptor.OverlapPercent, 0, 100);
-                camera.fieldOfView = Mathf.Clamp(deviceDescriptor.MonocularVertical, 0, 180); //unity camera FOV is vertical
-                SetResolution(deviceDescriptor.Width, deviceDescriptor.Height);
-
-                //if the view needs to be rotated 180 degrees, create a parent game object that is flipped 180 degrees on the z axis.
-                if(deviceDescriptor.Rotate180 > 0)
-                {
-                    GameObject vrHeadParent = new GameObject();
-                    vrHeadParent.name = this.transform.name + "_parent";
-                    vrHeadParent.transform.position = this.transform.position;
-                    vrHeadParent.transform.rotation = this.transform.rotation;
-                    if(this.transform.parent != null)
+                    switch (deviceDescriptor.DisplayMode)
                     {
-                        vrHeadParent.transform.parent = this.transform.parent;
+                        case "full_screen":
+                            viewMode = ViewMode.mono;
+                            break;
+                        case "horz_side_by_side":
+                        case "vert_side_by_side":
+                        default:
+                            viewMode = ViewMode.stereo;
+                            break;
                     }
-                    this.transform.parent = vrHeadParent.transform;
-                    vrHeadParent.transform.Rotate(0, 0, 180, Space.Self);
+                    stereoAmount = Mathf.Clamp(deviceDescriptor.OverlapPercent, 0, 100);
+                    _camera.fieldOfView = Mathf.Clamp(deviceDescriptor.MonocularVertical, 0, 180); //unity camera FOV is vertical
+                    SetResolution(deviceDescriptor.Width, deviceDescriptor.Height);
+
+                    //if the view needs to be rotated 180 degrees, create a parent game object that is flipped 180 degrees on the z axis.
+                    if (deviceDescriptor.Rotate180 > 0)
+                    {
+                        GameObject vrHeadParent = new GameObject();
+                        vrHeadParent.name = this.transform.name + "_parent";
+                        vrHeadParent.transform.position = this.transform.position;
+                        vrHeadParent.transform.rotation = this.transform.rotation;
+                        if (this.transform.parent != null)
+                        {
+                            vrHeadParent.transform.parent = this.transform.parent;
+                        }
+                        this.transform.parent = vrHeadParent.transform;
+                        vrHeadParent.transform.Rotate(0, 0, 180, Space.Self);
+                    }
                 }
             }
 
+            //Set the Screen Resolution
             private void SetResolution(int width, int height)
             {
                 //set the resolution

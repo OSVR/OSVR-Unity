@@ -24,6 +24,31 @@ using System.Collections;
 //a class for storing information about a device based on it's json descriptor file
 public class DeviceDescriptor {
 
+    //hmd
+    private string _vendor = "";
+    public string Vendor
+    {
+        get { return _vendor; }
+        set { _vendor = value; }
+    }
+    private string _model = "";
+    public string Model
+    {
+        get { return _model; }
+        set { _model = value; }
+    }
+    private string _version;
+    public string Version
+    {
+        get { return _version; }
+        set { _version = value; }
+    }
+    private string _note = "";
+    public string Note
+    {
+        get { return _note; }
+        set { _note = value; }
+    }
     //field of view
     private float _monocularHorizontal = 60f;
     public float MonocularHorizontal
@@ -148,5 +173,36 @@ public class DeviceDescriptor {
         this._centerProjX = centerProjX;
         this._centerProjY = centerProjY;
         this._rotate180 = rotate180;
+    }
+
+    public override string ToString()
+    {
+        string deviceDescription = "Device Description:\n" + "HMD:\n";
+        deviceDescription += "Vendor = " + Vendor + "\n";
+        deviceDescription += "Model = " + Model + "\n";
+        deviceDescription += "Version = " + Version + "\n";
+        deviceDescription += "Note = " + Note + "\n";
+        deviceDescription += "\nFIELD OF VIEW:\n";
+        deviceDescription += "monocular_horizontal = " + MonocularHorizontal + "\n";
+        deviceDescription += "monocular_vertical = " + MonocularVertical + "\n";
+        deviceDescription += "overlap_percent = " + OverlapPercent + "\n";
+        deviceDescription += "pitch_tilt = " + PitchTilt + "\n";
+        deviceDescription += "\nRESOLUTION\n";
+        deviceDescription += "width = " + Width + "\n";
+        deviceDescription += "height = " + Height + "\n";
+        deviceDescription += "video_inputs = " + VideoInputs + "\n";
+        deviceDescription += "display_mode = " + DisplayMode + "\n";
+        deviceDescription += "\nDISTORTION\n";
+        deviceDescription += "k1_red = " + K1Red + "\n";
+        deviceDescription += "k1_green = " + K1Green + "\n";
+        deviceDescription += "k1_blue = " + K1Blue + "\n";
+        deviceDescription += "\nRENDERING\n";
+        deviceDescription += "left_roll = " + LeftRoll + "\n";
+        deviceDescription += "right_roll = " + RightRoll + "\n";
+        deviceDescription += "\nEYES\n";
+        deviceDescription += "center_proj_x = " + CenterProjX + "\n";
+        deviceDescription += "center_proj_y = " + CenterProjY + "\n";
+        deviceDescription += "rotate_180 = " + Rotate180 + "\n";
+        return deviceDescription;
     }
 }

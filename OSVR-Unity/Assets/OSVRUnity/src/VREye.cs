@@ -37,6 +37,9 @@ namespace OSVR
             #region Public Variables
             public Eye eye;
 
+            private Camera _camera;
+            public Camera Camera { get { return _camera; } }
+
             [HideInInspector]
             public Transform cachedTransform;
             #endregion
@@ -57,7 +60,7 @@ namespace OSVR
                 camera.backgroundColor = sourceCamera.backgroundColor;
                 camera.clearFlags = sourceCamera.clearFlags;
                 camera.cullingMask = sourceCamera.cullingMask;*/
-                camera.CopyFrom(sourceCamera);
+                _camera.CopyFrom(sourceCamera);
                 SetViewportRects();
             }
 
@@ -70,7 +73,10 @@ namespace OSVR
                 //cache:
                 cachedTransform = transform;
 
-                if (camera == null) gameObject.AddComponent<Camera>();
+                if (_camera == null)
+                {
+                    _camera = gameObject.AddComponent<Camera>();
+                }
 
                 SetViewportRects();
             }
@@ -82,10 +88,10 @@ namespace OSVR
                 switch (eye)
                 {
                     case Eye.left:
-                        camera.rect = new Rect(0, 0, .5f, 1);
+                        _camera.rect = new Rect(0, 0, .5f, 1);
                         break;
                     case Eye.right:
-                        camera.rect = new Rect(.5f, 0, .5f, 1);
+                        _camera.rect = new Rect(.5f, 0, .5f, 1);
                         break;
                 }
             }

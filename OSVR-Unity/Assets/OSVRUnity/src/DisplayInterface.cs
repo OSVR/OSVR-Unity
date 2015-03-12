@@ -20,7 +20,8 @@
 
 using System;
 using UnityEngine;
-using SimpleJSON;
+using Newtonsoft.Json;
+using System.IO;
 
 namespace OSVR
 {
@@ -60,83 +61,97 @@ namespace OSVR
             }
 
             /// <summary>
-            /// This function will parse the device parameters from a device descriptor json file.
+            /// This function will parse the device parameters from a device descriptor json file using Newstonsoft
             ///
             /// Returns a DeviceDescriptor object containing stored json values.
             /// </summary>
             public DeviceDescriptor GetDeviceDescription()
             {
+                //create a device descriptor object for storing the parsed json in an object
+                DeviceDescriptor deviceDescriptor;
+                JsonTextReader reader;
 
-                JSONNode parsedJsonDisplayParams = JSON.Parse(_deviceDescriptorJson);
-
-                //field of view
-                float monocularHorizontal = parsedJsonDisplayParams["hmd"]["field_of_view"]["monocular_horizontal"].AsFloat;
-                float monocularVertical = parsedJsonDisplayParams["hmd"]["field_of_view"]["monocular_vertical"].AsFloat;
-                float overlapPercent = parsedJsonDisplayParams["hmd"]["field_of_view"]["overlap_percent"].AsFloat;
-                float pitchTilt = parsedJsonDisplayParams["hmd"]["field_of_view"]["pitch_tilt"].AsFloat;
-
-                //resolutions
-                int width = parsedJsonDisplayParams["hmd"]["resolutions"][0]["width"].AsInt;
-                int height = parsedJsonDisplayParams["hmd"]["resolutions"][0]["height"].AsInt;
-                int videoInputs = parsedJsonDisplayParams["hmd"]["resolutions"][0]["video_inputs"].AsInt;
-                string displayMode = parsedJsonDisplayParams["hmd"]["resolutions"][0]["display_mode"].Value;
-
-                //distortion
-                float k1Red = parsedJsonDisplayParams["hmd"]["distortion"]["k1_red"].AsFloat;
-                float k1Green = parsedJsonDisplayParams["hmd"]["distortion"]["k1_red"].AsFloat;
-                float k1Blue = parsedJsonDisplayParams["hmd"]["distortion"]["k1_red"].AsFloat;
-
-                //rendering
-                float leftRoll = parsedJsonDisplayParams["hmd"]["rendering"]["left_roll"].AsFloat;
-                float rightRoll = parsedJsonDisplayParams["hmd"]["rendering"]["right_roll"].AsFloat;
-
-                //eyes
-                float centerProjX = parsedJsonDisplayParams["hmd"]["eyes"][0]["center_proj_x"].AsFloat;
-                float centerProjY = parsedJsonDisplayParams["hmd"]["eyes"][0]["center_proj_y"].AsFloat;
-                int rotate180 = parsedJsonDisplayParams["hmd"]["eyes"][0]["rotate_180"].AsInt;
-
-                //print
-                string parsedJson = "FIELD OF VIEW:\n";
-                parsedJson += "monocular_horizontal = " + monocularHorizontal + "\n";
-                parsedJson += "monocular_vertical = " + monocularVertical + "\n";
-                parsedJson += "overlap_percent = " + overlapPercent + "\n";
-                parsedJson += "pitch_tilt = " + pitchTilt + "\n";
-                parsedJson += "\nRESOLUTION\n";
-                parsedJson += "width = " + width + "\n";
-                parsedJson += "height = " + width + "\n";
-                parsedJson += "video_inputs = " + videoInputs + "\n";
-                parsedJson += "display_mode = " + displayMode + "\n";
-                parsedJson += "\nDISTORTION\n";
-                parsedJson += "k1_red = " + k1Red + "\n";
-                parsedJson += "k1_green = " + k1Green + "\n";
-                parsedJson += "k1_blue = " + k1Blue + "\n";
-                parsedJson += "\nRENDERING\n";
-                parsedJson += "left_roll = " + leftRoll + "\n";
-                parsedJson += "right_roll = " + rightRoll + "\n";
-                parsedJson += "\nEYES\n";
-                parsedJson += "center_proj_x = " + centerProjX + "\n";
-                parsedJson += "center_proj_y = " + centerProjY + "\n";
-                parsedJson += "rotate_180 = " + rotate180 + "\n";
-                Debug.Log("Parsed " + JsonDescriptorFile.name + ".json:\n" + parsedJson);
-
-                //create a device descriptor object and store the parsed json
-                DeviceDescriptor deviceDescriptor = new DeviceDescriptor();
-                deviceDescriptor.MonocularHorizontal = monocularHorizontal;
-                deviceDescriptor.MonocularVertical = monocularVertical;
-                deviceDescriptor.OverlapPercent = overlapPercent;
-                deviceDescriptor.PitchTilt = pitchTilt;
-                deviceDescriptor.Width = width;
-                deviceDescriptor.Height = height;
-                deviceDescriptor.VideoInputs = videoInputs;
-                deviceDescriptor.DisplayMode = displayMode;
-                deviceDescriptor.K1Red = k1Red;
-                deviceDescriptor.K1Green = k1Green;
-                deviceDescriptor.K1Blue = k1Blue;
-                deviceDescriptor.LeftRoll = leftRoll;
-                deviceDescriptor.RightRoll = rightRoll;
-                deviceDescriptor.CenterProjX = centerProjX;
-                deviceDescriptor.CenterProjY = centerProjY;
-                deviceDescriptor.Rotate180 = rotate180;
+                reader = new JsonTextReader(new StringReader(_deviceDescriptorJson));
+                if(reader != null)
+                {
+                    deviceDescriptor = new DeviceDescriptor();
+                }
+                else
+                {
+                    Debug.LogError("No Device Descriptor detected.");
+                    return null;
+                }
+                //parsey
+                while (reader.Read())
+                {
+                    if (reader.Value != null && reader.ValueType == typeof(String))
+                    {
+                        string parsedJson = reader.Value.ToString().ToLower();
+                        switch(parsedJson)
+                        {
+                            case "vendor":
+                                deviceDescriptor.Vendor = reader.ReadAsString();
+                                break;
+                            case "model":
+                                deviceDescriptor.Model = reader.ReadAsString();
+                                break;
+                            case "version":
+                                deviceDescriptor.Version = reader.ReadAsString();
+                                break;
+                            case "note":
+                                deviceDescriptor.Note = reader.ReadAsString();
+                                break;
+                            case "monocular_horizontal":
+                                deviceDescriptor.MonocularHorizontal = float.Parse(reader.ReadAsString());
+                                break;
+                            case "monocular_vertical":
+                                deviceDescriptor.MonocularVertical = float.Parse(reader.ReadAsString());
+                                break;
+                            case "overlap_percent":
+                                deviceDescriptor.OverlapPercent = float.Parse(reader.ReadAsString());
+                                break;
+                            case "pitch_tilt":
+                                deviceDescriptor.PitchTilt = float.Parse(reader.ReadAsString());
+                                break;
+                            case "width":
+                                deviceDescriptor.Width = int.Parse(reader.ReadAsString());
+                                break;
+                            case "height":
+                                deviceDescriptor.Height = int.Parse(reader.ReadAsString());
+                                break;
+                            case "video_inputs":
+                                deviceDescriptor.VideoInputs = int.Parse(reader.ReadAsString());
+                                break;
+                            case "display_mode":
+                                deviceDescriptor.DisplayMode = reader.ReadAsString();
+                                break;
+                            case "k1_red":
+                                deviceDescriptor.K1Red = float.Parse(reader.ReadAsString());
+                                break;
+                            case "k1_green":
+                                deviceDescriptor.K1Green = float.Parse(reader.ReadAsString());
+                                break;
+                            case "k1_blue":
+                                deviceDescriptor.K1Blue = float.Parse(reader.ReadAsString());
+                                break;
+                            case "right_roll":
+                                deviceDescriptor.RightRoll = float.Parse(reader.ReadAsString());
+                                break;
+                            case "left_roll":
+                                deviceDescriptor.LeftRoll = float.Parse(reader.ReadAsString());
+                                break;
+                            case "center_proj_x":
+                                deviceDescriptor.CenterProjX = float.Parse(reader.ReadAsString());
+                                break;
+                            case "center_proj_y":
+                                deviceDescriptor.CenterProjY = float.Parse(reader.ReadAsString());
+                                break;
+                            case "rotate_180":
+                                deviceDescriptor.Rotate180 = int.Parse(reader.ReadAsString());
+                                break;
+                        }
+                    }
+                }
                 return deviceDescriptor;
             }
         }
