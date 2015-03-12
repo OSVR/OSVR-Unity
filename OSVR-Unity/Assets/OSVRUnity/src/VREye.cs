@@ -54,17 +54,19 @@ namespace OSVR
             #region Public Methods
             public void MatchCamera(Camera sourceCamera)
             {
-
-                /*camera.nearClipPlane = sourceCamera.nearClipPlane;
-                camera.farClipPlane = sourceCamera.farClipPlane;
-                camera.backgroundColor = sourceCamera.backgroundColor;
-                camera.clearFlags = sourceCamera.clearFlags;
-                camera.cullingMask = sourceCamera.cullingMask;*/
                 _camera.CopyFrom(sourceCamera);
                 SetViewportRects();
             }
-
-
+            //rotate each eye outward
+            public void SetEyeRotationY(float y)
+            {
+                cachedTransform.Rotate(0, y, 0, Space.Self);
+            }
+            //set the z rotation of the eye
+            public void SetEyeRoll(float rollAmount)
+            {
+                cachedTransform.Rotate(0, 0, rollAmount, Space.Self);
+            }
             #endregion
 
             #region Private Methods
@@ -95,7 +97,10 @@ namespace OSVR
                         break;
                 }
             }
+            
             #endregion
+
+            
         }
     }
 }
