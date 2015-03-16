@@ -99,27 +99,26 @@ namespace OSVR
                 //print
                 StringBuilder jsonPrinter = new StringBuilder(64);
                 jsonPrinter.Append("FIELD OF VIEW:\n")
-                .Append("monocular_horizontal = ").AppendLine( monocularHorizontal.toString() )
-                .Append("monocular_vertical = ").AppendLine( monocularVertical.toString() )
-                .Append("overlap_percent = ").AppendLine( overlapPercent.toString() )
-                .Append("pitch_tilt = ").AppendLine( pitchTilt.toString() )
+                .Append("monocular_horizontal = ").AppendLine( monocularHorizontal.ToString() )
+                .Append("monocular_vertical = ").AppendLine( monocularVertical.ToString() )
+                .Append("overlap_percent = ").AppendLine( overlapPercent.ToString() )
+                .Append("pitch_tilt = ").AppendLine( pitchTilt.ToString() )
                 .Append("\nRESOLUTION\n")
-                .Append("width = ").AppendLine( width.toString() )
-                .Append("height = ").AppendLine( height.toString() )
-                .Append("video_inputs = ").AppendLine( videoInputs.toString() )
+                .Append("width = ").AppendLine( width.ToString() )
+                .Append("height = ").AppendLine( height.ToString() )
+                .Append("video_inputs = ").AppendLine( videoInputs.ToString() )
                 .Append("display_mode = ").AppendLine( displayMode )
                 .Append("\nDISTORTION\n")
-                .Append("k1_red = ").AppendLine( k1Red.toString() )
-                .Append("k1_green = ").AppendLine( k1Green.toString() )
-                .Append("k1_blue = ").AppendLine( k1Blue.toString() )
+                .Append("k1_red = ").AppendLine( k1Red.ToString() )
+                .Append("k1_green = ").AppendLine( k1Green.ToString() )
+                .Append("k1_blue = ").AppendLine( k1Blue.ToString() )
                 .Append("\nRENDERING\n")
-                .Append("left_roll = ").AppendLine( leftRoll.toString() )
-                .Append("right_roll = ").AppendLine( rightRoll.toString() )
+                .Append("left_roll = ").AppendLine( leftRoll.ToString() )
+                .Append("right_roll = ").AppendLine( rightRoll.ToString() )
                 .Append("\nEYES\n")
-                .Append("center_proj_x = ").AppendLine( centerProjX.toString() )
-                .Append("center_proj_y = ").AppendLine( centerProjY.toString() )
-                .Append("rotate_180 = ").AppendLine( rotate180.toString() );
-                Debug.Log("Parsed " + JsonDescriptorFile.name + ".json:\n" + jsonPrinter.ToString());
+                .Append("center_proj_x = ").AppendLine( centerProjX.ToString() )
+                .Append("center_proj_y = ").AppendLine( centerProjY.ToString() )
+                .Append("rotate_180 = ").AppendLine( rotate180.ToString() );
                 Debug.Log("Parsed " + JsonDescriptorFile.name + ".json:\n" + jsonPrinter.ToString());
 
                 //create a device descriptor object and store the parsed json
