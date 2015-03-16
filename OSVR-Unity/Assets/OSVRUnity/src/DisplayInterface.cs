@@ -19,6 +19,7 @@
 /// </copyright>
 
 using System;
+using System.Text;
 using UnityEngine;
 using SimpleJSON;
 
@@ -96,28 +97,29 @@ namespace OSVR
                 int rotate180 = parsedJsonDisplayParams["hmd"]["eyes"][0]["rotate_180"].AsInt;
 
                 //print
-                string parsedJson = "FIELD OF VIEW:\n";
-                parsedJson += "monocular_horizontal = " + monocularHorizontal + "\n";
-                parsedJson += "monocular_vertical = " + monocularVertical + "\n";
-                parsedJson += "overlap_percent = " + overlapPercent + "\n";
-                parsedJson += "pitch_tilt = " + pitchTilt + "\n";
-                parsedJson += "\nRESOLUTION\n";
-                parsedJson += "width = " + width + "\n";
-                parsedJson += "height = " + width + "\n";
-                parsedJson += "video_inputs = " + videoInputs + "\n";
-                parsedJson += "display_mode = " + displayMode + "\n";
-                parsedJson += "\nDISTORTION\n";
-                parsedJson += "k1_red = " + k1Red + "\n";
-                parsedJson += "k1_green = " + k1Green + "\n";
-                parsedJson += "k1_blue = " + k1Blue + "\n";
-                parsedJson += "\nRENDERING\n";
-                parsedJson += "left_roll = " + leftRoll + "\n";
-                parsedJson += "right_roll = " + rightRoll + "\n";
-                parsedJson += "\nEYES\n";
-                parsedJson += "center_proj_x = " + centerProjX + "\n";
-                parsedJson += "center_proj_y = " + centerProjY + "\n";
-                parsedJson += "rotate_180 = " + rotate180 + "\n";
-                Debug.Log("Parsed " + JsonDescriptorFile.name + ".json:\n" + parsedJson);
+                StringBuilder jsonPrinter = new StringBuilder(64);
+                jsonPrinter.Append("FIELD OF VIEW:\n")
+                .Append("monocular_horizontal = ").AppendLine( monocularHorizontal )
+                .Append("monocular_vertical = ").AppendLine( monocularVertical )
+                .Append("overlap_percent = ").AppendLine( overlapPercent )
+                .Append("pitch_tilt = ").AppendLine( pitchTilt )
+                .Append("\nRESOLUTION\n")
+                .Append("width = ").AppendLine( width )
+                .Append("height = ").AppendLine( height )
+                .Append("video_inputs = ").AppendLine( videoInputs )
+                .Append("display_mode = ").AppendLine( displayMode )
+                .Append("\nDISTORTION\n")
+                .Append("k1_red = ").AppendLine( k1Red )
+                .Append("k1_green = ").AppendLine( k1Green )
+                .Append("k1_blue = ").AppendLine( k1Blue )
+                .Append("\nRENDERING\n")
+                .Append("left_roll = ").AppendLine( leftRoll )
+                .Append("right_roll = ").AppendLine( rightRoll )
+                .Append("\nEYES\n")
+                .Append("center_proj_x = ").AppendLine( centerProjX )
+                .Append("center_proj_y = ").AppendLine( centerProjY )
+                .Append("rotate_180 = ").AppendLine( rotate180 );
+                Debug.Log("Parsed " + JsonDescriptorFile.name + ".json:\n" + jsonPrinter.ToString());
 
                 //create a device descriptor object and store the parsed json
                 DeviceDescriptor deviceDescriptor = new DeviceDescriptor();
