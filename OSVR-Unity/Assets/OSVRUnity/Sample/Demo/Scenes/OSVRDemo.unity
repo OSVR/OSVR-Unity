@@ -2330,6 +2330,10 @@ Prefab:
       propertyPath: AppID
       value: org.opengoggles.osvr-unity.sample.demo
       objectReference: {fileID: 0}
+    - target: {fileID: 11436198, guid: 0b82dd794175b304a87805e4b38fbe84, type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0b82dd794175b304a87805e4b38fbe84, type: 2}
   m_RootGameObject: {fileID: 1796457541}
