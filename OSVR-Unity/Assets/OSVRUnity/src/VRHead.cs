@@ -178,7 +178,7 @@ namespace OSVR
             private void GetDeviceDescription()
             {
                 _deviceDescriptor = GetComponent<DisplayInterface>().GetDeviceDescription();
-               // Debug.Log(deviceDescriptor.ToString());
+                Debug.Log(_deviceDescriptor.ToString());
                 if (_deviceDescriptor != null)
                 {
                     switch (_deviceDescriptor.DisplayMode)
