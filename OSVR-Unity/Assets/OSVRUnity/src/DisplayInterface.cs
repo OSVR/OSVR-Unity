@@ -35,8 +35,8 @@ namespace OSVR
         /// </summary>
         public class DisplayInterface : MonoBehaviour
         {
-            private string _deviceDescriptorJson;
-            public TextAsset JsonDescriptorFile;
+            private string _deviceDescriptorJson; //a string that is the JSON file to be parsed
+            public TextAsset JsonDescriptorFile; //drop the json file into this slot in the Unity inspector
             void Awake()
             {
                 if (JsonDescriptorFile != null)
@@ -48,6 +48,8 @@ namespace OSVR
                     _deviceDescriptorJson = ClientKit.instance.context.getStringParameter("/display"); //otherwise read from /display
                 }
             }
+
+            
 
             /// <summary>
             /// This function will parse the device parameters from a device descriptor json file.
@@ -70,6 +72,7 @@ namespace OSVR
                 //create a device descriptor object for storing the parsed json in an object
                 DeviceDescriptor deviceDescriptor;
                 JsonTextReader reader;
+               
 
                 reader = new JsonTextReader(new StringReader(_deviceDescriptorJson));
                 if(reader != null)
@@ -81,6 +84,15 @@ namespace OSVR
                     Debug.LogError("No Device Descriptor detected.");
                     return null;
                 }
+                if(JsonDescriptorFile != null)
+                {
+                    deviceDescriptor.FileName = JsonDescriptorFile.name;
+                }
+                else
+                {
+                    deviceDescriptor.FileName = "No descriptor file has been assigned. Using parameters from /display";
+                }
+                
                 //parsey
                 while (reader.Read())
                 {
@@ -152,6 +164,7 @@ namespace OSVR
                         }
                     }
                 }
+
                 return deviceDescriptor;
             }
         }

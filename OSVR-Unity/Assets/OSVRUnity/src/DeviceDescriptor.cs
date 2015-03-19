@@ -20,10 +20,18 @@
 
 using UnityEngine;
 using System.Collections;
+using System.Text;
 
 //a class for storing information about a device based on it's json descriptor file
 public class DeviceDescriptor {
 
+    //filename
+    private string _fileName = "";
+    public string FileName
+    {
+        get { return _fileName; }
+        set { _fileName = value; }
+    }
     //hmd
     private string _vendor = "";
     public string Vendor
@@ -153,10 +161,11 @@ public class DeviceDescriptor {
 
     //constructors
     public DeviceDescriptor() { }
-    public DeviceDescriptor(float monocularHorizontal, float monocularVertical, float overlapPercent, float pitchTilt,
+    public DeviceDescriptor(string fileName, float monocularHorizontal, float monocularVertical, float overlapPercent, float pitchTilt,
         int width, int height, int videoInputs, string displayMode, float k1Red, float k1Green, float k1Blue, float leftRoll,
         float rightRoll, float centerProjX, float centerProjY, int rotate180)
     {
+        this._fileName = fileName;
         this._monocularHorizontal = monocularHorizontal;
         this._monocularVertical = monocularVertical;
         this._overlapPercent = overlapPercent;
@@ -177,32 +186,41 @@ public class DeviceDescriptor {
 
     public override string ToString()
     {
-        string deviceDescription = "Device Description:\n" + "HMD:\n";
-        deviceDescription += "Vendor = " + Vendor + "\n";
-        deviceDescription += "Model = " + Model + "\n";
-        deviceDescription += "Version = " + Version + "\n";
-        deviceDescription += "Note = " + Note + "\n";
-        deviceDescription += "\nFIELD OF VIEW:\n";
-        deviceDescription += "monocular_horizontal = " + MonocularHorizontal + "\n";
-        deviceDescription += "monocular_vertical = " + MonocularVertical + "\n";
-        deviceDescription += "overlap_percent = " + OverlapPercent + "\n";
-        deviceDescription += "pitch_tilt = " + PitchTilt + "\n";
-        deviceDescription += "\nRESOLUTION\n";
-        deviceDescription += "width = " + Width + "\n";
-        deviceDescription += "height = " + Height + "\n";
-        deviceDescription += "video_inputs = " + VideoInputs + "\n";
-        deviceDescription += "display_mode = " + DisplayMode + "\n";
-        deviceDescription += "\nDISTORTION\n";
-        deviceDescription += "k1_red = " + K1Red + "\n";
-        deviceDescription += "k1_green = " + K1Green + "\n";
-        deviceDescription += "k1_blue = " + K1Blue + "\n";
-        deviceDescription += "\nRENDERING\n";
-        deviceDescription += "left_roll = " + LeftRoll + "\n";
-        deviceDescription += "right_roll = " + RightRoll + "\n";
-        deviceDescription += "\nEYES\n";
-        deviceDescription += "center_proj_x = " + CenterProjX + "\n";
-        deviceDescription += "center_proj_y = " + CenterProjY + "\n";
-        deviceDescription += "rotate_180 = " + Rotate180 + "\n";
-        return deviceDescription;
+
+        if(FileName.Equals(""))
+        {
+            return "No json file has been provided.";
+        }
+        //print
+        StringBuilder jsonPrinter = new StringBuilder(64);
+        jsonPrinter.AppendLine("Json File Device Description:")
+        .Append("filename = ").AppendLine(FileName)
+        .Append("HMD\n")
+        .Append("vendor = ").AppendLine(Vendor)
+        .Append("model = ").AppendLine(Model)
+        .Append("version = ").AppendLine(Version)
+        .Append("notes = ").AppendLine(Note)
+        .Append("\nFIELD OF VIEW\n")
+        .Append("monocular_horizontal = ").AppendLine(MonocularHorizontal.ToString())
+        .Append("monocular_vertical = ").AppendLine(MonocularVertical.ToString())
+        .Append("overlap_percent = ").AppendLine(OverlapPercent.ToString())
+        .Append("pitch_tilt = ").AppendLine(PitchTilt.ToString())
+        .Append("\nRESOLUTION\n")
+        .Append("width = ").AppendLine(Width.ToString())
+        .Append("height = ").AppendLine(Height.ToString())
+        .Append("video_inputs = ").AppendLine(VideoInputs.ToString())
+        .Append("display_mode = ").AppendLine(DisplayMode)
+        .Append("\nDISTORTION\n")
+        .Append("k1_red = ").AppendLine(K1Red.ToString())
+        .Append("k1_green = ").AppendLine(K1Green.ToString())
+        .Append("k1_blue = ").AppendLine(K1Blue.ToString())
+        .Append("\nRENDERING\n")
+        .Append("left_roll = ").AppendLine(LeftRoll.ToString())
+        .Append("right_roll = ").AppendLine(RightRoll.ToString())
+        .Append("\nEYES\n")
+        .Append("center_proj_x = ").AppendLine(CenterProjX.ToString())
+        .Append("center_proj_y = ").AppendLine(CenterProjY.ToString())
+        .Append("rotate_180 = ").AppendLine(Rotate180.ToString());
+       return jsonPrinter.ToString();
     }
 }
