@@ -37,6 +37,9 @@ namespace OSVR
             #region Public Variables
             public Eye eye;
 
+            private Camera _camera;
+            public Camera Camera { get { return _camera; } }
+
             [HideInInspector]
             public Transform cachedTransform;
             #endregion
@@ -51,17 +54,19 @@ namespace OSVR
             #region Public Methods
             public void MatchCamera(Camera sourceCamera)
             {
-
-                /*camera.nearClipPlane = sourceCamera.nearClipPlane;
-                camera.farClipPlane = sourceCamera.farClipPlane;
-                camera.backgroundColor = sourceCamera.backgroundColor;
-                camera.clearFlags = sourceCamera.clearFlags;
-                camera.cullingMask = sourceCamera.cullingMask;*/
-                camera.CopyFrom(sourceCamera);
+                _camera.CopyFrom(sourceCamera);
                 SetViewportRects();
             }
-
-
+            //rotate each eye outward
+            public void SetEyeRotationY(float y)
+            {
+                cachedTransform.Rotate(0, y, 0, Space.Self);
+            }
+            //set the z rotation of the eye
+            public void SetEyeRoll(float rollAmount)
+            {
+                cachedTransform.Rotate(0, 0, rollAmount, Space.Self);
+            }
             #endregion
 
             #region Private Methods
@@ -70,7 +75,10 @@ namespace OSVR
                 //cache:
                 cachedTransform = transform;
 
-                if (camera == null) gameObject.AddComponent<Camera>();
+                if (_camera == null)
+                {
+                    _camera = gameObject.AddComponent<Camera>();
+                }
 
                 SetViewportRects();
             }
@@ -82,14 +90,17 @@ namespace OSVR
                 switch (eye)
                 {
                     case Eye.left:
-                        camera.rect = new Rect(0, 0, .5f, 1);
+                        _camera.rect = new Rect(0, 0, .5f, 1);
                         break;
                     case Eye.right:
-                        camera.rect = new Rect(.5f, 0, .5f, 1);
+                        _camera.rect = new Rect(.5f, 0, .5f, 1);
                         break;
                 }
             }
+            
             #endregion
+
+            
         }
     }
 }

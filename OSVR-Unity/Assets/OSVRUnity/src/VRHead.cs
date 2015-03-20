@@ -50,16 +50,25 @@ namespace OSVR
             VREye _rightEye;
             float _previousStereoAmount;
             ViewMode _previousViewMode;
+            private Camera _camera;
+            private DeviceDescriptor _deviceDescriptor;
             #endregion
 
             #region Init
             void Start()
             {
                 Init();
-                GetDeviceDescription();
                 CatalogEyes();
+                GetDeviceDescription();
+                MatchEyes(); //copy camera properties to each eye
+                //rotate each eye based on overlap percent, must do this after match eyes
+                if (_deviceDescriptor != null)
+                {
+                    SetEyeRotation(_deviceDescriptor.OverlapPercent, _deviceDescriptor.MonocularHorizontal);
+                    SetEyeRoll(_deviceDescriptor.LeftRoll, _deviceDescriptor.RightRoll);
+                }
+                
             }
-
             #endregion
 
             #region Loop
@@ -81,15 +90,15 @@ namespace OSVR
                     switch (viewMode)
                     {
                         case ViewMode.mono:
-                            camera.enabled = true;
-                            _leftEye.camera.enabled = false;
-                            _rightEye.camera.enabled = false;
+                            _camera.enabled = true;
+                            _leftEye.Camera.enabled = false;
+                            _rightEye.Camera.enabled = false;
                             break;
 
                         case ViewMode.stereo:
-                            camera.enabled = false;
-                            _leftEye.camera.enabled = true;
-                            _rightEye.camera.enabled = true;
+                            _camera.enabled = false;
+                            _leftEye.Camera.enabled = true;
+                            _rightEye.Camera.enabled = true;
                             break;
                     }
                 }
@@ -108,13 +117,11 @@ namespace OSVR
                 }
             }
 
+            //this function finds and initializes each eye
             void CatalogEyes()
             {
                 foreach (VREye currentEye in GetComponentsInChildren<VREye>())
                 {
-                    //match:
-                    currentEye.MatchCamera(camera);
-
                     //catalog:
                     switch (currentEye.eye)
                     {
@@ -129,8 +136,26 @@ namespace OSVR
                 }
             }
 
+            //this function matches the camera on each eye to the camera on the head
+            void MatchEyes()
+            {
+                foreach (VREye currentEye in GetComponentsInChildren<VREye>())
+                {
+                    //match:
+                    currentEye.MatchCamera(_camera);
+                }
+            }
+
             void Init()
             {
+                if (_camera == null)
+                {                   
+                    if((_camera = GetComponent<Camera>()) == null)
+                    {
+                        _camera = gameObject.AddComponent<Camera>();
+                    }               
+                }
+
                 //VR should never timeout the screen:
                 Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
@@ -138,40 +163,49 @@ namespace OSVR
                 Application.targetFrameRate = 60;
             }
 
+            /// <summary>
+            /// GetDeviceDescription: Get a Description of the HMD and apply appropriate settings
+            /// 
+            /// </summary>
             private void GetDeviceDescription()
             {
-                DeviceDescriptor deviceDescriptor = GetComponent<DisplayInterface>().GetDeviceDescription();
-                switch (deviceDescriptor.DisplayMode)
+                _deviceDescriptor = GetComponent<DisplayInterface>().GetDeviceDescription();
+                Debug.Log(_deviceDescriptor.ToString());
+                if (_deviceDescriptor != null)
                 {
-                    case "full_screen":
-                        viewMode = ViewMode.mono;
-                        break;
-                    case "horz_side_by_side":
-                    case "vert_side_by_side":
-                    default:
-                        viewMode = ViewMode.stereo;
-                        break;
-                }
-                stereoAmount = Mathf.Clamp(deviceDescriptor.OverlapPercent, 0, 100);
-                camera.fieldOfView = Mathf.Clamp(deviceDescriptor.MonocularVertical, 0, 180); //unity camera FOV is vertical
-                SetResolution(deviceDescriptor.Width, deviceDescriptor.Height);
-
-                //if the view needs to be rotated 180 degrees, create a parent game object that is flipped 180 degrees on the z axis.
-                if(deviceDescriptor.Rotate180 > 0)
-                {
-                    GameObject vrHeadParent = new GameObject();
-                    vrHeadParent.name = this.transform.name + "_parent";
-                    vrHeadParent.transform.position = this.transform.position;
-                    vrHeadParent.transform.rotation = this.transform.rotation;
-                    if(this.transform.parent != null)
+                    switch (_deviceDescriptor.DisplayMode)
                     {
-                        vrHeadParent.transform.parent = this.transform.parent;
+                        case "full_screen":
+                            viewMode = ViewMode.mono;
+                            break;
+                        case "horz_side_by_side":
+                        case "vert_side_by_side":
+                        default:
+                            viewMode = ViewMode.stereo;
+                            break;
                     }
-                    this.transform.parent = vrHeadParent.transform;
-                    vrHeadParent.transform.Rotate(0, 0, 180, Space.Self);
+                    stereoAmount = Mathf.Clamp(_deviceDescriptor.OverlapPercent, 0, 100);
+                    SetResolution(_deviceDescriptor.Width, _deviceDescriptor.Height); //set resolution before FOV
+                    _camera.fieldOfView = Mathf.Clamp(_deviceDescriptor.MonocularVertical, 0, 180); //unity camera FOV is vertical
+            
+                    //if the view needs to be rotated 180 degrees, create a parent game object that is flipped 180 degrees on the z axis.
+                    if (_deviceDescriptor.Rotate180 > 0)
+                    {
+                        GameObject vrHeadParent = new GameObject();
+                        vrHeadParent.name = this.transform.name + "_parent";
+                        vrHeadParent.transform.position = this.transform.position;
+                        vrHeadParent.transform.rotation = this.transform.rotation;
+                        if (this.transform.parent != null)
+                        {
+                            vrHeadParent.transform.parent = this.transform.parent;
+                        }
+                        this.transform.parent = vrHeadParent.transform;
+                        vrHeadParent.transform.Rotate(0, 0, 180, Space.Self);
+                    }
                 }
             }
 
+            //Set the Screen Resolution
             private void SetResolution(int width, int height)
             {
                 //set the resolution
@@ -181,6 +215,48 @@ namespace OSVR
                 UnityEditor.PlayerSettings.defaultScreenHeight = height;
                 UnityEditor.PlayerSettings.defaultIsFullScreen = true;
 #endif
+            }
+            
+            //rotate each eye based on overlap percent and horizontal FOV
+            //Formula: ((OverlapPercent/100) * hFOV)/2
+            private void SetEyeRotation(float overlapPercent, float horizontalFov)
+            {
+                float overlap = overlapPercent* .01f * horizontalFov * 0.5f;
+                
+                //with a 90 degree FOV with 100% overlap, the eyes should not be rotated
+                //compare rotationY with half of FOV
+
+                float halfFOV = horizontalFov * 0.5f;
+                float rotateYAmount = Mathf.Abs(overlap - halfFOV);
+
+                foreach (VREye currentEye in GetComponentsInChildren<VREye>())
+                {
+                    switch (currentEye.eye)
+                    {
+                        case Eye.left:
+                            _leftEye.SetEyeRotationY(-rotateYAmount);
+                            break;
+                        case Eye.right:
+                            _rightEye.SetEyeRotationY(rotateYAmount);
+                            break;
+                    }
+                }
+            }
+            //rotate each eye on the z axis by the specified amount, in degrees
+            private void SetEyeRoll(float leftRoll, float rightRoll)
+            {
+                foreach (VREye currentEye in GetComponentsInChildren<VREye>())
+                {
+                    switch (currentEye.eye)
+                    {
+                        case Eye.left:
+                            _leftEye.SetEyeRoll(leftRoll);
+                            break;
+                        case Eye.right:
+                            _rightEye.SetEyeRoll(rightRoll);
+                            break;
+                    }
+                }
             }
             #endregion
         }

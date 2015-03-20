@@ -19,9 +19,9 @@
 /// </copyright>
 
 using System;
-using System.Text;
 using UnityEngine;
-using SimpleJSON;
+using Newtonsoft.Json;
+using System.IO;
 
 namespace OSVR
 {
@@ -35,8 +35,8 @@ namespace OSVR
         /// </summary>
         public class DisplayInterface : MonoBehaviour
         {
-            private string _deviceDescriptorJson;
-            public TextAsset JsonDescriptorFile;
+            private string _deviceDescriptorJson; //a string that is the JSON file to be parsed
+            public TextAsset JsonDescriptorFile; //drop the json file into this slot in the Unity inspector
             void Awake()
             {
                 if (JsonDescriptorFile != null)
@@ -48,6 +48,8 @@ namespace OSVR
                     _deviceDescriptorJson = ClientKit.instance.context.getStringParameter("/display"); //otherwise read from /display
                 }
             }
+
+            
 
             /// <summary>
             /// This function will parse the device parameters from a device descriptor json file.
@@ -61,84 +63,108 @@ namespace OSVR
             }
 
             /// <summary>
-            /// This function will parse the device parameters from a device descriptor json file.
+            /// This function will parse the device parameters from a device descriptor json file using Newstonsoft
             ///
             /// Returns a DeviceDescriptor object containing stored json values.
             /// </summary>
             public DeviceDescriptor GetDeviceDescription()
             {
+                //create a device descriptor object for storing the parsed json in an object
+                DeviceDescriptor deviceDescriptor;
+                JsonTextReader reader;
+               
 
-                JSONNode parsedJsonDisplayParams = JSON.Parse(_deviceDescriptorJson);
+                reader = new JsonTextReader(new StringReader(_deviceDescriptorJson));
+                if(reader != null)
+                {
+                    deviceDescriptor = new DeviceDescriptor();
+                }
+                else
+                {
+                    Debug.LogError("No Device Descriptor detected.");
+                    return null;
+                }
+                if(JsonDescriptorFile != null)
+                {
+                    deviceDescriptor.FileName = JsonDescriptorFile.name;
+                }
+                else
+                {
+                    deviceDescriptor.FileName = "No descriptor file has been assigned. Using parameters from /display";
+                }
+                
+                //parsey
+                while (reader.Read())
+                {
+                    if (reader.Value != null && reader.ValueType == typeof(String))
+                    {
+                        string parsedJson = reader.Value.ToString().ToLower();
+                        switch(parsedJson)
+                        {
+                            case "vendor":
+                                deviceDescriptor.Vendor = reader.ReadAsString();
+                                break;
+                            case "model":
+                                deviceDescriptor.Model = reader.ReadAsString();
+                                break;
+                            case "version":
+                                deviceDescriptor.Version = reader.ReadAsString();
+                                break;
+                            case "note":
+                                deviceDescriptor.Note = reader.ReadAsString();
+                                break;
+                            case "monocular_horizontal":
+                                deviceDescriptor.MonocularHorizontal = float.Parse(reader.ReadAsString());
+                                break;
+                            case "monocular_vertical":
+                                deviceDescriptor.MonocularVertical = float.Parse(reader.ReadAsString());
+                                break;
+                            case "overlap_percent":
+                                deviceDescriptor.OverlapPercent = float.Parse(reader.ReadAsString());
+                                break;
+                            case "pitch_tilt":
+                                deviceDescriptor.PitchTilt = float.Parse(reader.ReadAsString());
+                                break;
+                            case "width":
+                                deviceDescriptor.Width = int.Parse(reader.ReadAsString());
+                                break;
+                            case "height":
+                                deviceDescriptor.Height = int.Parse(reader.ReadAsString());
+                                break;
+                            case "video_inputs":
+                                deviceDescriptor.VideoInputs = int.Parse(reader.ReadAsString());
+                                break;
+                            case "display_mode":
+                                deviceDescriptor.DisplayMode = reader.ReadAsString();
+                                break;
+                            case "k1_red":
+                                deviceDescriptor.K1Red = float.Parse(reader.ReadAsString());
+                                break;
+                            case "k1_green":
+                                deviceDescriptor.K1Green = float.Parse(reader.ReadAsString());
+                                break;
+                            case "k1_blue":
+                                deviceDescriptor.K1Blue = float.Parse(reader.ReadAsString());
+                                break;
+                            case "right_roll":
+                                deviceDescriptor.RightRoll = float.Parse(reader.ReadAsString());
+                                break;
+                            case "left_roll":
+                                deviceDescriptor.LeftRoll = float.Parse(reader.ReadAsString());
+                                break;
+                            case "center_proj_x":
+                                deviceDescriptor.CenterProjX = float.Parse(reader.ReadAsString());
+                                break;
+                            case "center_proj_y":
+                                deviceDescriptor.CenterProjY = float.Parse(reader.ReadAsString());
+                                break;
+                            case "rotate_180":
+                                deviceDescriptor.Rotate180 = int.Parse(reader.ReadAsString());
+                                break;
+                        }
+                    }
+                }
 
-                //field of view
-                float monocularHorizontal = parsedJsonDisplayParams["hmd"]["field_of_view"]["monocular_horizontal"].AsFloat;
-                float monocularVertical = parsedJsonDisplayParams["hmd"]["field_of_view"]["monocular_vertical"].AsFloat;
-                float overlapPercent = parsedJsonDisplayParams["hmd"]["field_of_view"]["overlap_percent"].AsFloat;
-                float pitchTilt = parsedJsonDisplayParams["hmd"]["field_of_view"]["pitch_tilt"].AsFloat;
-
-                //resolutions
-                int width = parsedJsonDisplayParams["hmd"]["resolutions"][0]["width"].AsInt;
-                int height = parsedJsonDisplayParams["hmd"]["resolutions"][0]["height"].AsInt;
-                int videoInputs = parsedJsonDisplayParams["hmd"]["resolutions"][0]["video_inputs"].AsInt;
-                string displayMode = parsedJsonDisplayParams["hmd"]["resolutions"][0]["display_mode"].Value;
-
-                //distortion
-                float k1Red = parsedJsonDisplayParams["hmd"]["distortion"]["k1_red"].AsFloat;
-                float k1Green = parsedJsonDisplayParams["hmd"]["distortion"]["k1_red"].AsFloat;
-                float k1Blue = parsedJsonDisplayParams["hmd"]["distortion"]["k1_red"].AsFloat;
-
-                //rendering
-                float leftRoll = parsedJsonDisplayParams["hmd"]["rendering"]["left_roll"].AsFloat;
-                float rightRoll = parsedJsonDisplayParams["hmd"]["rendering"]["right_roll"].AsFloat;
-
-                //eyes
-                float centerProjX = parsedJsonDisplayParams["hmd"]["eyes"][0]["center_proj_x"].AsFloat;
-                float centerProjY = parsedJsonDisplayParams["hmd"]["eyes"][0]["center_proj_y"].AsFloat;
-                int rotate180 = parsedJsonDisplayParams["hmd"]["eyes"][0]["rotate_180"].AsInt;
-
-                //print
-                StringBuilder jsonPrinter = new StringBuilder(64);
-                jsonPrinter.Append("FIELD OF VIEW:\n")
-                .Append("monocular_horizontal = ").AppendLine( monocularHorizontal.ToString() )
-                .Append("monocular_vertical = ").AppendLine( monocularVertical.ToString() )
-                .Append("overlap_percent = ").AppendLine( overlapPercent.ToString() )
-                .Append("pitch_tilt = ").AppendLine( pitchTilt.ToString() )
-                .Append("\nRESOLUTION\n")
-                .Append("width = ").AppendLine( width.ToString() )
-                .Append("height = ").AppendLine( height.ToString() )
-                .Append("video_inputs = ").AppendLine( videoInputs.ToString() )
-                .Append("display_mode = ").AppendLine( displayMode )
-                .Append("\nDISTORTION\n")
-                .Append("k1_red = ").AppendLine( k1Red.ToString() )
-                .Append("k1_green = ").AppendLine( k1Green.ToString() )
-                .Append("k1_blue = ").AppendLine( k1Blue.ToString() )
-                .Append("\nRENDERING\n")
-                .Append("left_roll = ").AppendLine( leftRoll.ToString() )
-                .Append("right_roll = ").AppendLine( rightRoll.ToString() )
-                .Append("\nEYES\n")
-                .Append("center_proj_x = ").AppendLine( centerProjX.ToString() )
-                .Append("center_proj_y = ").AppendLine( centerProjY.ToString() )
-                .Append("rotate_180 = ").AppendLine( rotate180.ToString() );
-                Debug.Log("Parsed " + JsonDescriptorFile.name + ".json:\n" + jsonPrinter.ToString());
-
-                //create a device descriptor object and store the parsed json
-                DeviceDescriptor deviceDescriptor = new DeviceDescriptor();
-                deviceDescriptor.MonocularHorizontal = monocularHorizontal;
-                deviceDescriptor.MonocularVertical = monocularVertical;
-                deviceDescriptor.OverlapPercent = overlapPercent;
-                deviceDescriptor.PitchTilt = pitchTilt;
-                deviceDescriptor.Width = width;
-                deviceDescriptor.Height = height;
-                deviceDescriptor.VideoInputs = videoInputs;
-                deviceDescriptor.DisplayMode = displayMode;
-                deviceDescriptor.K1Red = k1Red;
-                deviceDescriptor.K1Green = k1Green;
-                deviceDescriptor.K1Blue = k1Blue;
-                deviceDescriptor.LeftRoll = leftRoll;
-                deviceDescriptor.RightRoll = rightRoll;
-                deviceDescriptor.CenterProjX = centerProjX;
-                deviceDescriptor.CenterProjY = centerProjY;
-                deviceDescriptor.Rotate180 = rotate180;
                 return deviceDescriptor;
             }
         }
