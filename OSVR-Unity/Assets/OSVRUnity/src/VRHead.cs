@@ -60,6 +60,11 @@ namespace OSVR
             {
                 Init();
                 CatalogEyes();
+                _distortionEffect = GetComponent<OsvrDistortion>();
+                if (_distortionEffect != null)
+                {
+                    _distortionEffect.enabled = (viewMode == ViewMode.mono);
+                }
                 GetDeviceDescription();
                 MatchEyes(); //copy camera properties to each eye
                 //rotate each eye based on overlap percent, must do this after match eyes
@@ -68,11 +73,7 @@ namespace OSVR
                     SetEyeRotation(_deviceDescriptor.OverlapPercent, _deviceDescriptor.MonocularHorizontal);
                     SetEyeRoll(_deviceDescriptor.LeftRoll, _deviceDescriptor.RightRoll);
                 }
-                _distortionEffect = GetComponent<OsvrDistortion>();
-                if(_distortionEffect != null)
-                {
-                    _distortionEffect.enabled = (viewMode == ViewMode.mono);
-                }
+                
                 
                 
             }
