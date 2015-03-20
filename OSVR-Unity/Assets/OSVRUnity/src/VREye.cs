@@ -30,16 +30,17 @@ namespace OSVR
 {
     namespace Unity
     {
+        
         public enum Eye { left, right };
 
         public class VREye : MonoBehaviour
         {
+            #region Private Variables
+            private Camera _camera;
+            #endregion
             #region Public Variables
             public Eye eye;
-
-            private Camera _camera;
-            public Camera Camera { get { return _camera; } }
-
+            public Camera Camera { get { return _camera; } set { _camera = value; } }
             [HideInInspector]
             public Transform cachedTransform;
             #endregion
@@ -54,9 +55,26 @@ namespace OSVR
             #region Public Methods
             public void MatchCamera(Camera sourceCamera)
             {
-                _camera.CopyFrom(sourceCamera);
+                Camera.CopyFrom(sourceCamera);
+                //copy the distortion shader
+                CopyDistortionShader(sourceCamera.GetComponent<OsvrDistortion>(), this.gameObject);
                 SetViewportRects();
+                
             }
+            //this function copies the distortion shader from the original Shader attached to VRHead
+            private void CopyDistortionShader(OsvrDistortion original, GameObject destination)
+            {
+                OsvrDistortion d = destination.AddComponent<OsvrDistortion>();
+                d.distortionShader = original.distortionShader;
+                d.k1Red = original.k1Red;
+                d.k1Blue = original.k1Blue;
+                d.k1Green = original.k1Green;
+                d.leftCenter = original.leftCenter;
+                d.rightCenter = original.rightCenter;
+                d.fullCenter = original.fullCenter;
+                d.enabled = true;
+            }
+
             //rotate each eye outward
             public void SetEyeRotationY(float y)
             {
@@ -75,9 +93,12 @@ namespace OSVR
                 //cache:
                 cachedTransform = transform;
 
-                if (_camera == null)
+                if (Camera == null)
                 {
-                    _camera = gameObject.AddComponent<Camera>();
+                    if ((Camera = GetComponent<Camera>()) == null)
+                    {
+                        Camera = gameObject.AddComponent<Camera>();
+                    }
                 }
 
                 SetViewportRects();
@@ -86,18 +107,21 @@ namespace OSVR
             //helper method to set correct viewport for each eye
             private void SetViewportRects()
             {
+                if (Camera == null)
+                {
+                    Init();
+                }
                 //camera setups:
                 switch (eye)
                 {
                     case Eye.left:
-                        _camera.rect = new Rect(0, 0, .5f, 1);
+                        Camera.rect = new Rect(0, 0, .5f, 1);
                         break;
                     case Eye.right:
-                        _camera.rect = new Rect(.5f, 0, .5f, 1);
+                        Camera.rect = new Rect(.5f, 0, .5f, 1);
                         break;
                 }
             }
-            
             #endregion
 
             
