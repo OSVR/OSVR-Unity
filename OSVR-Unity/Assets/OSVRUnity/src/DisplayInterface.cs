@@ -62,24 +62,24 @@ namespace OSVR
                 return GetDeviceDescription();
             }
 
-			/// <summary>
-			/// This function will parse the device parameters from a device descriptor json file using Newstonsoft
-			///
-			/// Returns a DeviceDescriptor object containing stored json values.
-			/// </summary>
-			public DeviceDescriptor GetDeviceDescription()
-			{
-				//create a device descriptor object for storing the parsed json in an object
-				DeviceDescriptor deviceDescriptor = DeviceDescriptor.Parse(_deviceDescriptorJson);
-				if (deviceDescriptor != null) {
-					if (JsonDescriptorFile != null) {
-						deviceDescriptor.FileName = JsonDescriptorFile.name;
-					} else {
-						deviceDescriptor.FileName = "No descriptor file has been assigned. Using parameters from /display";
-					}
-				}
-				return deviceDescriptor;
-			}
+            /// <summary>
+            /// This function will parse the device parameters from a device descriptor json file using Newstonsoft
+            ///
+            /// Returns a DeviceDescriptor object containing stored json values.
+            /// </summary>
+            public DeviceDescriptor GetDeviceDescription()
+            {
+                //create a device descriptor object for storing the parsed json in an object
+                DeviceDescriptor deviceDescriptor = DeviceDescriptor.Parse(_deviceDescriptorJson);
+                if (deviceDescriptor != null) {
+                    if (JsonDescriptorFile != null) {
+                        deviceDescriptor.FileName = JsonDescriptorFile.name;
+                    } else {
+                        deviceDescriptor.FileName = "No descriptor file has been assigned. Using parameters from /display";
+                    }
+                }
+                return deviceDescriptor;
+            }
         }
     }
 }
