@@ -112,9 +112,10 @@ public class OsvrPostEffectsBase : MonoBehaviour {
 			return false;
 		}
 		
-		if(needDepth)
+		if (needDepth) {
 			GetComponent<Camera>().depthTextureMode |= DepthTextureMode.Depth;	
-		
+		}
+
 		return true;
 	}
 
