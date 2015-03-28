@@ -36,7 +36,7 @@ namespace OSVR
         /// </summary>
         public class DisplayInterface : MonoBehaviour
         {
-            const string HmdJsonFileName = "hmd.json";
+            const string HmdJsonFileName = "hmd.json"; //hardcoded filename of hmd config in Data folder
             private string _deviceDescriptorJson; //a string that is the JSON file to be parsed
             public TextAsset JsonDescriptorFile; //drop the json file into this slot in the Unity inspector
 
@@ -44,7 +44,7 @@ namespace OSVR
             {
                 get { return _initialized; }
             }
-            private bool _initialized = false;
+            private bool _initialized = false; //flag set when _deviceDescriptorJson has data
 
             void Awake()
             {
@@ -67,11 +67,12 @@ namespace OSVR
                         _deviceDescriptorJson = ClientKit.instance.context.getStringParameter("/display"); //otherwise read from /display
                     }
                     _initialized = true;
-                }
-                    
-                
+                }                        
             }
 
+            //coroutine for loading an external json config file
+            //this could be more generic, but I'm not sure we will be loading external files
+            //this will eventually go away anyway when we get display config data from /display
             private IEnumerator LoadJsonFile(string filePath)
             {
                 WWW jsonFile = new WWW("file://"+filePath);
@@ -79,9 +80,6 @@ namespace OSVR
                 _initialized = true;
                 _deviceDescriptorJson = jsonFile.text;
             }
-
-
-            
 
             /// <summary>
             /// This function will parse the device parameters from a device descriptor json file.
