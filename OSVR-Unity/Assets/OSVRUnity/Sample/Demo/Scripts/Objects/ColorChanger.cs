@@ -42,7 +42,7 @@ public class ColorChanger : MonoBehaviour, IColorChanger
 	#region Init
 	void Awake()
 	{
-		_material = renderer.materials[materialID];
+		_material = GetComponent<Renderer>().materials[materialID];
 	}
 	#endregion
 
