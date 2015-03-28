@@ -22,6 +22,7 @@ using System;
 using UnityEngine;
 using Newtonsoft.Json;
 using System.IO;
+using System.Collections;
 
 namespace OSVR
 {
@@ -35,19 +36,50 @@ namespace OSVR
         /// </summary>
         public class DisplayInterface : MonoBehaviour
         {
+            const string HmdJsonFileName = "hmd.json";
             private string _deviceDescriptorJson; //a string that is the JSON file to be parsed
             public TextAsset JsonDescriptorFile; //drop the json file into this slot in the Unity inspector
+
+            public bool Initialized
+            {
+                get { return _initialized; }
+            }
+            private bool _initialized = false;
+
             void Awake()
             {
-                if (JsonDescriptorFile != null)
+                //check to see if "hmd.json" is provided in the Data folder
+                //if so, load it
+                string filePath = Application.dataPath + "/" + HmdJsonFileName;
+                if (System.IO.File.Exists(filePath))
                 {
-                    _deviceDescriptorJson = JsonDescriptorFile.text; //read JSON file directly from Unity if provided
-                }
-                else
+                    StartCoroutine(LoadJsonFile(filePath));
+                }                  
+                else //if not, load the json file provided in the Unity editor
                 {
-                    _deviceDescriptorJson = ClientKit.instance.context.getStringParameter("/display"); //otherwise read from /display
+                    
+                    if (JsonDescriptorFile != null)
+                    {
+                        _deviceDescriptorJson = JsonDescriptorFile.text; //read JSON file directly from Unity if provided
+                    }
+                    else
+                    {
+                        _deviceDescriptorJson = ClientKit.instance.context.getStringParameter("/display"); //otherwise read from /display
+                    }
+                    _initialized = true;
                 }
+                    
+                
             }
+
+            private IEnumerator LoadJsonFile(string filePath)
+            {
+                WWW jsonFile = new WWW("file://"+filePath);
+                yield return jsonFile;
+                _initialized = true;
+                _deviceDescriptorJson = jsonFile.text;
+            }
+
 
             
 
@@ -72,7 +104,6 @@ namespace OSVR
                 //create a device descriptor object for storing the parsed json in an object
                 DeviceDescriptor deviceDescriptor;
                 JsonTextReader reader;
-               
 
                 reader = new JsonTextReader(new StringReader(_deviceDescriptorJson));
                 if(reader != null)
