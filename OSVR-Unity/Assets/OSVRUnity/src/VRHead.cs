@@ -53,6 +53,7 @@ namespace OSVR
             private Camera _camera;
             private DeviceDescriptor _deviceDescriptor;
             private OsvrDistortion _distortionEffect;
+            private bool _initDisplayInterface = false;
             #endregion
 
             #region Init
@@ -65,23 +66,24 @@ namespace OSVR
                 {
                     _distortionEffect.enabled = (viewMode == ViewMode.mono);
                 }
-                GetDeviceDescription();
-                MatchEyes(); //copy camera properties to each eye
-                //rotate each eye based on overlap percent, must do this after match eyes
-                if (_deviceDescriptor != null)
+
+                //update VRHead with info from the display interface if it has been initialized
+                //it might not be initialized if it is still loading/parsing a display json file
+                //in that case, we will try to initialize asap in the update function
+                if (GetComponent<DisplayInterface>().Initialized)
                 {
-                    SetEyeRotation(_deviceDescriptor.OverlapPercent, _deviceDescriptor.MonocularHorizontal);
-                    SetEyeRoll(_deviceDescriptor.LeftRoll, _deviceDescriptor.RightRoll);
-                }
-                
-                
-                
-            }
+                    UpdateDisplayInterface();                  
+                }              
+            }         
             #endregion
 
             #region Loop
             void Update()
             {
+                if(!_initDisplayInterface && GetComponent<DisplayInterface>().Initialized)
+                {
+                    UpdateDisplayInterface();
+                }
                 UpdateStereoAmount();
                 UpdateViewMode();
             }
@@ -91,6 +93,18 @@ namespace OSVR
             #endregion
 
             #region Private Methods
+            private void UpdateDisplayInterface()
+            {
+                GetDeviceDescription();
+                MatchEyes(); //copy camera properties to each eye
+                //rotate each eye based on overlap percent, must do this after match eyes
+                if (_deviceDescriptor != null)
+                {
+                    SetEyeRotation(_deviceDescriptor.OverlapPercent, _deviceDescriptor.MonocularHorizontal);
+                    SetEyeRoll(_deviceDescriptor.LeftRoll, _deviceDescriptor.RightRoll);
+                }
+                _initDisplayInterface = true;
+            }
             void UpdateViewMode()
             {
                 if (Time.realtimeSinceStartup < 100 || _previousViewMode != viewMode)
@@ -170,6 +184,8 @@ namespace OSVR
 
                 //60 FPS whenever possible:
                 Application.targetFrameRate = 60;
+
+                _initDisplayInterface = false;
             }
 
             /// <summary>
@@ -178,10 +194,10 @@ namespace OSVR
             /// </summary>
             private void GetDeviceDescription()
             {
-                _deviceDescriptor = GetComponent<DisplayInterface>().GetDeviceDescription();
-                Debug.Log(_deviceDescriptor.ToString());
+                _deviceDescriptor = GetComponent<DisplayInterface>().GetDeviceDescription();              
                 if (_deviceDescriptor != null)
                 {
+                    Debug.Log(_deviceDescriptor.ToString());
                     switch (_deviceDescriptor.DisplayMode)
                     {
                         case "full_screen":

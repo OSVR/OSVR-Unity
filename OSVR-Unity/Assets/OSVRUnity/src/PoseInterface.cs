@@ -32,15 +32,30 @@ namespace OSVR
         /// </summary>
         public class PoseInterface : InterfaceGameObject
         {
+            //private int currentFrame = 0;
+            //private int frameCount = 0;
             new void Start()
             {
                 osvrInterface.RegisterCallback(callback);
+                //currentFrame = Time.frameCount;
+                //frameCount = 0;
             }
 
             private void callback(string source, Vector3 position, Quaternion rotation)
             {
                 transform.localPosition = position;
                 transform.localRotation = rotation;
+                //keeping this here for now for debugging purposes
+                /*if(currentFrame != Time.frameCount)
+                {
+                    Debug.Log("Time.frameCount = " + currentFrame + ", Time.time = " + Time.time + ". Callbacks per frame = " + frameCount);
+                    frameCount = 0;
+                    currentFrame = Time.frameCount;
+                }
+                else
+                {
+                    frameCount++;
+                }*/              
             }
         }
     }

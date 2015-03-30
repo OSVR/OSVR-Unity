@@ -37,12 +37,14 @@ namespace OSVR
         {
             #region Private Variables
             private Camera _camera;
+            private ClientKit clientKit;
             #endregion
             #region Public Variables
             public Eye eye;
             public Camera Camera { get { return _camera; } set { _camera = value; } }
             [HideInInspector]
             public Transform cachedTransform;
+            
             #endregion
 
             #region Init
@@ -90,6 +92,10 @@ namespace OSVR
             #region Private Methods
             void Init()
             {
+                if(clientKit == null)
+                {
+                    clientKit = GameObject.FindObjectOfType<ClientKit>();
+                }
                 //cache:
                 cachedTransform = transform;
 
@@ -121,6 +127,14 @@ namespace OSVR
                         Camera.rect = new Rect(.5f, 0, .5f, 1);
                         break;
                 }
+            }
+
+            //Called after a camera finishes rendering the scene.
+            //the goal here is to update the client often to make sure we have the most recent tracker data
+            //this helps reduce latency
+            void OnPostRender()
+            {
+                clientKit.context.update();
             }
             #endregion
 
