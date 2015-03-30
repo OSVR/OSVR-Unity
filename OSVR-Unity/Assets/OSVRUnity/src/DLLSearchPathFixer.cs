@@ -49,7 +49,7 @@ namespace OSVR
             private DLLSearchPathFixer()
             {
                 var currentPath = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Process);
-                Debug.Log(String.Format("Old PATH: {0}", currentPath));
+                //Debug.Log(String.Format("Old PATH: {0}", currentPath));
                 OrigDirs = new List<string>(currentPath.Split(Path.PathSeparator));
                 UnityDataDir = Application.dataPath;
                 UnityDataDirBackslashed = Application.dataPath.Replace("/", "\\");
@@ -65,7 +65,7 @@ namespace OSVR
                 allDirs.AddRange(OrigDirs);
 
                 var newPathString = String.Join(Path.PathSeparator.ToString(), allDirs.ToArray());
-                Debug.Log(String.Format("New PATH: {0}", newPathString));
+                //Debug.Log(String.Format("New PATH: {0}", newPathString));
                 Environment.SetEnvironmentVariable("PATH", newPathString, EnvironmentVariableTarget.Process);
             }
 
