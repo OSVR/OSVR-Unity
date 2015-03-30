@@ -102,9 +102,22 @@ namespace OSVR
             void FixedUpdate()
             {
                 EnsureStarted();
+                //Debug.Log("ClientKit FixedUpdate: frame # " + Time.frameCount + " " + Time.time);
                 contextObject.update();
             }
-
+          
+            //may seem superfluous. the goal here is to update the client more often to make sure we have the most recent tracker data
+            //this helps reduce latency
+            void Update()
+            {
+                contextObject.update();
+            }
+            //may seem superfluous. the goal here is to update the client more often to make sure we have the most recent tracker data
+            //this helps reduce latency
+            void LateUpdate()
+            {
+                contextObject.update();
+            }
             void Stop()
             {
                 if (null != contextObject)
