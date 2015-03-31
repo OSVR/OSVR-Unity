@@ -3,8 +3,11 @@
 This is an abbreviated changelog for the OSVR Unity Plugin.
 
 Use git for a full changelog.
-##Recent Changes (updated 28-March-2015)
-##External Json File v0.1-56-gf2d8bab (20-March-2015)
+##Recent Changes (updated 31-March-2015)
+##DLL Search Path v0.1-69-gb80966b (31-March-2015)
+- The built executable will now find the plugins it needs in the _Data folder. Previously, the executable had to be in the same directory with Assets/Plugins. That is no longer necessary.
+
+##External Json File v0.1-56-gf2d8bab (28-March-2015)
 - The JSON file containing display configuration can now be read from a file at runtime. To do this, add a config file "hmd.json" to the _Data folder that is created in a build. The format of the JSON file has not changed at all. It is the same file you would drag-and-drop onto the DisplayInterface component on your VRDisplayTracked prefab. If "hmd.json" does not exist in the Data folder (and it won't by default unless you put it there), then the plugin will look for the JSON file assigned in the DisplayInterface component in your scene. If that also has not been assigned, it will fall back to reading OSVR's /display parameter (this will eventually be the default).
 
 ##Distortion v0.1-55-g046c709(20-March-2015)

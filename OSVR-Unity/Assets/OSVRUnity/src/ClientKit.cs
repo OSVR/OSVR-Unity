@@ -75,16 +75,9 @@ namespace OSVR
                 }
             }
 
-            /// <summary>
-            /// Static constructor that enhances the DLL search path to ensure dependent native dlls are found.
-            /// </summary>
-            static ClientKit()
-            {
-                DLLSearchPathFixer.fix();
-            }
-
             void Awake()
             {
+                DLLSearchPathFixer.fix();
                 DontDestroyOnLoad(gameObject);
             }
             void Start()
@@ -102,7 +95,6 @@ namespace OSVR
             void FixedUpdate()
             {
                 EnsureStarted();
-                //Debug.Log("ClientKit FixedUpdate: frame # " + Time.frameCount + " " + Time.time);
                 contextObject.update();
             }
           
