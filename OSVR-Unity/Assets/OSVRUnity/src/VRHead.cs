@@ -212,6 +212,13 @@ namespace OSVR
                     stereoAmount = Mathf.Clamp(_deviceDescriptor.OverlapPercent, 0, 100);
                     SetResolution(_deviceDescriptor.Width, _deviceDescriptor.Height); //set resolution before FOV
                     Camera.fieldOfView = Mathf.Clamp(_deviceDescriptor.MonocularVertical, 0, 180); //unity camera FOV is vertical
+                    float aspectRatio = (float)_deviceDescriptor.Width / (float)_deviceDescriptor.Height;
+                    //aspect ratio per eye depends on how many displays the HMD has
+                    //for example, dSight has two 1920x1080 displays, so each eye should have 1.77 aspect
+                    //whereas HDK has one 1920x1080 display, each eye should have 0.88 aspect (half of 1.77)
+                    float aspectRatioPerEye = _deviceDescriptor.NumDisplays == 1 ? aspectRatio * 0.5f : aspectRatio;
+                    //set projection matrix for each eye
+                    Camera.projectionMatrix = Matrix4x4.Perspective(_deviceDescriptor.MonocularVertical, aspectRatioPerEye, Camera.nearClipPlane, Camera.farClipPlane);
                     SetDistortion(_deviceDescriptor.K1Red, _deviceDescriptor.K1Green, _deviceDescriptor.K1Blue, 
                     _deviceDescriptor.CenterProjX, _deviceDescriptor.CenterProjY); //set distortion shader
             
@@ -236,17 +243,26 @@ namespace OSVR
             {
                 if(_distortionEffect != null)
                 {
-                    _distortionEffect.k1Red = k1Red;
-                    _distortionEffect.k1Green = k1Green;
-                    _distortionEffect.k1Blue = k1Blue;
-                    _distortionEffect.fullCenter = new Vector2(centerProjX, centerProjY);
+                    //disable distortion if there is no distortion for this hmd
+                    if(k1Red == 0 && k1Green == 0 && k1Blue == 0)
+                    {
+                        _distortionEffect.enabled = false;
+                    }
+                    else
+                    {
+                        _distortionEffect.k1Red = k1Red;
+                        _distortionEffect.k1Green = k1Green;
+                        _distortionEffect.k1Blue = k1Blue;
+                        _distortionEffect.fullCenter = new Vector2(centerProjX, centerProjY);
+                    }
+                    
                 }
             }
 
             //Set the Screen Resolution
             private void SetResolution(int width, int height)
             {
-                //set the resolution
+                //set the resolution, default to full screen
                 Screen.SetResolution(width, height, true);
 #if UNITY_EDITOR
                 UnityEditor.PlayerSettings.defaultScreenWidth = width;
