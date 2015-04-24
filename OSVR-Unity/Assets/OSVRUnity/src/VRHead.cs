@@ -68,7 +68,7 @@ namespace OSVR
                 }
 
                 //update VRHead with info from the display interface if it has been initialized
-                //it might not be initialized if it is still loading/parsing a display json file
+                //it might not be initialized if it is still parsing a display json file
                 //in that case, we will try to initialize asap in the update function
                 if (GetComponent<DisplayInterface>().Initialized)
                 {
@@ -80,6 +80,7 @@ namespace OSVR
             #region Loop
             void Update()
             {
+                //make sure we have display config info from /display.
                 if(!_initDisplayInterface && GetComponent<DisplayInterface>().Initialized)
                 {
                     UpdateDisplayInterface();

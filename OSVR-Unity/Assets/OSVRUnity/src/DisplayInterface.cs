@@ -36,78 +36,31 @@ namespace OSVR
         /// </summary>
         public class DisplayInterface : MonoBehaviour
         {
-            const string HmdJsonFileName = "hmd.json"; //hardcoded filename of hmd config in Data folder
             private string _deviceDescriptorJson; //a string that is the JSON file to be parsed
-            public TextAsset JsonDescriptorFile; //drop the json file into this slot in the Unity inspector
+
+            //TODO: remove this field. It was added when external JSON files were being loaded rather than
+            //being read from /display. _initalized exists to make sure display config has been parsed before trying to read it
+            //this probably isn't necessary anymore now that it comes from /display, but leaving this here for now just to be safe.
             public bool Initialized
             {
                 get { return _initialized; }
             }
-            private bool _initialized = false; //flag set when _deviceDescriptorJson has data
+            private bool _initialized = false; //flag set when _deviceDescriptorJson has data from /display
 
             void Awake()
             {
-                //check to see if "hmd.json" is provided in the Data folder
-                //if so, load it
-                string filePath = Application.dataPath + "/" + HmdJsonFileName;
-                if (System.IO.File.Exists(filePath))
-                {
-                    StartCoroutine(LoadJsonFile(filePath));
-                }
-                else //if not, load the json file provided in the Unity editor
-                {
-                    if (JsonDescriptorFile != null)
-                    {
-                        _deviceDescriptorJson = JsonDescriptorFile.text; //read JSON file directly from Unity if provided
-                    }
-                    else
-                    {
-                        _deviceDescriptorJson = ClientKit.instance.context.getStringParameter("/display"); //otherwise read from /display
-                    }
-                    _initialized = true;
-                }  
-            }
-
-            //coroutine for loading an external json config file
-            //this could be more generic, but I'm not sure we will be loading external files
-            //this will eventually go away anyway when we get display config data from /display
-            private IEnumerator LoadJsonFile(string filePath)
-            {
-                WWW jsonFile = new WWW("file://" + filePath);
-                yield return jsonFile;
+                _deviceDescriptorJson = ClientKit.instance.context.getStringParameter("/display");
                 _initialized = true;
-                _deviceDescriptorJson = jsonFile.text;
-            }
-
-
-            /// <summary>
-            /// This function will parse the device parameters from a device descriptor json file.
-            ///
-            /// Returns a DeviceDescriptor object containing stored json values.
-            /// </summary>
-            public DeviceDescriptor GetDisplayParameters(TextAsset jsonDescriptor)
-            {
-                _deviceDescriptorJson = jsonDescriptor.text;
-                return GetDeviceDescription();
             }
 
             /// <summary>
-            /// This function will parse the device parameters from a device descriptor json file using Newstonsoft
+            /// This function will parse the Json display parameters from /display using Newstonsoft
             ///
             /// Returns a DeviceDescriptor object containing stored json values.
             /// </summary>
             public DeviceDescriptor GetDeviceDescription()
             {
-                //create a device descriptor object for storing the parsed json in an object
-                DeviceDescriptor deviceDescriptor = DeviceDescriptor.Parse(_deviceDescriptorJson);
-                if (deviceDescriptor != null) {
-                    if (JsonDescriptorFile != null) {
-                        deviceDescriptor.FileName = JsonDescriptorFile.name;
-                    } else {
-                        deviceDescriptor.FileName = "No descriptor file has been assigned. Using parameters from /display";
-                    }
-                }
-                return deviceDescriptor;
+                return _deviceDescriptorJson == null ? null : DeviceDescriptor.Parse(_deviceDescriptorJson);               
             }
         }
     }
