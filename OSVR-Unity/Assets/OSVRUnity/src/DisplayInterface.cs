@@ -47,7 +47,7 @@ namespace OSVR
             }
             private bool _initialized = false; //flag set when _deviceDescriptorJson has data from /display
 
-            void Awake()
+            void Start()
             {
                 _deviceDescriptorJson = ClientKit.instance.context.getStringParameter("/display");
                 _initialized = true;
