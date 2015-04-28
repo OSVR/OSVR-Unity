@@ -80,13 +80,24 @@ namespace OSVR
             #region Loop
             void Update()
             {
-                //make sure we have display config info from /display.
-                if(!_initDisplayInterface && GetComponent<DisplayInterface>().Initialized)
+                
+                if(!_initDisplayInterface && !GetComponent<DisplayInterface>().Initialized)
                 {
+                    //if the display configuration hasn't initialized, ping the DisplayInterface to retrieve it from the ClientKit
+                    //this would mean DisplayInterface was unable to retrieve that data in its Start() function.
+                    GetComponent<DisplayInterface>().ReadDisplayPath();
+                }
+                else if (!_initDisplayInterface && GetComponent<DisplayInterface>().Initialized)
+                {
+                    //once the DisplayInterface has initialized, meaning it has read data from the /display path which contains
+                    //display configuration, update the Camera and other settings with properties from the display configuration.
                     UpdateDisplayInterface();
                 }
-                UpdateStereoAmount();
-                UpdateViewMode();
+                else if (_initDisplayInterface)
+                {
+                    UpdateStereoAmount();
+                    UpdateViewMode();
+                }
             }
             #endregion
 
@@ -198,7 +209,6 @@ namespace OSVR
                 _deviceDescriptor = GetComponent<DisplayInterface>().GetDeviceDescription();              
                 if (_deviceDescriptor != null)
                 {
-                    Debug.Log(_deviceDescriptor.ToString());
                     switch (_deviceDescriptor.DisplayMode)
                     {
                         case "fullScreen":
