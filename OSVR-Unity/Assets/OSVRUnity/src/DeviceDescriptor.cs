@@ -30,14 +30,6 @@ using System;
 
 public class DeviceDescriptor
 {
-
-    //filename
-    private string _fileName = "";
-    public string FileName
-    {
-        get { return _fileName; }
-        set { _fileName = value; }
-    }
     //hmd
     private string _vendor = "";
     public string Vendor
@@ -173,11 +165,10 @@ public class DeviceDescriptor
 
     //constructors
     public DeviceDescriptor() { }
-    public DeviceDescriptor(string fileName, string vendor, string model, string version, int numDisplays, string note, float monocularHorizontal, 
+    public DeviceDescriptor(string vendor, string model, string version, int numDisplays, string note, float monocularHorizontal, 
         float monocularVertical, float overlapPercent, float pitchTilt, int width, int height, int videoInputs, string displayMode, float k1Red, 
         float k1Green, float k1Blue, float leftRoll, float rightRoll, float centerProjX, float centerProjY, int rotate180)
     {
-        this._fileName = fileName;
         this._vendor = vendor;
         this._model = model;
         this._version = version;
@@ -203,15 +194,9 @@ public class DeviceDescriptor
 
     public override string ToString()
     {
-
-        if (FileName.Equals(""))
-        {
-            return "No json file has been provided.";
-        }
         //print
         StringBuilder jsonPrinter = new StringBuilder(64);
         jsonPrinter.AppendLine("Json File Device Description:")
-        .Append("filename = ").AppendLine(FileName)
         .Append("HMD\n")
         .Append("vendor = ").AppendLine(Vendor)
         .Append("model = ").AppendLine(Model)

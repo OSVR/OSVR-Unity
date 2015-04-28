@@ -38,9 +38,7 @@ namespace OSVR
         {
             private string _deviceDescriptorJson; //a string that is the JSON file to be parsed
 
-            //TODO: remove this field. It was added when external JSON files were being loaded rather than
-            //being read from /display. _initalized exists to make sure display config has been parsed before trying to read it
-            //this probably isn't necessary anymore now that it comes from /display, but leaving this here for now just to be safe.
+            //_initalized exists to make sure the display config has been parsed before trying to read it
             public bool Initialized
             {
                 get { return _initialized; }
@@ -49,8 +47,21 @@ namespace OSVR
 
             void Start()
             {
-                _deviceDescriptorJson = ClientKit.instance.context.getStringParameter("/display");
-                _initialized = true;
+                ReadDisplayPath();
+            }
+
+            //this function attemtps to retrieve display configuration from the /display path
+            //this data is in JSON format. Once it has initialized, the data is used to configure Camera and other settings.
+            public void ReadDisplayPath()
+            {
+                if (!_initialized)
+                {
+                    _deviceDescriptorJson = ClientKit.instance.context.getStringParameter("/display");
+                    if (_deviceDescriptorJson != "")
+                    {
+                        _initialized = true;
+                    }
+                }
             }
 
             /// <summary>
