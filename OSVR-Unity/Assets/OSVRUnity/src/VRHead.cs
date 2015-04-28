@@ -201,11 +201,11 @@ namespace OSVR
                     Debug.Log(_deviceDescriptor.ToString());
                     switch (_deviceDescriptor.DisplayMode)
                     {
-                        case "full_screen":
+                        case "fullScreen":
                             viewMode = ViewMode.mono;
                             break;
-                        case "horz_side_by_side":
-                        case "vert_side_by_side":
+                        case "horzSideBySide":
+                        case "vertSideBySide":
                         default:
                             viewMode = ViewMode.stereo;
                             break;
