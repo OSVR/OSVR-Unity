@@ -5,6 +5,8 @@
 ## Known Issues
 This list only includes Unity-specific issues that have a substantial impact on the development experience. For a full list of issues, see the [GitHub issue tracker](https://github.com/sensics/OSVR-Unity/issues)
 
+- Unity 4 Free version will not use distortion as this is a Pro-only feature. You will get a warning that you can ignore and continue to use OSVR without distortion. OSVR plugins will still work with Unity 4 Free. If you get a License Error in Unity 4 Free, try moving all files from Plugins/x86 to Plugins/.
+- Unity 5 OSVR developers should use the 32-bit version of the Unity 5 editor for now. Support for 64-bit Unity 5 is coming soon. ([GitHub issue](https://github.com/OSVR/OSVR-Unity/issues/19))
 - Stereo will not work unless you load a display `.json` file manually into the display prefab. A number of these are bundled with the plugin: drag and drop the appropriate one into the slot in the Inspector.
 - Display configuration is not always falling back to data from OSVR. ([GitHub issue](https://github.com/OSVR/OSVR-Unity/issues/2))
 
