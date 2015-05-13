@@ -48,6 +48,7 @@ namespace OSVR
             #region Private Variables
             private VREye _leftEye;
             private VREye _rightEye;
+            private bool swapEyes = false;
             private float _previousStereoAmount;
             private ViewMode _previousViewMode;
             private Camera _camera;
@@ -146,8 +147,8 @@ namespace OSVR
                 if (stereoAmount != _previousStereoAmount)
                 {
                     stereoAmount = Mathf.Clamp(stereoAmount, 0, 1);
-                    _rightEye.cachedTransform.localPosition = Vector3.right * (maxStereo * stereoAmount);
-                    _leftEye.cachedTransform.localPosition = Vector3.left * (maxStereo * stereoAmount);
+                    _rightEye.cachedTransform.localPosition = (swapEyes ? Vector3.left : Vector3.right) * (maxStereo * stereoAmount);
+                    _leftEye.cachedTransform.localPosition = (swapEyes ? Vector3.right : Vector3.left) * (maxStereo * stereoAmount);
                     _previousStereoAmount = stereoAmount;                  
                 }
             }
@@ -206,7 +207,7 @@ namespace OSVR
             /// </summary>
             private void GetDeviceDescription()
             {
-                _deviceDescriptor = GetComponent<DisplayInterface>().GetDeviceDescription();              
+                _deviceDescriptor = GetComponent<DisplayInterface>().GetDeviceDescription();
                 if (_deviceDescriptor != null)
                 {
                     switch (_deviceDescriptor.DisplayMode)
@@ -220,6 +221,7 @@ namespace OSVR
                             viewMode = ViewMode.stereo;
                             break;
                     }
+                    swapEyes = _deviceDescriptor.SwapEyes > 0; //swap left and right eye positions?
                     stereoAmount = Mathf.Clamp(_deviceDescriptor.OverlapPercent, 0, 100);
                     SetResolution(_deviceDescriptor.Width, _deviceDescriptor.Height); //set resolution before FOV
                     Camera.fieldOfView = Mathf.Clamp(_deviceDescriptor.MonocularVertical, 0, 180); //unity camera FOV is vertical
