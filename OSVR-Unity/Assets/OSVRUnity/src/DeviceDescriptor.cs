@@ -55,6 +55,12 @@ public class DeviceDescriptor
         get { return _note; }
         set { _note = value; }
     }
+    private int _numDisplays = 1;
+    public int NumDisplays
+    {
+        get { return _numDisplays; }
+        set { _numDisplays = value; }
+    }
     //field of view
     private float _monocularHorizontal = 60f;
     public float MonocularHorizontal
@@ -105,12 +111,13 @@ public class DeviceDescriptor
         get { return _displayMode; }
         set { _displayMode = value; }
     }
-    private int _numDisplays = 1;
-    public int NumDisplays
+    private int _swapEyes = 0;
+    public int SwapEyes
     {
-        get { return _numDisplays; }
-        set { _numDisplays = value; }
+        get { return _swapEyes; }
+        set { _swapEyes = value; }
     }
+    
     //distortion
     private float _k1Red = 0;
     public float K1Red
@@ -166,8 +173,8 @@ public class DeviceDescriptor
     //constructors
     public DeviceDescriptor() { }
     public DeviceDescriptor(string vendor, string model, string version, int numDisplays, string note, float monocularHorizontal, 
-        float monocularVertical, float overlapPercent, float pitchTilt, int width, int height, int videoInputs, string displayMode, float k1Red, 
-        float k1Green, float k1Blue, float leftRoll, float rightRoll, float centerProjX, float centerProjY, int rotate180)
+        float monocularVertical, float overlapPercent, float pitchTilt, int width, int height, int videoInputs, string displayMode, int swapEyes,
+        float k1Red, float k1Green, float k1Blue, float leftRoll, float rightRoll, float centerProjX, float centerProjY, int rotate180)
     {
         this._vendor = vendor;
         this._model = model;
@@ -182,6 +189,7 @@ public class DeviceDescriptor
         this._height = height;
         this._videoInputs = videoInputs;
         this._displayMode = displayMode;
+        this._swapEyes = swapEyes;
         this._k1Red = k1Red;
         this._k1Green = k1Green;
         this._k1Blue = k1Blue;
@@ -213,6 +221,7 @@ public class DeviceDescriptor
         .Append("height = ").AppendLine(Height.ToString())
         .Append("videoInputs = ").AppendLine(VideoInputs.ToString())
         .Append("displayMode = ").AppendLine(DisplayMode)
+        .Append("swapEyes = ").AppendLine(SwapEyes.ToString())
         .Append("\nDISTORTION\n")
         .Append("k1Red = ").AppendLine(K1Red.ToString())
         .Append("k1Green = ").AppendLine(K1Green.ToString())
@@ -301,7 +310,10 @@ public class DeviceDescriptor
                         break;
                     case "displaymode":
                         deviceDescriptor.DisplayMode = reader.ReadAsString();
-                        break;                   
+                        break;
+                    case "swapeyes":
+                        deviceDescriptor.SwapEyes = int.Parse(reader.ReadAsString());
+                        break;
                     case "k1red":
                         deviceDescriptor.K1Red = float.Parse(reader.ReadAsString());
                         break;
