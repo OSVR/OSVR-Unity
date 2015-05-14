@@ -66,6 +66,11 @@ namespace OSVR
             //this function copies the distortion shader from the original Shader attached to VRHead
             private void CopyDistortionShader(OsvrDistortion original, GameObject destination)
             {
+                //if there is no distortion, don't bother
+                if (original.k1Red == 0 && original.k1Green == 0 && original.k1Blue == 0)
+                {
+                    return;                    
+                }
                 OsvrDistortion d = destination.AddComponent<OsvrDistortion>();
                 d.distortionShader = original.distortionShader;
                 d.k1Red = original.k1Red;
