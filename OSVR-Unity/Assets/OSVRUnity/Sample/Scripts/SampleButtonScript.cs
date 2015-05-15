@@ -19,6 +19,7 @@
 /// </copyright>
 
 using UnityEngine;
+using UnityEngine.Events;
 using System.Collections;
 
 /// <summary>
@@ -29,6 +30,9 @@ using System.Collections;
 /// </summary>
 public class SampleButtonScript : OSVR.Unity.InterfaceBase
 {
+    public UnityEvent OnPress;
+    public UnityEvent OnRelease;
+
     void Start()
     {
         osvrInterface.RegisterCallback(handleButton);
@@ -37,5 +41,7 @@ public class SampleButtonScript : OSVR.Unity.InterfaceBase
     void handleButton(string path, bool state)
     {
         Debug.Log("Got button: " + path + " state is " + state);
+        if(state) OnPress.Invoke();
+        else OnRelease.Invoke();
     }
 }
