@@ -48,6 +48,7 @@ namespace OSVR
             #region Private Variables
             private VREye _leftEye;
             private VREye _rightEye;
+            private bool swapEyes = false;
             private float _previousStereoAmount;
             private ViewMode _previousViewMode;
             private Camera _camera;
@@ -68,7 +69,7 @@ namespace OSVR
                 }
 
                 //update VRHead with info from the display interface if it has been initialized
-                //it might not be initialized if it is still loading/parsing a display json file
+                //it might not be initialized if it is still parsing a display json file
                 //in that case, we will try to initialize asap in the update function
                 if (GetComponent<DisplayInterface>().Initialized)
                 {
@@ -80,12 +81,24 @@ namespace OSVR
             #region Loop
             void Update()
             {
-                if(!_initDisplayInterface && GetComponent<DisplayInterface>().Initialized)
+                
+                if(!_initDisplayInterface && !GetComponent<DisplayInterface>().Initialized)
                 {
+                    //if the display configuration hasn't initialized, ping the DisplayInterface to retrieve it from the ClientKit
+                    //this would mean DisplayInterface was unable to retrieve that data in its Start() function.
+                    GetComponent<DisplayInterface>().ReadDisplayPath();
+                }
+                else if (!_initDisplayInterface && GetComponent<DisplayInterface>().Initialized)
+                {
+                    //once the DisplayInterface has initialized, meaning it has read data from the /display path which contains
+                    //display configuration, update the Camera and other settings with properties from the display configuration.
                     UpdateDisplayInterface();
                 }
-                UpdateStereoAmount();
-                UpdateViewMode();
+                else if (_initDisplayInterface)
+                {
+                    UpdateStereoAmount();
+                    UpdateViewMode();
+                }
             }
             #endregion
 
@@ -134,8 +147,8 @@ namespace OSVR
                 if (stereoAmount != _previousStereoAmount)
                 {
                     stereoAmount = Mathf.Clamp(stereoAmount, 0, 1);
-                    _rightEye.cachedTransform.localPosition = Vector3.right * (maxStereo * stereoAmount);
-                    _leftEye.cachedTransform.localPosition = Vector3.left * (maxStereo * stereoAmount);
+                    _rightEye.cachedTransform.localPosition = (swapEyes ? Vector3.left : Vector3.right) * (maxStereo * stereoAmount);
+                    _leftEye.cachedTransform.localPosition = (swapEyes ? Vector3.right : Vector3.left) * (maxStereo * stereoAmount);
                     _previousStereoAmount = stereoAmount;                  
                 }
             }
@@ -194,24 +207,31 @@ namespace OSVR
             /// </summary>
             private void GetDeviceDescription()
             {
-                _deviceDescriptor = GetComponent<DisplayInterface>().GetDeviceDescription();              
+                _deviceDescriptor = GetComponent<DisplayInterface>().GetDeviceDescription();
                 if (_deviceDescriptor != null)
                 {
-                    Debug.Log(_deviceDescriptor.ToString());
                     switch (_deviceDescriptor.DisplayMode)
                     {
-                        case "full_screen":
+                        case "fullScreen":
                             viewMode = ViewMode.mono;
                             break;
-                        case "horz_side_by_side":
-                        case "vert_side_by_side":
+                        case "horzSideBySide":
+                        case "vertSideBySide":
                         default:
                             viewMode = ViewMode.stereo;
                             break;
                     }
+                    swapEyes = _deviceDescriptor.SwapEyes > 0; //swap left and right eye positions?
                     stereoAmount = Mathf.Clamp(_deviceDescriptor.OverlapPercent, 0, 100);
                     SetResolution(_deviceDescriptor.Width, _deviceDescriptor.Height); //set resolution before FOV
                     Camera.fieldOfView = Mathf.Clamp(_deviceDescriptor.MonocularVertical, 0, 180); //unity camera FOV is vertical
+                    float aspectRatio = (float)_deviceDescriptor.Width / (float)_deviceDescriptor.Height;
+                    //aspect ratio per eye depends on how many displays the HMD has
+                    //for example, dSight has two 1920x1080 displays, so each eye should have 1.77 aspect
+                    //whereas HDK has one 1920x1080 display, each eye should have 0.88 aspect (half of 1.77)
+                    float aspectRatioPerEye = _deviceDescriptor.NumDisplays == 1 ? aspectRatio * 0.5f : aspectRatio;
+                    //set projection matrix for each eye
+                    Camera.projectionMatrix = Matrix4x4.Perspective(_deviceDescriptor.MonocularVertical, aspectRatioPerEye, Camera.nearClipPlane, Camera.farClipPlane);
                     SetDistortion(_deviceDescriptor.K1Red, _deviceDescriptor.K1Green, _deviceDescriptor.K1Blue, 
                     _deviceDescriptor.CenterProjX, _deviceDescriptor.CenterProjY); //set distortion shader
             
@@ -236,17 +256,26 @@ namespace OSVR
             {
                 if(_distortionEffect != null)
                 {
-                    _distortionEffect.k1Red = k1Red;
-                    _distortionEffect.k1Green = k1Green;
-                    _distortionEffect.k1Blue = k1Blue;
-                    _distortionEffect.fullCenter = new Vector2(centerProjX, centerProjY);
+                    //disable distortion if there is no distortion for this hmd
+                    if(k1Red == 0 && k1Green == 0 && k1Blue == 0)
+                    {
+                        _distortionEffect.enabled = false;
+                    }
+                    else
+                    {
+                        _distortionEffect.k1Red = k1Red;
+                        _distortionEffect.k1Green = k1Green;
+                        _distortionEffect.k1Blue = k1Blue;
+                        _distortionEffect.fullCenter = new Vector2(centerProjX, centerProjY);
+                    }
+                    
                 }
             }
 
             //Set the Screen Resolution
             private void SetResolution(int width, int height)
             {
-                //set the resolution
+                //set the resolution, default to full screen
                 Screen.SetResolution(width, height, true);
 #if UNITY_EDITOR
                 UnityEditor.PlayerSettings.defaultScreenWidth = width;
