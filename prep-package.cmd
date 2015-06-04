@@ -17,3 +17,7 @@ move CONTRIBUTING.html OSVR-Unity-Dist\
 rem Copy the license and the notice
 xcopy LICENSE OSVR-Unity-Dist /Y
 xcopy NOTICE OSVR-Unity-Dist /Y
+
+rem Copy the readme and changes to text files inside the Unity editor
+copy OSVR-Unity\README.md OSVR-Unity-Dist\src\OSVR-Unity\Assets\OSVRUnity\README.txt /Y
+copy OSVR-Unity\CHANGES.md OSVR-Unity-Dist\src\OSVR-Unity\Assets\OSVRUnity\CHANGES.txt /Y
