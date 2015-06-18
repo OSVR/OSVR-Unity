@@ -3,7 +3,10 @@
 This is an abbreviated changelog for the OSVR Unity Plugin.
 
 Use git for a full changelog.
-##Recent Changes (updated 31-March-2015)
+##Recent Changes (updated 31-May-2015)
+##Displays Folder removed v0.1.78-ge7ad2a0 (31-May-2015)
+- Unity developers no longer need to assign a JSON display descriptor in the Unity editor. The OSVR server sends the display descriptor to Unity, so switching HMDs requires changing the server config file to use a different display, not recompiling your Unity project. 
+
 ##DLL Search Path v0.1-69-gb80966b (31-March-2015)
 - The built executable will now find the plugins it needs in the _Data folder. Previously, the executable had to be in the same directory with Assets/Plugins. That is no longer necessary.
 
