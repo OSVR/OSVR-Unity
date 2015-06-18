@@ -90,7 +90,7 @@ namespace OSVR
                 {
                     //if the display configuration hasn't initialized, ping the DisplayInterface to retrieve it from the ClientKit
                     //this would mean DisplayInterface was unable to retrieve that data in its Start() function.
-                    GetComponent<DisplayInterface>().ReadDisplayPath();
+                    _displayInterface.ReadDisplayPath();
                 }
                 else if (!_initDisplayInterface && _displayInterface.Initialized)
                 {
@@ -211,7 +211,7 @@ namespace OSVR
             /// </summary>
             private void GetDeviceDescription()
             {
-                _deviceDescriptor = GetComponent<DisplayInterface>().GetDeviceDescription();
+                _deviceDescriptor = _displayInterface.GetDeviceDescription();
                 if (_deviceDescriptor != null)
                 {
                     switch (_deviceDescriptor.DisplayMode)
