@@ -19,6 +19,7 @@
 /// </copyright>
 
 using UnityEngine;
+using UnityEngine.Events;
 using System.Collections;
 
 /// <summary>
@@ -27,6 +28,9 @@ using System.Collections;
 [RequireComponent(typeof(OSVR.Unity.InterfaceGameObject))]
 public class HandleButtonPress : MonoBehaviour
 {
+    public UnityEvent OnPress;
+    public UnityEvent OnRelease;
+
     public void Start()
     {
         gameObject.GetComponent<OSVR.Unity.InterfaceGameObject>().osvrInterface.RegisterCallback(handleButton);
@@ -35,5 +39,7 @@ public class HandleButtonPress : MonoBehaviour
     public void handleButton(string path, bool state)
     {
         Debug.Log("Got button: " + path + " state is " + state);
+        if(state) OnPress.Invoke();
+        else OnRelease.Invoke();
     }
 }
