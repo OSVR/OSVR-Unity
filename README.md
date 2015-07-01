@@ -23,6 +23,8 @@ Note that if you're looking at the source, you'll need to download and import th
 ### Managed-OSVR
 When the `build-for-unity.cmd` script is run (by the CI or a human) in Managed-OSVR, it generates a tree with `Managed-OSVR-Unity` as the root directory. The contents of that (which will be a `.dll`, and some additional subdirectories and files) should be moved to the `OSVR-Unity/Assets/Plugins` directory.
 
+`install-managed-osvr.cmd` can do this if you place the `Managed-OSVR-Unity` in the root of this repository.
+
 ### OSVR-Unity
 This contains the source project used to generate `.unitypackage` files, since that seems more useful as "source" than a repo containing a `.unitypackage` file. Any one of the scenes should work to get you in there. There is an editor script to automate the bundling of a `.unitypackage` for the sake of CI.
 
