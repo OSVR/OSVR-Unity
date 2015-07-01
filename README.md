@@ -6,24 +6,24 @@
 > For support, see <http://support.osvr.com>
 
 ## .NET Binding for OSVR - "Managed-OSVR"
-Contained in `Managed-OSVR/ClientKit`. The `Managed-OSVR` directory contains a solution with both the ClientKit wrapper and ported examples based on the C++ examples from the core.
+The Unity integration is based on the [Managed-OSVR][] .NET binding for OSVR, which is now maintained in a separate repository. That code is entirely Unity-independent so it can be used in other applications/frameworks.
 
-## OSVR-Unity Wrapper
-In the `OSVR-Unity` directory. Note that if you're looking at the source, you'll need to build the Managed-OSVR/ClientKit project to get the plugins installed into this directory.
+[Managed-OSVR]: https://github.com/OSVR/Managed-OSVR
 
-It contains its own README with some basic documentation.
+## OSVR Unity Integration
+The development "project" for Unity is in the `OSVR-Unity` directory. We are currently maintaining support for 4.6.1 as well as 5.x in the same tree, so be aware of that if you're using a newer version that you don't break the older version. (You can parallel-install different versions of Unity, you just need to specify a different install directory). This is the project used to generate the `.unitypackage` file (there is an editor script that does it for the CI's sake).
 
-## Bundled binary snapshot
-Windows x86 native DLLs are bundled in the `Managed-OSVR/ClientKit` directory. The are presently from the snapshot identified as:
+The `OSVR-Unity` directory contains its own README with some basic documentation that is shipped with the built version.
 
-> `OSVR-Core-Snapshot-v0.1-634-g4fbaaee`
+Note that if you're looking at the source, you'll need to download and import the Managed-OSVR project artifacts, see below.
 
-If you have binary preview access, note that the OSVR-Unity snapshots there are re-built with every new core snapshot, rather than the version of the binaries mentioned here.
 
 ## Development Information
 
 ### Managed-OSVR
-This project is entirely Unity-independent, and aside from a post-build action that copies the assembly and the dependent DLL files over into the OSVR-Unity tree, that subdirectory could basically stand alone.
+When the `build-for-unity.cmd` script is run (by the CI or a human) in Managed-OSVR, it generates a tree with `Managed-OSVR-Unity` as the root directory. The contents of that (which will be a `.dll`, and some additional subdirectories and files) should be moved to the `OSVR-Unity/Assets/Plugins` directory.
+
+`install-managed-osvr.cmd` can do this if you place the `Managed-OSVR-Unity` in the root of this repository.
 
 ### OSVR-Unity
 This contains the source project used to generate `.unitypackage` files, since that seems more useful as "source" than a repo containing a `.unitypackage` file. Any one of the scenes should work to get you in there. There is an editor script to automate the bundling of a `.unitypackage` for the sake of CI.
