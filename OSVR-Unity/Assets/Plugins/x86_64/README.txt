@@ -1,0 +1,1 @@
+Placeholder for OSVR-Core client libraries built for Windows, 64-bit.
