@@ -8,9 +8,12 @@ A few tips:
 
 The OSVR system consists of a number of repositories, many of which are in the [OSVR organization on GitHub][osvr-org].
 
-The `OSVR-Unity` repo consists of two parts: the Managed-OSVR bindings for using OSVR ClientKit from .NET-based languages, and the OSVR-Unity integration and sample code.
+The `OSVR-Unity` repo contains the code that integrates OSVR, via the [Managed-OSVR][] bindings (for using OSVR ClientKit from .NET-based languages), with the Unity game engine, as well as some sample code.
 
-- If you've got an issue to report, a bug fix, or a feature addition to those components: **yes**, you're in the right spot!
+[Managed-OSVR]: https://github.com/OSVR/Managed-OSVR
+
+- If you've got an issue to report, a bug fix, or a feature addition specific to the OSVR-Unity integration components: **yes**, you're in the right spot! (If you aren't sure if it's Unity-specific or in Managed-OSVR, it's fine to start here.)
+- If you're got something that's related to .NET but not Unity-specific: **you're close** - see the [Managed-OSVR][] repo for the non-Unity-specific OSVR .NET bindings.
 - If you have an issue, bug fix, or other contribution related to the OSVR server (which comes bundled with an OSVR-Unity binary snapshot) or one of the plugins: **you're close** - see the [OSVR-Core](https://github.com/osvr/OSVR-Core) repo for the server and its bundled plugins.
 - If you have a hardware or software issue related to OSVR but aren't sure exactly where it fits: **let us know with a support ticket at <http://support.osvr.com>**
 
@@ -18,7 +21,7 @@ The `OSVR-Unity` repo consists of two parts: the Managed-OSVR bindings for using
 
 ## Getting ready
 
-General "getting started" instructions can be found at <http://wiki.osvr.com>.
+General "getting started" instructions can be found at <http://osvr.github.io>.
 
 When making pull requests, please fork the project and create a topic branch off of the `master` branch.
 (This is what GitHub does by default if you start editing with your web browser.)
@@ -31,7 +34,7 @@ Avoid merging from master into your topic branch: if you need a change from mast
 
 Try to develop code that is portable (not particularly tied to a single operating system/compiler/etc) - OSVR runs on a number of platforms, and while we don't expect you to have all of them to test on, it's good to keep in mind.
 
-Note that the Managed-OSVR code should be entirely Unity-independent, so it can be used in other .NET-based applications. The reason for the specific version of the .NET framework it is using is for compatibility with the runtime used by Unity.
+Please note the compatible versions of Unity in the project README, and make sure that any change is either optional (and properly version-guarded) or works all the way back to the oldest version of Unity we support.
 
 If you're adding something reasonably testable, please also add a test.
 If you're touching code that already has tests, make sure they didn't break.
