@@ -3,7 +3,12 @@
 This is an abbreviated changelog for the OSVR Unity Plugin.
 
 Use git for a full changelog.
-##Recent Changes (updated 31-May-2015)
+##Recent Changes (updated 30-June-2015)
+
+##Update/rename of Managed-OSVR assembly v0.1-94-gf4d3c44
+- The Unity plugin now uses the external Managed-OSVR project and assembly, providing improved reliability, development progress, and 64-bit support.
+- Projects upgrading to the new version should remove all copies of `ClientKit.dll` from their `Assets` (including subdirectories) before importing the updated package, as the file has been renamed to `OSVR.ClientKit.dll` to match .NET conventions.
+
 ##Displays Folder removed v0.1.78-ge7ad2a0 (31-May-2015)
 - Unity developers no longer need to assign a JSON display descriptor in the Unity editor. The OSVR server sends the display descriptor to Unity, so switching HMDs requires changing the server config file to use a different display, not recompiling your Unity project. 
 

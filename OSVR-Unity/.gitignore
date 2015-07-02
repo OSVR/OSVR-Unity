@@ -1,3 +1,15 @@
+# Don't commit a file from another project!
+/Assets/Plugins/OSVR.ClientKit.*
+
+# Don't commit binaries or files like them
+/Assets/Plugins/x86/*
+/Assets/Plugins/x86_64/*
+/Assets/Plugins/Android/**/*
+
+# Don't commit your UnityVS stuff
+/Assets/UnityVS.meta
+/Assets/UnityVS/**/*
+
 # See http://kleber-swf.com/the-definitive-gitignore-for-unity-projects/
 
 # =============== #
@@ -8,7 +20,7 @@
 [Bb]uild
 [Ll]ibrary/
 sysinfo.txt
- 
+
 # ===================================== #
 # Visual Studio / MonoDevelop generated #
 # ===================================== #
@@ -21,7 +33,7 @@ sysinfo.txt
 /*.user
 /*.unityproj
 /*.booproj
- 
+
 # ============ #
 # OS generated #
 # ============ #
