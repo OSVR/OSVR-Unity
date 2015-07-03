@@ -22,30 +22,30 @@ using UnityEngine;
 
 namespace OSVR
 {
-	namespace Unity
-	{
-		/// <summary>
-		/// Base class for a script that requires an OSVR position interface.
-		/// It primarily takes care of requiring that there is an PositionInterface component in the current game object.
-		/// </summary>
-		[RequireComponent(typeof(OSVR.Unity.PositionInterface))]
-		public class RequiresPositionInterface : MonoBehaviour
-		{
-			/// <summary>
-			/// Accessor for the sibling PositionInterface component.
-			/// </summary>
-			private OSVR.Unity.PositionInterface positionInterface;
-			public OSVR.Unity.PositionInterface PositionInterface
-			{
-				get
-				{
-					if(positionInterface == null)
-					{
-						positionInterface = GetComponent<OSVR.Unity.PositionInterface>();
-					}
-					return positionInterface;
-				}
-			}
-		}
-	}
+    namespace Unity
+    {
+        /// <summary>
+        /// Base class for a script that requires an OSVR position interface.
+        /// It primarily takes care of requiring that there is an PositionInterface component in the current game object.
+        /// </summary>
+        [RequireComponent(typeof(OSVR.Unity.PositionInterface))]
+        public class RequiresPositionInterface : MonoBehaviour
+        {
+            /// <summary>
+            /// Accessor for the sibling PositionInterface component.
+            /// </summary>
+            private OSVR.Unity.PositionInterface positionInterface;
+            public OSVR.Unity.PositionInterface PositionInterface
+            {
+                get
+                {
+                    if(positionInterface == null)
+                    {
+                        positionInterface = GetComponent<OSVR.Unity.PositionInterface>();
+                    }
+                    return positionInterface;
+                }
+            }
+        }
+    }
 }

@@ -22,30 +22,30 @@ using UnityEngine;
 
 namespace OSVR
 {
-	namespace Unity
-	{
-		/// <summary>
-		/// Base class for a script that requires an OSVR analog interface.
-		/// It primarily takes care of requiring that there is an AnalogInterface component in the current game object.
-		/// </summary>
-		[RequireComponent(typeof(OSVR.Unity.AnalogInterface))]
-		public class RequiresAnalogInterface : MonoBehaviour
-		{
-			/// <summary>
-			/// Accessor for the sibling AnalogInterface component.
-			/// </summary>
-			private AnalogInterface analogInterface;
-			public AnalogInterface AnalogInterface
-			{
-				get
-				{
-					if(analogInterface == null)
-					{
-						analogInterface = GetComponent<AnalogInterface>();
-					}
-					return analogInterface;
-				}
-			}
-		}
-	}
+    namespace Unity
+    {
+        /// <summary>
+        /// Base class for a script that requires an OSVR analog interface.
+        /// It primarily takes care of requiring that there is an AnalogInterface component in the current game object.
+        /// </summary>
+        [RequireComponent(typeof(OSVR.Unity.AnalogInterface))]
+        public class RequiresAnalogInterface : MonoBehaviour
+        {
+            /// <summary>
+            /// Accessor for the sibling AnalogInterface component.
+            /// </summary>
+            private AnalogInterface analogInterface;
+            public AnalogInterface AnalogInterface
+            {
+                get
+                {
+                    if(analogInterface == null)
+                    {
+                        analogInterface = GetComponent<AnalogInterface>();
+                    }
+                    return analogInterface;
+                }
+            }
+        }
+    }
 }

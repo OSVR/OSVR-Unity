@@ -22,30 +22,30 @@ using UnityEngine;
 
 namespace OSVR
 {
-	namespace Unity
-	{
-		/// <summary>
-		/// Base class for a script that requires an OSVR interface.
-		/// It primarily takes care of requiring that there is an PoseInterface component in the current game object.
-		/// </summary>
-		[RequireComponent(typeof(OSVR.Unity.PoseInterface))]
-		public class RequiresPoseInterface : MonoBehaviour
-		{
-			/// <summary>
-			/// Accessor for the sibling PoseInterface component.
-			/// </summary>
-			private PoseInterface poseInterface;
-			public PoseInterface PoseInterface
-			{
-				get
-				{
-					if(poseInterface == null)
-					{
- 						poseInterface = GetComponent<PoseInterface>();
-					}
-					return poseInterface;
-				}
-			}
-		}
-	}
+    namespace Unity
+    {
+        /// <summary>
+        /// Base class for a script that requires an OSVR interface.
+        /// It primarily takes care of requiring that there is an PoseInterface component in the current game object.
+        /// </summary>
+        [RequireComponent(typeof(OSVR.Unity.PoseInterface))]
+        public class RequiresPoseInterface : MonoBehaviour
+        {
+            /// <summary>
+            /// Accessor for the sibling PoseInterface component.
+            /// </summary>
+            private PoseInterface poseInterface;
+            public PoseInterface PoseInterface
+            {
+                get
+                {
+                    if(poseInterface == null)
+                    {
+                        poseInterface = GetComponent<PoseInterface>();
+                    }
+                    return poseInterface;
+                }
+            }
+        }
+    }
 }

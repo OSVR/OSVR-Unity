@@ -49,9 +49,9 @@ namespace OSVR
             {
                 get
                 {
-					if (null == interfaceGameObject) {
-						return null;
-					}
+                    if (null == interfaceGameObject) {
+                        return null;
+                    }
                     return interfaceGameObject.osvrInterface;
                 }
             }

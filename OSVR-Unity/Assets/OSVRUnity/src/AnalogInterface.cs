@@ -23,36 +23,36 @@ using System;
 
 namespace OSVR
 {
-	namespace Unity
-	{
-		/// <summary>
-		/// Analog Interface - exposes an analog interface to other scene objects.
-		///
-		/// Attach to a GameObject that is interested in analog button state or events.
-		/// </summary>
-		public class AnalogInterface : InterfaceGameObjectBase
-		{
-			public OSVR.ClientKit.AnalogInterface Interface { get; protected set; }
-			
-			override protected void Start()
-			{
-				base.Start();
-				if (!String.IsNullOrEmpty(usedPath))
-				{
-					Interface = OSVR.ClientKit.AnalogInterface.GetInterface(
-						ClientKit.instance.context, usedPath);
-				}
-			}
-			
-			protected override void Stop()
-			{
-				base.Stop();
-				if(Interface != null)
-				{
-					Interface.Dispose();
-					Interface = null;
-				}
-			}
-		}
-	}
+    namespace Unity
+    {
+        /// <summary>
+        /// Analog Interface - exposes an analog interface to other scene objects.
+        ///
+        /// Attach to a GameObject that is interested in analog button state or events.
+        /// </summary>
+        public class AnalogInterface : InterfaceGameObjectBase
+        {
+            public OSVR.ClientKit.AnalogInterface Interface { get; protected set; }
+            
+            override protected void Start()
+            {
+                base.Start();
+                if (!String.IsNullOrEmpty(usedPath))
+                {
+                    Interface = OSVR.ClientKit.AnalogInterface.GetInterface(
+                        ClientKit.instance.context, usedPath);
+                }
+            }
+            
+            protected override void Stop()
+            {
+                base.Stop();
+                if(Interface != null)
+                {
+                    Interface.Dispose();
+                    Interface = null;
+                }
+            }
+        }
+    }
 }

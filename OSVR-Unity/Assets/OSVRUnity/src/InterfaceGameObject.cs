@@ -29,7 +29,7 @@ namespace OSVR
         /// <summary>
         /// A script component to add to a GameObject in order to access an interface, managing lifetime and centralizing the path specification.
         /// </summary>
-		public class InterfaceGameObject : InterfaceGameObjectBase
+        public class InterfaceGameObject : InterfaceGameObjectBase
         {
             public InterfaceCallbacks osvrInterface
             {
@@ -61,7 +61,7 @@ namespace OSVR
             /// </summary>
             protected override void Start()
             {
-				base.Start ();
+                base.Start ();
                 if (null != iface)
                 {
                     return;
@@ -74,7 +74,7 @@ namespace OSVR
 
             protected override void Stop()
             {
-				base.Stop ();
+                base.Stop ();
                 if (null != iface)
                 {
                     Object.Destroy(iface);

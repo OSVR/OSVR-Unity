@@ -22,30 +22,30 @@ using UnityEngine;
 
 namespace OSVR
 {
-	namespace Unity
-	{
-		/// <summary>
-		/// Base class for a script that requires an OSVR orientation interface.
-		/// It primarily takes care of requiring that there is an OrientationInterface component in the current game object.
-		/// </summary>
-		[RequireComponent(typeof(OSVR.Unity.OrientationInterface))]
-		public class RequiresOrientationInterface : MonoBehaviour
-		{
-			/// <summary>
-			/// Accessor for the sibling OrientationInterface component.
-			/// </summary>
-			private OSVR.Unity.OrientationInterface orientationInterface;
-			public OSVR.Unity.OrientationInterface OrientationInterface
-			{
-				get
-				{
-					if(orientationInterface == null)
-					{
-						orientationInterface = GetComponent<OSVR.Unity.OrientationInterface>();
-					}
-					return orientationInterface;
-				}
-			}
-		}
-	}
+    namespace Unity
+    {
+        /// <summary>
+        /// Base class for a script that requires an OSVR orientation interface.
+        /// It primarily takes care of requiring that there is an OrientationInterface component in the current game object.
+        /// </summary>
+        [RequireComponent(typeof(OSVR.Unity.OrientationInterface))]
+        public class RequiresOrientationInterface : MonoBehaviour
+        {
+            /// <summary>
+            /// Accessor for the sibling OrientationInterface component.
+            /// </summary>
+            private OSVR.Unity.OrientationInterface orientationInterface;
+            public OSVR.Unity.OrientationInterface OrientationInterface
+            {
+                get
+                {
+                    if(orientationInterface == null)
+                    {
+                        orientationInterface = GetComponent<OSVR.Unity.OrientationInterface>();
+                    }
+                    return orientationInterface;
+                }
+            }
+        }
+    }
 }

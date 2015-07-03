@@ -22,30 +22,30 @@ using UnityEngine;
 
 namespace OSVR
 {
-	namespace Unity
-	{
-		/// <summary>
-		/// Base class for a script that requires an OSVR button interface.
-		/// It primarily takes care of requiring that there is an ButtonInterface component in the current game object.
-		/// </summary>
-		[RequireComponent(typeof(OSVR.Unity.ButtonInterface))]
-		public class RequiresButtonInterface : MonoBehaviour
-		{
-			/// <summary>
-			/// Accessor for the sibling ButtonInterface component.
-			/// </summary>
-			private ButtonInterface buttonInterface;
-			public ButtonInterface ButtonInterface
-			{
-				get
-				{
-					if(buttonInterface == null)
-					{
-						buttonInterface = GetComponent<ButtonInterface>();
-					}
-					return buttonInterface;
-				}
-			}
-		}
-	}
+    namespace Unity
+    {
+        /// <summary>
+        /// Base class for a script that requires an OSVR button interface.
+        /// It primarily takes care of requiring that there is an ButtonInterface component in the current game object.
+        /// </summary>
+        [RequireComponent(typeof(OSVR.Unity.ButtonInterface))]
+        public class RequiresButtonInterface : MonoBehaviour
+        {
+            /// <summary>
+            /// Accessor for the sibling ButtonInterface component.
+            /// </summary>
+            private ButtonInterface buttonInterface;
+            public ButtonInterface ButtonInterface
+            {
+                get
+                {
+                    if(buttonInterface == null)
+                    {
+                        buttonInterface = GetComponent<ButtonInterface>();
+                    }
+                    return buttonInterface;
+                }
+            }
+        }
+    }
 }

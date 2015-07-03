@@ -23,36 +23,36 @@ using System;
 
 namespace OSVR
 {
-	namespace Unity
-	{
-		/// <summary>
-		/// Button Interface - exposes a button interface to other scene objects.
-		///
-		/// Attach to a GameObject that is interested in button state or events.
-		/// </summary>
-		public class ButtonInterface : InterfaceGameObjectBase
-		{
-			public OSVR.ClientKit.ButtonInterface Interface { get; protected set; }
-			
-			override protected void Start()
-			{
-				base.Start();
-				if (!String.IsNullOrEmpty(usedPath))
-				{
-					Interface = OSVR.ClientKit.ButtonInterface.GetInterface(
-						ClientKit.instance.context, usedPath);
-				}
-			}
-			
-			protected override void Stop()
-			{
-				base.Stop();
-				if(Interface != null)
-				{
-					Interface.Dispose();
-					Interface = null;
-				}
-			}
-		}
-	}
+    namespace Unity
+    {
+        /// <summary>
+        /// Button Interface - exposes a button interface to other scene objects.
+        ///
+        /// Attach to a GameObject that is interested in button state or events.
+        /// </summary>
+        public class ButtonInterface : InterfaceGameObjectBase
+        {
+            public OSVR.ClientKit.ButtonInterface Interface { get; protected set; }
+            
+            override protected void Start()
+            {
+                base.Start();
+                if (!String.IsNullOrEmpty(usedPath))
+                {
+                    Interface = OSVR.ClientKit.ButtonInterface.GetInterface(
+                        ClientKit.instance.context, usedPath);
+                }
+            }
+            
+            protected override void Stop()
+            {
+                base.Stop();
+                if(Interface != null)
+                {
+                    Interface.Dispose();
+                    Interface = null;
+                }
+            }
+        }
+    }
 }
