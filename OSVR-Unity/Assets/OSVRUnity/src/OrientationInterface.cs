@@ -30,38 +30,37 @@ namespace OSVR
         ///
         /// Attach to a GameObject that you'd like to have updated in this way.
         /// </summary>
-        public class OrientationInterface : MonoBehaviour
+        public class OrientationInterface : InterfaceGameObjectBase
         {
-            /// <summary>
-            /// The interface path you want to connect to.
-            /// </summary>
-            public string path;
+            OrientationAdapter adapter;
 
-            private OSVR.ClientKit.Interface iface;
-            private OSVR.ClientKit.OrientationCallback cb;
-
-            // Use this for initialization
-            void Start()
+            override protected void Start()
             {
-                if (0 == path.Length)
+                base.Start();
+                if (!String.IsNullOrEmpty(usedPath))
                 {
-                    Debug.LogError("Missing path for OrientationInterface " + gameObject.name);
-                    return;
+                    adapter = new OrientationAdapter(
+                        OSVR.ClientKit.OrientationInterface.GetInterface(ClientKit.instance.context, usedPath));
                 }
-
-                iface = OSVR.Unity.ClientKit.instance.context.getInterface(path);
-                cb = new OSVR.ClientKit.OrientationCallback(callback);
-                iface.registerCallback(cb, IntPtr.Zero);
             }
 
-            private void callback(IntPtr userdata, ref OSVR.ClientKit.TimeValue timestamp, ref OSVR.ClientKit.OrientationReport report)
+            protected override void Stop()
             {
-                transform.localRotation = Math.ConvertOrientation(report.rotation);
+                base.Stop();
+                if(adapter != null)
+                {
+                    adapter.Dispose();
+                    adapter = null;
+                }
             }
 
-            void OnDestroy()
+            void Update()
             {
-                iface = null;
+                if (this.adapter != null)
+                {
+                    var state = this.adapter.GetState();
+                    transform.localRotation = state.Value;
+                }
             }
         }
     }

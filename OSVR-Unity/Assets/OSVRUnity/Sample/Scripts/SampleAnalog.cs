@@ -27,17 +27,17 @@ using System.Collections;
 /// GetComponent usage required to get to the InterfaceGameObject. We can just rely on it being there and use
 /// the inherited properties to access it concisely. Thus, this is the preferred technique for handling callbacks.
 /// </summary>
-public class SampleAnalog : OSVR.Unity.InterfaceBase
+public class SampleAnalog : OSVR.Unity.RequiresAnalogInterface
 {
 
     // Use this for initialization
     void Start()
     {
-        osvrInterface.RegisterCallback(callback);
+        this.AnalogInterface.Interface.StateChanged += Interface_StateChanged;
     }
 
-    void callback(string path, float value)
+    void Interface_StateChanged(object sender, OSVR.ClientKit.TimeValue timestamp, int sensor, double report)
     {
-        Debug.Log("Got analog value " + value);
+        Debug.Log("Got analog value " + report);
     }
 }

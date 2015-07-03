@@ -22,20 +22,20 @@ using UnityEngine;
 using System.Collections;
 
 /// <summary>
-/// Note that this derives from the OSVR.Unity.InterfaceBase, and so unlike the code in HandleButtonPress.cs,
-/// no class attributes are required to enforce the presence of an InterfaceGameObject component, nor is any
-/// GetComponent usage required to get to the InterfaceGameObject. We can just rely on it being there and use
+/// Note that this derives from the OSVR.Unity.RequiresButtonInterface, and so unlike the code in HandleButtonPress.cs,
+/// no class attributes are required to enforce the presence of an ButtonInterface component, nor is any
+/// GetComponent usage required to get to the ButtonInterface. We can just rely on it being there and use
 /// the inherited properties to access it concisely. Thus, this is the preferred technique for handling callbacks.
 /// </summary>
-public class SampleButtonScript : OSVR.Unity.InterfaceBase
+public class SampleButtonScript : OSVR.Unity.RequiresButtonInterface
 {
     void Start()
     {
-        osvrInterface.RegisterCallback(handleButton);
+        this.ButtonInterface.Interface.StateChanged += handleButton;
     }
 
-    void handleButton(string path, bool state)
+    void handleButton(object sender, OSVR.ClientKit.TimeValue timestamp, int sensor, byte report)
     {
-        Debug.Log("Got button: " + path + " state is " + state);
+        Debug.Log("Got button: " + sensor.ToString() + " state is " + report);
     }
 }
