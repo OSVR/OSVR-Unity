@@ -25,9 +25,11 @@ namespace OSVR
     namespace Unity
     {
         /// <summary>
+        /// (OBSOLETE)
         /// Base class for a script that requires an OSVR interface.
         /// It primarily takes care of requiring that there is an InterfaceGameObject component in the current game object.
         /// </summary>
+        [System.Obsolete("Interface specific base classes are now available. For example, use RequiresOrientationInterface to require an orientation interface.")]
         [RequireComponent(typeof(InterfaceGameObject))]
         public class InterfaceBase : MonoBehaviour
         {

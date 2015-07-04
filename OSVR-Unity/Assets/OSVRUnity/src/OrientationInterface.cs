@@ -62,6 +62,14 @@ namespace OSVR
                     transform.localRotation = state.Value;
                 }
             }
+
+            public OSVR.ClientKit.IInterface<Quaternion> Interface
+            {
+                get
+                {
+                    return this.adapter;
+                }
+            }
         }
     }
 }

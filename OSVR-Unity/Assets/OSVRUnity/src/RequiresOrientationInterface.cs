@@ -29,21 +29,21 @@ namespace OSVR
         /// It primarily takes care of requiring that there is an OrientationInterface component in the current game object.
         /// </summary>
         [RequireComponent(typeof(OSVR.Unity.OrientationInterface))]
-        public class RequiresOrientationInterface : MonoBehaviour
+        public class RequiresOrientationInterface : MonoBehaviour, IRequiresInterface<UnityEngine.Quaternion>
         {
             /// <summary>
             /// Accessor for the sibling OrientationInterface component.
             /// </summary>
-            private OSVR.Unity.OrientationInterface orientationInterface;
-            public OSVR.Unity.OrientationInterface OrientationInterface
+            private OSVR.Unity.OrientationInterface ifaceComponent;
+            public OSVR.ClientKit.IInterface<UnityEngine.Quaternion> Interface
             {
                 get
                 {
-                    if(orientationInterface == null)
+                    if (ifaceComponent == null)
                     {
-                        orientationInterface = GetComponent<OSVR.Unity.OrientationInterface>();
+                        ifaceComponent = GetComponent<OSVR.Unity.OrientationInterface>();
                     }
-                    return orientationInterface;
+                    return ifaceComponent.Interface;
                 }
             }
         }

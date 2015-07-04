@@ -27,8 +27,9 @@ namespace OSVR
     {
 
         /// <summary>
-        /// A script component to add to a GameObject in order to access an interface, managing lifetime and centralizing the path specification.
+        /// (OBSOLETE) A script component to add to a GameObject in order to access an interface, managing lifetime and centralizing the path specification.
         /// </summary>
+        [System.Obsolete("Use one of the OSVR.Unity.Requires*Interface base classes instead.")]
         public class InterfaceGameObject : InterfaceGameObjectBase
         {
             public InterfaceCallbacks osvrInterface

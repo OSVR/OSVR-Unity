@@ -33,7 +33,7 @@ public class SampleAnalog : OSVR.Unity.RequiresAnalogInterface
     // Use this for initialization
     void Start()
     {
-        this.AnalogInterface.Interface.StateChanged += Interface_StateChanged;
+        this.Interface.StateChanged += Interface_StateChanged;
     }
 
     void Interface_StateChanged(object sender, OSVR.ClientKit.TimeValue timestamp, int sensor, double report)

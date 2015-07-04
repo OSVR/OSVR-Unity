@@ -31,7 +31,7 @@ public class SampleButtonScript : OSVR.Unity.RequiresButtonInterface
 {
     void Start()
     {
-        this.ButtonInterface.Interface.StateChanged += handleButton;
+        this.Interface.StateChanged += handleButton;
     }
 
     void handleButton(object sender, OSVR.ClientKit.TimeValue timestamp, int sensor, byte report)

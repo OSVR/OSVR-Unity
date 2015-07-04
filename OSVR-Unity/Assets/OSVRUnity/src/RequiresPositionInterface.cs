@@ -29,21 +29,21 @@ namespace OSVR
         /// It primarily takes care of requiring that there is an PositionInterface component in the current game object.
         /// </summary>
         [RequireComponent(typeof(OSVR.Unity.PositionInterface))]
-        public class RequiresPositionInterface : MonoBehaviour
+        public class RequiresPositionInterface : MonoBehaviour, IRequiresInterface<UnityEngine.Vector3>
         {
             /// <summary>
             /// Accessor for the sibling PositionInterface component.
             /// </summary>
-            private OSVR.Unity.PositionInterface positionInterface;
-            public OSVR.Unity.PositionInterface PositionInterface
+            private OSVR.Unity.PositionInterface ifaceComponent;
+            public OSVR.ClientKit.IInterface<UnityEngine.Vector3> Interface
             {
                 get
                 {
-                    if(positionInterface == null)
+                    if(ifaceComponent == null)
                     {
-                        positionInterface = GetComponent<OSVR.Unity.PositionInterface>();
+                        ifaceComponent = GetComponent<OSVR.Unity.PositionInterface>();
                     }
-                    return positionInterface;
+                    return ifaceComponent.Interface;
                 }
             }
         }

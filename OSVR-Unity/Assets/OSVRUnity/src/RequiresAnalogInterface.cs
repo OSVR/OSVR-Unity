@@ -29,21 +29,21 @@ namespace OSVR
         /// It primarily takes care of requiring that there is an AnalogInterface component in the current game object.
         /// </summary>
         [RequireComponent(typeof(OSVR.Unity.AnalogInterface))]
-        public class RequiresAnalogInterface : MonoBehaviour
+        public class RequiresAnalogInterface : MonoBehaviour, IRequiresInterface<double>
         {
             /// <summary>
             /// Accessor for the sibling AnalogInterface component.
             /// </summary>
-            private AnalogInterface analogInterface;
-            public AnalogInterface AnalogInterface
+            private AnalogInterface ifaceComponent;
+            public OSVR.ClientKit.IInterface<double> Interface
             {
                 get
                 {
-                    if(analogInterface == null)
+                    if (ifaceComponent == null)
                     {
-                        analogInterface = GetComponent<AnalogInterface>();
+                        ifaceComponent = GetComponent<AnalogInterface>();
                     }
-                    return analogInterface;
+                    return ifaceComponent.Interface;
                 }
             }
         }

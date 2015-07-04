@@ -29,21 +29,21 @@ namespace OSVR
         /// It primarily takes care of requiring that there is an PoseInterface component in the current game object.
         /// </summary>
         [RequireComponent(typeof(OSVR.Unity.PoseInterface))]
-        public class RequiresPoseInterface : MonoBehaviour
+        public class RequiresPoseInterface : MonoBehaviour, IRequiresInterface<OSVR.Unity.Pose3>
         {
             /// <summary>
             /// Accessor for the sibling PoseInterface component.
             /// </summary>
-            private PoseInterface poseInterface;
-            public PoseInterface PoseInterface
+            private PoseInterface ifaceComponent;
+            public OSVR.ClientKit.IInterface<OSVR.Unity.Pose3> Interface
             {
                 get
                 {
-                    if(poseInterface == null)
+                    if(ifaceComponent == null)
                     {
-                        poseInterface = GetComponent<PoseInterface>();
+                        ifaceComponent = GetComponent<PoseInterface>();
                     }
-                    return poseInterface;
+                    return ifaceComponent.Interface;
                 }
             }
         }

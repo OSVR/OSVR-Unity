@@ -63,6 +63,14 @@ namespace OSVR
                     transform.localPosition = state.Value;
                 }
             }
+
+            public OSVR.ClientKit.IInterface<Vector3> Interface
+            {
+                get
+                {
+                    return adapter;
+                }
+            }
         }
     }
 }

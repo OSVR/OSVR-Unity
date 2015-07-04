@@ -29,21 +29,21 @@ namespace OSVR
         /// It primarily takes care of requiring that there is an ButtonInterface component in the current game object.
         /// </summary>
         [RequireComponent(typeof(OSVR.Unity.ButtonInterface))]
-        public class RequiresButtonInterface : MonoBehaviour
+        public class RequiresButtonInterface : MonoBehaviour, IRequiresInterface<byte>
         {
             /// <summary>
             /// Accessor for the sibling ButtonInterface component.
             /// </summary>
-            private ButtonInterface buttonInterface;
-            public ButtonInterface ButtonInterface
+            private ButtonInterface ifaceComponent;
+            public OSVR.ClientKit.IInterface<byte> Interface
             {
                 get
                 {
-                    if(buttonInterface == null)
+                    if (ifaceComponent == null)
                     {
-                        buttonInterface = GetComponent<ButtonInterface>();
+                        ifaceComponent = GetComponent<ButtonInterface>();
                     }
-                    return buttonInterface;
+                    return ifaceComponent.Interface;
                 }
             }
         }

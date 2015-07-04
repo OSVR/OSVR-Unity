@@ -62,6 +62,14 @@ namespace OSVR
                     transform.localRotation = state.Value.Rotation;
                 }
             }
+
+            public OSVR.ClientKit.IInterface<OSVR.Unity.Pose3> Interface
+            {
+                get
+                {
+                    return adapter;
+                }
+            }
         }
     }
 }
