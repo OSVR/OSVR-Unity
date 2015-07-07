@@ -37,7 +37,7 @@ namespace OSVR
             override protected void Start()
             {
                 base.Start();
-                if(!String.IsNullOrEmpty(usedPath))
+                if(adapter == null && !String.IsNullOrEmpty(usedPath))
                 {
                     adapter = new PositionAdapter(
                         OSVR.ClientKit.PositionInterface.GetInterface(
@@ -68,6 +68,7 @@ namespace OSVR
             {
                 get
                 {
+                    this.Start();
                     return adapter;
                 }
             }

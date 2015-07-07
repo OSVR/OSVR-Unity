@@ -79,9 +79,9 @@ namespace OSVR.Unity
             AdvertisePath();
             GameObject go = this.gameObject;
             PathHolder holder = null;
-            usedPath = path;
-            while (null != go && 0 == usedPath.Length)
+            while (null != go && System.String.IsNullOrEmpty(usedPath))
             {
+                usedPath = path;
                 holder = go.GetComponent<PathHolder>();
                 if (null != holder)
                 {

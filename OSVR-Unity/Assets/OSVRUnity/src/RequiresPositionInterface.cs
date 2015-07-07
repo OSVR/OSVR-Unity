@@ -43,7 +43,7 @@ namespace OSVR
                     {
                         ifaceComponent = GetComponent<OSVR.Unity.PositionInterface>();
                     }
-                    return ifaceComponent.Interface;
+                    return ifaceComponent == null ? null : ifaceComponent.Interface;
                 }
             }
         }

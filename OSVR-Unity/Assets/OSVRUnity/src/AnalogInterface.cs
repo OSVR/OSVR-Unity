@@ -32,14 +32,22 @@ namespace OSVR
         /// </summary>
         public class AnalogInterface : InterfaceGameObjectBase
         {
-            public OSVR.ClientKit.AnalogInterface Interface { get; protected set; }
+            private OSVR.ClientKit.AnalogInterface iface;
+            public OSVR.ClientKit.AnalogInterface Interface
+            { 
+                get
+                {
+                    this.Start();
+                    return iface;
+                }
+            }
             
             override protected void Start()
             {
                 base.Start();
-                if (!String.IsNullOrEmpty(usedPath))
+                if (iface == null && !String.IsNullOrEmpty(usedPath))
                 {
-                    Interface = OSVR.ClientKit.AnalogInterface.GetInterface(
+                    iface = OSVR.ClientKit.AnalogInterface.GetInterface(
                         ClientKit.instance.context, usedPath);
                 }
             }
@@ -47,10 +55,10 @@ namespace OSVR
             protected override void Stop()
             {
                 base.Stop();
-                if(Interface != null)
+                if(iface != null)
                 {
-                    Interface.Dispose();
-                    Interface = null;
+                    iface.Dispose();
+                    iface = null;
                 }
             }
         }

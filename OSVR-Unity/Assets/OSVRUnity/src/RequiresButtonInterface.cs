@@ -43,7 +43,7 @@ namespace OSVR
                     {
                         ifaceComponent = GetComponent<ButtonInterface>();
                     }
-                    return ifaceComponent.Interface;
+                    return ifaceComponent == null ? null : ifaceComponent.Interface;
                 }
             }
         }

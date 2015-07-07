@@ -32,14 +32,22 @@ namespace OSVR
         /// </summary>
         public class ButtonInterface : InterfaceGameObjectBase
         {
-            public OSVR.ClientKit.ButtonInterface Interface { get; protected set; }
+            private OSVR.ClientKit.ButtonInterface iface;
+            public OSVR.ClientKit.ButtonInterface Interface
+            { 
+                get
+                {
+                    this.Start ();
+                    return iface;
+                }
+            }
             
             override protected void Start()
             {
                 base.Start();
-                if (!String.IsNullOrEmpty(usedPath))
+                if (iface == null && !String.IsNullOrEmpty(usedPath))
                 {
-                    Interface = OSVR.ClientKit.ButtonInterface.GetInterface(
+                    iface = OSVR.ClientKit.ButtonInterface.GetInterface(
                         ClientKit.instance.context, usedPath);
                 }
             }
@@ -47,10 +55,10 @@ namespace OSVR
             protected override void Stop()
             {
                 base.Stop();
-                if(Interface != null)
+                if (iface != null)
                 {
-                    Interface.Dispose();
-                    Interface = null;
+                    iface.Dispose();
+                    iface = null;
                 }
             }
         }
