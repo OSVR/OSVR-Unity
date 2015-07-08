@@ -2353,7 +2353,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11436198, guid: 0b82dd794175b304a87805e4b38fbe84, type: 2}
       propertyPath: AppID
-      value: org.opengoggles.osvr-unity.sample.demo
+      value: org.osvr-unity.sample.demo
       objectReference: {fileID: 0}
     - target: {fileID: 11436198, guid: 0b82dd794175b304a87805e4b38fbe84, type: 2}
       propertyPath: m_Enabled
@@ -2475,7 +2475,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2550bc6af558044baf4aa2ee88d5e8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AppID: org.opengoggles.osvr-unity.sample.demo
+  AppID: org.osvr-unity.sample.demo
 --- !u!1 &1818608091
 GameObject:
   m_ObjectHideFlags: 0
@@ -2592,7 +2592,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a288e4aec9950634b83d232abc73d1bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  JsonDescriptorFile: {fileID: 4900000, guid: 903a53a7997a82c42b329c472b623a4e, type: 3}
 --- !u!114 &1818608098
 MonoBehaviour:
   m_ObjectHideFlags: 0
