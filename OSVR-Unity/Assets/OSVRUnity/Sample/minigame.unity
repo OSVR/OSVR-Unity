@@ -551,7 +551,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2550bc6af558044baf4aa2ee88d5e8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AppID: org.osvr-unity.sample.minigame
+  AppID: com.osvr.osvr-unity.sample.minigame
 --- !u!4 &738728247
 Transform:
   m_ObjectHideFlags: 0
@@ -728,7 +728,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11436198, guid: 0b82dd794175b304a87805e4b38fbe84, type: 2}
       propertyPath: AppID
-      value: org.osvr-unity.sample.minigame
+      value: com.osvr.osvr-unity.sample.minigame
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0b82dd794175b304a87805e4b38fbe84, type: 2}
