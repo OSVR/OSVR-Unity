@@ -11,8 +11,6 @@ GameObject:
   - 20: {fileID: 2000000}
   - 81: {fileID: 8100000}
   - 114: {fileID: 11400000}
-  - 114: {fileID: 11491624}
-  - 114: {fileID: 11437754}
   m_Layer: 0
   m_Name: VRDisplayUntracked
   m_TagString: Untagged
@@ -122,7 +120,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: .0219999999
-  m_StereoMirrorMode: 0
 --- !u!81 &8100000
 AudioListener:
   m_ObjectHideFlags: 1
@@ -170,59 +167,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   eye: 1
   cachedTransform: {fileID: 0}
---- !u!114 &11437754
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100000}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: db80e57e78593b64384f21c9a3022b68, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  k1Red: 0
-  k1Green: 0
-  k1Blue: 0
-  fullCenter: {x: .5, y: .5}
-  leftCenter: {x: .5, y: .5}
-  rightCenter: {x: .5, y: .5}
-  distortionShader: {fileID: 4800000, guid: 1dffc394b375bda49bb119de26c0bb35, type: 3}
---- !u!114 &11491624
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100000}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a288e4aec9950634b83d232abc73d1bb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 0}
-      propertyPath: k1Red
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: k1Green
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: k1Blue
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: distortionShader
-      value: 
-      objectReference: {fileID: 4800000, guid: 1dffc394b375bda49bb119de26c0bb35, type: 3}
+    m_Modifications: []
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 100000}
   m_IsPrefabParent: 1
+  m_IsExploded: 1

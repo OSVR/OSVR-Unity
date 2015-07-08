@@ -73,6 +73,7 @@ NavMeshSettings:
     minRegionArea: 2
     widthInaccuracy: 16.666666
     heightInaccuracy: 10
+    tileSizeHint: 0
   m_NavMesh: {fileID: 0}
 --- !u!1 &546153132
 GameObject:
@@ -1253,6 +1254,8 @@ GameObject:
   - 20: {fileID: 955452068}
   - 81: {fileID: 955452069}
   - 114: {fileID: 955452067}
+  - 114: {fileID: 955452071}
+  - 114: {fileID: 955452070}
   m_Layer: 0
   m_Name: VRDisplayUntracked
   m_TagString: Untagged
@@ -1330,6 +1333,35 @@ AudioListener:
   m_PrefabInternal: {fileID: 803028027}
   m_GameObject: {fileID: 955452065}
   m_Enabled: 1
+--- !u!114 &955452070
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 955452065}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a288e4aec9950634b83d232abc73d1bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &955452071
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 955452065}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db80e57e78593b64384f21c9a3022b68, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  k1Red: 0
+  k1Green: 0
+  k1Blue: 0
+  fullCenter: {x: .5, y: .5}
+  leftCenter: {x: .5, y: .5}
+  rightCenter: {x: .5, y: .5}
+  distortionShader: {fileID: 4800000, guid: 1dffc394b375bda49bb119de26c0bb35, type: 3}
 --- !u!1001 &1400362904
 Prefab:
   m_ObjectHideFlags: 0
