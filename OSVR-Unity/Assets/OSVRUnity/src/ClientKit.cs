@@ -75,7 +75,7 @@ namespace OSVR
                     if (0 == AppID.Length)
                     {
                         Debug.LogError("OSVR ClientKit instance needs AppID set to a reverse-order DNS name! Using dummy name...");
-                        AppID = "org.opengoggles.osvr-unity.dummy";
+                        AppID = "com.osvr.osvr-unity.dummy";
                     }
                     Debug.Log("[OSVR] Starting with app ID: " + AppID);
                     contextObject = new OSVR.ClientKit.ClientContext(AppID, 0);

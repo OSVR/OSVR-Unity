@@ -22,18 +22,18 @@ using UnityEngine;
 using System.Collections;
 
 /// <summary>
-/// This is a manual way of accessing the InterfaceGameObject component. See SampleButtonScript for the recommended, more elegant solution.
+/// This is a manual way of accessing an interface game component. See SampleButtonScript for the recommended, more elegant solution.
 /// </summary>
-[RequireComponent(typeof(OSVR.Unity.InterfaceGameObject))]
+[RequireComponent(typeof(OSVR.Unity.ButtonInterface))]
 public class HandleButtonPress : MonoBehaviour
 {
     public void Start()
     {
-        gameObject.GetComponent<OSVR.Unity.InterfaceGameObject>().osvrInterface.RegisterCallback(handleButton);
+        gameObject.GetComponent<OSVR.Unity.ButtonInterface>().Interface.StateChanged += handleButton;
     }
 
-    public void handleButton(string path, bool state)
+    public void handleButton(object sender, OSVR.ClientKit.TimeValue timestamp, int sensor, byte report)
     {
-        Debug.Log("Got button: " + path + " state is " + state);
+        Debug.Log("Got button: " + sensor.ToString() + " state is " + report.ToString());
     }
 }

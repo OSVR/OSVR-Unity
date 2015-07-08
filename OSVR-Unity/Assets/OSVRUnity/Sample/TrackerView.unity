@@ -73,6 +73,7 @@ NavMeshSettings:
     minRegionArea: 2
     widthInaccuracy: 16.666666
     heightInaccuracy: 10
+    tileSizeHint: 0
   m_NavMesh: {fileID: 0}
 --- !u!1001 &2184805
 Prefab:
@@ -1048,7 +1049,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11436198, guid: 0b82dd794175b304a87805e4b38fbe84, type: 2}
       propertyPath: AppID
-      value: org.opengoggles.osvr-unity.sample.trackerview
+      value: com.osvr.osvr-unity.sample.trackerview
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0b82dd794175b304a87805e4b38fbe84, type: 2}
@@ -1254,7 +1255,7 @@ GameObject:
   - 114: {fileID: 1887463597}
   m_Layer: 0
   m_Name: ClientKit
-  m_TagString: OSVRClientKit
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
@@ -1271,7 +1272,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2550bc6af558044baf4aa2ee88d5e8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AppID: org.opengoggles.osvr-unity.sample.trackerview
+  AppID: com.osvr.osvr-unity.sample.trackerview
 --- !u!4 &1887463598
 Transform:
   m_ObjectHideFlags: 0

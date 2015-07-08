@@ -30,32 +30,46 @@ namespace OSVR
         ///
         /// Attach to a GameObject that you'd like to have updated in this way.
         /// </summary>
-        public class PoseInterface : InterfaceGameObject
+        public class PoseInterface : InterfaceGameObjectBase
         {
-            //private int currentFrame = 0;
-            //private int frameCount = 0;
-            new void Start()
+            PoseAdapter adapter;
+            override protected void Start()
             {
-                osvrInterface.RegisterCallback(callback);
-                //currentFrame = Time.frameCount;
-                //frameCount = 0;
+                base.Start ();
+                if (adapter == null && !String.IsNullOrEmpty(usedPath))
+                {
+                    adapter = new PoseAdapter(
+                        OSVR.ClientKit.PoseInterface.GetInterface(ClientKit.instance.context, usedPath));
+                }
             }
 
-            private void callback(string source, Vector3 position, Quaternion rotation)
+            protected override void Stop()
             {
-                transform.localPosition = position;
-                transform.localRotation = rotation;
-                //keeping this here for now for debugging purposes
-                /*if(currentFrame != Time.frameCount)
+                base.Stop();
+                if(adapter != null)
                 {
-                    Debug.Log("Time.frameCount = " + currentFrame + ", Time.time = " + Time.time + ". Callbacks per frame = " + frameCount);
-                    frameCount = 0;
-                    currentFrame = Time.frameCount;
+                    adapter.Dispose();
+                    adapter = null;
                 }
-                else
+            }
+
+            void Update()
+            {
+                if (this.adapter != null)
                 {
-                    frameCount++;
-                }*/              
+                    var state = this.adapter.GetState();
+                    transform.localPosition = state.Value.Position;
+                    transform.localRotation = state.Value.Rotation;
+                }
+            }
+
+            public OSVR.ClientKit.IInterface<OSVR.Unity.Pose3> Interface
+            {
+                get
+                {
+                    this.Start();
+                    return adapter;
+                }
             }
         }
     }
