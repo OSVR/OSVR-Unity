@@ -2,7 +2,7 @@
 * text=auto
 
 # Source files - keep them lf
-*.cs eol=lf
+*.cs text eol=lf
 
 # Custom for Visual Studio
 *.cs     diff=csharp
