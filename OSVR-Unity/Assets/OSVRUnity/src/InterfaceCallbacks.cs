@@ -25,8 +25,9 @@ namespace OSVR
     namespace Unity
     {
         /// <summary>
-        /// OSVR Interface, supporting generic callbacks that provide the source path and a Unity-native datatype.
+        /// (OBSOLETE) OSVR Interface, supporting generic callbacks that provide the source path and a Unity-native datatype.
         /// </summary>
+        [System.Obsolete("Use one of the OSVR.ClientKit.*Interface classes, or a unity adapter (e.g. OSVR.Unity.OrientationAdapter).")]
         public class InterfaceCallbacks : ScriptableObject
         {
             /// <summary>

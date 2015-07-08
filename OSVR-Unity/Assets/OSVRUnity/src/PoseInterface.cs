@@ -30,17 +30,46 @@ namespace OSVR
         ///
         /// Attach to a GameObject that you'd like to have updated in this way.
         /// </summary>
-        public class PoseInterface : InterfaceGameObject
+        public class PoseInterface : InterfaceGameObjectBase
         {
-            new void Start()
+            PoseAdapter adapter;
+            override protected void Start()
             {
-                osvrInterface.RegisterCallback(callback);
+                base.Start ();
+                if (adapter == null && !String.IsNullOrEmpty(usedPath))
+                {
+                    adapter = new PoseAdapter(
+                        OSVR.ClientKit.PoseInterface.GetInterface(ClientKit.instance.context, usedPath));
+                }
             }
 
-            private void callback(string source, Vector3 position, Quaternion rotation)
+            protected override void Stop()
             {
-                transform.localPosition = position;
-                transform.localRotation = rotation;         
+                base.Stop();
+                if(adapter != null)
+                {
+                    adapter.Dispose();
+                    adapter = null;
+                }
+            }
+
+            void Update()
+            {
+                if (this.adapter != null)
+                {
+                    var state = this.adapter.GetState();
+                    transform.localPosition = state.Value.Position;
+                    transform.localRotation = state.Value.Rotation;
+                }
+            }
+
+            public OSVR.ClientKit.IInterface<OSVR.Unity.Pose3> Interface
+            {
+                get
+                {
+                    this.Start();
+                    return adapter;
+                }
             }
         }
     }

@@ -18,22 +18,15 @@
 /// limitations under the License.
 /// </copyright>
 
-using UnityEngine;
-using System.Collections;
 
-/// <summary>
-/// This is a manual way of accessing an interface game component. See SampleButtonScript for the recommended, more elegant solution.
-/// </summary>
-[RequireComponent(typeof(OSVR.Unity.ButtonInterface))]
-public class HandleButtonPress : MonoBehaviour
+namespace OSVR.Unity
 {
-    public void Start()
+    /// <summary>
+    /// Common .net interface for the set of Requires*Interface base classes.
+    /// </summary>
+    /// <typeparam name="T">The report/state type of the OSVR interface.</typeparam>
+    public interface IRequiresInterface<T>
     {
-        gameObject.GetComponent<OSVR.Unity.ButtonInterface>().Interface.StateChanged += handleButton;
-    }
-
-    public void handleButton(object sender, OSVR.ClientKit.TimeValue timestamp, int sensor, byte report)
-    {
-        Debug.Log("Got button: " + sensor.ToString() + " state is " + report.ToString());
+        OSVR.ClientKit.IInterface<T> Interface { get; }
     }
 }

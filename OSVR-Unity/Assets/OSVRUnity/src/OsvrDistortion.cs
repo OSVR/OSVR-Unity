@@ -1,4 +1,4 @@
-﻿/// OSVR-Unity Connection
+/// OSVR-Unity Connection
 ///
 /// http://sensics.com/osvr
 ///
