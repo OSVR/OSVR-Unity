@@ -31,6 +31,9 @@ namespace OSVR
 
             private OSVR.ClientKit.ClientContext contextObject;
 
+            /// Uses the Unity "Persistent Singleton" pattern, see http://unitypatterns.com/singletons/
+            private static ClientKit _instance;
+
             /// <summary>
             /// Use to access the single instance of this object/script in your game.
             /// </summary>
@@ -39,13 +42,19 @@ namespace OSVR
             {
                 get
                 {
-                    ClientKit candidate = GameObject.FindObjectOfType<ClientKit>();
-                    if (null == candidate)
+                    if(_instance == null)
                     {
-                        Debug.LogError("OSVR Error: You need the ClientKit prefab in your game!!");
+                        _instance = GameObject.FindObjectOfType<ClientKit>();
+                        if (_instance == null)
+                        {
+                            Debug.LogError("OSVR Error: You need the ClientKit prefab in your game!!");
+                        }
+                        else
+                        {
+                            DontDestroyOnLoad(_instance.gameObject);
+                        }
                     }
-                    return candidate;
-
+                    return _instance;
                 }
             }
 
@@ -78,7 +87,20 @@ namespace OSVR
             void Awake()
             {
                 DLLSearchPathFixer.fix();
-                DontDestroyOnLoad(gameObject);
+                //if an instance of this singleton does not exist, set the instance to this object and make it persist
+                if(_instance == null)
+                {
+                    _instance = this;
+                    DontDestroyOnLoad(this);
+                }
+                else
+                {
+                    //if an instance of this singleton already exists, destroy this one
+                    if(_instance != this)
+                    {
+                        Destroy(this.gameObject);
+                    }
+                }
             }
             void Start()
             {
