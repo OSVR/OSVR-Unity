@@ -30,6 +30,8 @@ namespace OSVR
             public string AppID;
 
             private OSVR.ClientKit.ClientContext contextObject;
+
+            /// Uses the Unity "Persistent Singleton" pattern, see http://unitypatterns.com/singletons/
             private static ClientKit _instance;
 
             /// <summary>
