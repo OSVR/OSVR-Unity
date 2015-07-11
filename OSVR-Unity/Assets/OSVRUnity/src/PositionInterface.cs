@@ -55,7 +55,7 @@ namespace OSVR
                 }
             }
 
-            void Update()
+            void LateUpdate()
             {
                 if (this.adapter != null)
                 {
