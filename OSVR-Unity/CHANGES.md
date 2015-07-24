@@ -6,7 +6,7 @@ Use git for a full changelog.
 ##Recent Changes
 
 ### InterfaceAdapter update
-> 07-July-2015 - v0.1-199-g497cc10
+> 07-July-2015 - v0.2-23-gc3c5dc0
 
 > This update introduces some API improvements. Projects upgrading to the new version should remain backwards compatible, but may want to take this time to replace deprecated components `InterfaceGameObject`, `InterfaceCallbacks`, and `InterfaceBase`:
 
