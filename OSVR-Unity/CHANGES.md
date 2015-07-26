@@ -5,6 +5,18 @@ This is an abbreviated changelog for the OSVR Unity Plugin.
 Use git for a full changelog.
 ##Recent Changes
 
+### InterfaceAdapter update
+> 07-July-2015 - v0.2-23-gc3c5dc0
+
+> This update introduces some API improvements. Projects upgrading to the new version should remain backwards compatible, but may want to take this time to replace deprecated components `InterfaceGameObject`, `InterfaceCallbacks`, and `InterfaceBase`:
+
+- Use `OSVR.Unity.OrientationInterface`, `OSVR.Unity.PoseInterface`, and others instead of `InterfaceGameObject`.
+- `OSVR.Unity.ButtonInterface` and `OSVR.Unity.AnalogInterface` are now available.
+- `OSVR.Unity.RequiresOrientationInterface` and others are now available. These replace `InterfaceBase` and allow you to require a specific interface type.
+- A set of Unity-specific `OSVR.ClientKit.InterfaceAdapter` sub-classes are now available. Use these instead of the deprecated `InterfaceCallbacks` class.
+ - Note: `OSVR.ClientKit.ButtonInterface` and `OSVR.ClientKit.AnalogInterface` can be used directly without an adapter.
+- `OSVR.Unity.OrientationInterface`, `OSVR.Unity.PoseInterface`, and `OSVR.Unity.PositionInterface` now use the OSVR state APIs instead of the callback APIs.
+
 ### Update/rename of Managed-OSVR assembly
 > 30-June-2015 - v0.2 (commit 429546f) and approximately v0.1-94-gf4d3c44
 
