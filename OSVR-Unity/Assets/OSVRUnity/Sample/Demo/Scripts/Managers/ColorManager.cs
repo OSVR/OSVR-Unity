@@ -70,7 +70,32 @@ public class ColorManager : MonoBehaviour
 	#region Private Variables
 	float _item;
 	static List<IColorChanger> _colorChangers = new List<IColorChanger>();
+    OSVR.Unity.EyeTrackerBlinkInterface blinkInterface;
+    bool lastBlinkReportState = false; // used to filter blink reports, in case the plugin doesn't.
+    long lastBlinkColorChangeTimestampSeconds = 0; // only change color from blink once every 1 second, at the most.
 	#endregion
+
+    void Awake()
+    {
+        blinkInterface = GetComponent<OSVR.Unity.EyeTrackerBlinkInterface>();
+        if(blinkInterface != null)
+        {
+            blinkInterface.Interface.StateChanged += blinkInterface_StateChanged;
+        }
+    }
+
+    /// <summary>
+    /// Blink causes the color to change. At most once per second.
+    /// </summary>
+    void blinkInterface_StateChanged(object sender, OSVR.ClientKit.TimeValue timestamp, int sensor, bool report)
+    {
+        if (lastBlinkReportState != report && timestamp.seconds - lastBlinkColorChangeTimestampSeconds > 1)
+        {
+            ChangeColorNext();
+            lastBlinkColorChangeTimestampSeconds = timestamp.seconds;
+        }
+        lastBlinkReportState = report;
+    }
 
 	#region Loop
 	void Update()
