@@ -20,7 +20,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class SampleEyeTracker2DSprite : OSVR.Unity.RequiresEyeTracker2DInterface {
+public class SampleEyeTracker2D : OSVR.Unity.RequiresEyeTracker2DInterface {
     // Update is called once per frame
     void Update () {
         var state = this.Interface.GetState();
