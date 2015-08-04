@@ -73,7 +73,7 @@ namespace OSVR.Unity
     public struct EyeTracker3DState
     {
         public bool DirectionValid { get; set; }
-        public UnityEngine.Vector2 Direction { get; set; }
+        public UnityEngine.Vector3 Direction { get; set; }
         public bool BasePointValid { get; set; }
         public UnityEngine.Vector3 BasePoint { get; set; }
     }

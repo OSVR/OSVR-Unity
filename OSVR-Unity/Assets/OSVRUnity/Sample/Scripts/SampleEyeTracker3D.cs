@@ -37,8 +37,7 @@ public class SampleEyeTracker3D : OSVR.Unity.RequiresEyeTracker3DInterface
 
         if (state.DirectionValid)
         {
-            var direction3D = new Vector3(state.Direction.x, state.Direction.y, 0f);
-            this.transform.localRotation = Quaternion.FromToRotation(Vector3.up, direction3D);
+            this.transform.localRotation = Quaternion.FromToRotation(Vector3.up, state.Direction);
         }
         else
         {
