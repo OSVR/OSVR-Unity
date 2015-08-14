@@ -50,7 +50,7 @@ namespace OSVR
                 ReadDisplayPath();
             }
 
-            //this function attemtps to retrieve display configuration from the /display path
+            //this function attempts to retrieve display configuration from the /display path
             //this data is in JSON format. Once it has initialized, the data is used to configure Camera and other settings.
             public void ReadDisplayPath()
             {
