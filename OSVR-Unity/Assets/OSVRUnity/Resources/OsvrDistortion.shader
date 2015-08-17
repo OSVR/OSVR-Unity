@@ -22,6 +22,9 @@
 /// Author: Greg Aring
 /// Email: greg@sensics.com
 /// </summary>
+
+/// Syntax reference: see http://docs.unity3d.com/Manual/SL-Shader.html
+
 Shader "Osvr/OsvrDistortion" {
 Properties
 {
@@ -54,6 +57,7 @@ Properties
 	}
 	float2 Distort(float2 p, float k1)
 	{
+    /// @todo would pow improve performance here? (by using SFU if available?)
 		float r2 = p.x * p.x + p.y * p.y;
 
 		float newRadius = (1 + k1*r2);
