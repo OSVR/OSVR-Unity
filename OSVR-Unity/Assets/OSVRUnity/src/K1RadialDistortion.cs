@@ -18,8 +18,7 @@
 /// limitations under the License.
 /// </copyright>
 /// <summary>
-/// Long ago, based on Unity's (Pro Only) Image Effect: Fisheye.js
-/// Author: Greg Aring
+/// Author: Greg Aring, Ryan Pavlik
 /// Email: greg@sensics.com
 /// </summary>
 using UnityEngine;
@@ -52,17 +51,9 @@ namespace OSVR.Unity
 
 		public bool Supported
 		{
-			get
-			{
-				return _supported;
-			}
-			private set
-			{
-				_supported = value;
-			}
+			get;
+			private set;
 		}
-
-		private bool _supported = false;
 
 		private Shader DistortionShader;
 
@@ -85,7 +76,8 @@ namespace OSVR.Unity
 			K1RadialDistortion ret = eye.DistortionEffect;
 			if (!Supported)
 			{
-				if (ret) {
+				if (ret)
+				{
 					// shouldn't be able to get here but...
 					ret.enabled = false;
 					ret = null;
