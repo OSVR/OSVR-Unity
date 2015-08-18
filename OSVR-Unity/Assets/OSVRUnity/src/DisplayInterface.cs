@@ -37,6 +37,17 @@ namespace OSVR
         public class DisplayInterface : MonoBehaviour
         {
             private string _deviceDescriptorJson; //a string that is the JSON file to be parsed
+            private OSVR.ClientKit.DisplayConfig _displayConfig;
+            public OSVR.ClientKit.DisplayConfig DisplayConfig
+            {
+                get { return _displayConfig; }
+                set { _displayConfig = value; }
+            }
+            public bool GetDisplayConfig(OSVR.ClientKit.ClientContext ctx)
+            {
+                _displayConfig = ctx.GetDisplayConfig();
+                return (_displayConfig != null);
+            }
 
             //_initalized exists to make sure the display config has been parsed before trying to read it
             public bool Initialized
@@ -75,4 +86,4 @@ namespace OSVR
             }
         }
     }
-}
+}       
