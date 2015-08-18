@@ -59,4 +59,38 @@ namespace OSVR.Unity
             };
         }
     }
+
+    public class Location2DAdapter :
+        OSVR.ClientKit.InterfaceAdapter<OSVR.ClientKit.Vec2, UnityEngine.Vector2>
+    {
+        public Location2DAdapter(OSVR.ClientKit.IInterface<OSVR.ClientKit.Vec2> iface) : base(iface) {}
+        protected override UnityEngine.Vector2 Convert (OSVR.ClientKit.Vec2 sourceValue)
+        {
+            return OSVR.Unity.Math.ConvertPosition(sourceValue);
+        }
+    }
+
+    public struct EyeTracker3DState
+    {
+        public bool DirectionValid { get; set; }
+        public UnityEngine.Vector3 Direction { get; set; }
+        public bool BasePointValid { get; set; }
+        public UnityEngine.Vector3 BasePoint { get; set; }
+    }
+
+    public class EyeTracker3DAdapter :
+        OSVR.ClientKit.InterfaceAdapter<OSVR.ClientKit.EyeTracker3DState, EyeTracker3DState>
+    {
+        public EyeTracker3DAdapter(OSVR.ClientKit.IInterface<OSVR.ClientKit.EyeTracker3DState> iface) : base(iface) { }
+        protected override EyeTracker3DState Convert(OSVR.ClientKit.EyeTracker3DState sourceValue)
+        {
+            return new EyeTracker3DState
+            {
+                BasePoint = Math.ConvertPosition(sourceValue.basePoint),
+                BasePointValid = sourceValue.basePointValid,
+                Direction = Math.ConvertPosition(sourceValue.direction),
+                DirectionValid = sourceValue.directionValid,
+            };
+        }
+    }
 }
