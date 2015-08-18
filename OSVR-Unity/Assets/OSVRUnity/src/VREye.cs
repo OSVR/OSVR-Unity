@@ -31,7 +31,7 @@ namespace OSVR
     namespace Unity
     {
 
-        public enum Eye { left, right };
+        public enum Eye { left, right};
 
         public class VREye : MonoBehaviour
         {
@@ -87,6 +87,20 @@ namespace OSVR
             public void SetEyeRoll(float rollAmount)
             {
                 cachedTransform.Rotate(0, 0, rollAmount, Space.Self);
+            }
+
+            //call this from endofframe coroutine in VRHead
+            public void Render(DisplayInterface displayInterface)
+            {
+                //Set the projection matrix
+                //@todo get near and far values from somewhere
+                _camera.projectionMatrix = displayInterface.GetProjectionMatrix(this, _camera.nearClipPlane, _camera.farClipPlane);
+               
+                //Set the viewport
+                //@todo need a viewport.Top for this constructor
+                OSVR.ClientKit.Viewport viewport = displayInterface.GetViewport(this);
+                Rect viewportRect = new Rect(viewport.Left, 1 - viewport.Bottom, viewport.Width, viewport.Height);
+                _camera.rect = viewportRect;
             }
             #endregion
 
