@@ -230,17 +230,29 @@ namespace OSVR
                             viewMode = ViewMode.stereo;
                             break;
                     }
+                    //@todo get these from DisplayConfig?
                     swapEyes = _deviceDescriptor.SwapEyes > 0; //swap left and right eye positions?
                     stereoAmount = Mathf.Clamp(_deviceDescriptor.OverlapPercent, 0, 100);
+                    
                     SetResolution(_deviceDescriptor.Width, _deviceDescriptor.Height); //set resolution before FOV
+                    //@todo get resolution from display config or rendermanager?
+                    
                     Camera.fieldOfView = Mathf.Clamp(_deviceDescriptor.MonocularVertical, 0, 180); //unity camera FOV is vertical
+                    //@todo get the field of view from DisplayConfig?
+                    //Camera.fieldOfView = _displayInterface.GetFieldOfView();
+
+                    //@todo get aspect ratio (resolution) from DisplayConfig
                     float aspectRatio = (float)_deviceDescriptor.Width / (float)_deviceDescriptor.Height;
                     //aspect ratio per eye depends on how many displays the HMD has
                     //for example, dSight has two 1920x1080 displays, so each eye should have 1.77 aspect
                     //whereas HDK has one 1920x1080 display, each eye should have 0.88 aspect (half of 1.77)
                     float aspectRatioPerEye = _deviceDescriptor.NumDisplays == 1 ? aspectRatio * 0.5f : aspectRatio;
+                    
                     //set projection matrix for each eye
                     Camera.projectionMatrix = Matrix4x4.Perspective(_deviceDescriptor.MonocularVertical, aspectRatioPerEye, Camera.nearClipPlane, Camera.farClipPlane);
+                    //Camera.projectionMatrix = _displayInterface.GetProjectionMatrix(_leftEye);
+                    
+                    //@todo get these values from RenderManager?
                     SetDistortion(_deviceDescriptor.K1Red, _deviceDescriptor.K1Green, _deviceDescriptor.K1Blue, 
                     _deviceDescriptor.CenterProjX, _deviceDescriptor.CenterProjY); //set distortion shader
             
