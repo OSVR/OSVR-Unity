@@ -56,6 +56,7 @@ namespace OSVR
             private DeviceDescriptor _deviceDescriptor;
             private DisplayInterface _displayInterface;
             private bool _initDisplayInterface = false;
+            private bool renderedStereo = true;
             #endregion
 
             #region Init
@@ -84,7 +85,16 @@ namespace OSVR
                     UpdateDisplayInterface();                  
                 }
                 //else initialize in Update() 
-            }         
+            }
+            void OnEnable()
+            {
+                StartCoroutine("EndOfFrame");
+            }
+
+            void OnDisable()
+            {
+                StopCoroutine("EndOfFrame");
+            }
             #endregion
 
             #region Loop
@@ -352,6 +362,57 @@ namespace OSVR
                             _rightEye.SetEyeRoll(rightRoll);
                             break;
                     }
+                }
+            }
+
+            void OnPreCull()
+            {
+                if (viewMode == ViewMode.mono)
+                {
+                    // Nothing to do.
+                    return;
+                }
+
+                //@todo update the client?
+
+                //@todo update the head tracker?
+
+                // Turn off the mono camera so it doesn't waste time rendering.
+                // @note mono camera is left on from beginning of frame till now
+                // in order that other game logic (e.g. Camera.main) continues
+                // to work as expected.
+                _camera.enabled = false;
+
+                // Render the eyes under our control.
+                _leftEye.Render(_displayInterface);
+                _rightEye.Render(_displayInterface);
+
+                // Remember to reenable.
+                renderedStereo = true;
+            }
+
+            IEnumerator EndOfFrame()
+            {
+                while (true)
+                {
+                    // If *we* turned off the mono cam, turn it back on for next frame.
+                    if (renderedStereo)
+                    {
+                        _camera.enabled = true;
+                        renderedStereo = false;
+                    }
+                    yield return new WaitForEndOfFrame();
+                    //use this when RenderManager is around
+                   /* if (SupportsRenderManager())
+                    {
+                        //@todo update tracker state?
+                        //call the rendering plugin
+                        GL.IssuePluginEvent(0);
+                        //This invalidates any cached renderstates tied to the GL context. 
+                        //If a (native) plugin alters the renderstate settings then Unity's 
+                        //rendering architecture must be made aware of that to not assume the GL context is preserved.
+                        GL.InvalidateState();
+                    }*/
                 }
             }
             #endregion
