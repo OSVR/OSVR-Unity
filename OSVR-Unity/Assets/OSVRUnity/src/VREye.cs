@@ -30,19 +30,34 @@ namespace OSVR
 {
     namespace Unity
     {
-
-        public enum Eye { left, right};
-
         public class VREye : MonoBehaviour
         {
             #region Private Variables
-            private Camera _camera;
-            private ClientKit clientKit;
+
+            private DisplayController _displayController;
             private K1RadialDistortion _distortionEffect;
+            private VRSurface _surface; //the surface associated with this eye
+            private int _eyeIndex;
+            private bool updated = false; //whether the headpose has been updated this frame
+            private bool updateEarly = false; //if false, update in LateUpdate
+            
             #endregion
-            #region Public Variables
-            public Eye eye;
-            public Camera Camera { get { return _camera; } set { _camera = value; } }
+            #region Public Variables  
+            public int EyeIndex
+            {
+                get { return _eyeIndex; }
+                set { _eyeIndex = value; }
+            }
+            public DisplayController DisplayController 
+            { 
+                get { return _displayController; } 
+                set { _displayController = value; } 
+            }
+            public VRSurface Surface
+            {
+                get { return _surface; }
+                set { _surface = value; }
+            }
             [HideInInspector]
             public Transform cachedTransform;
             [HideInInspector]
@@ -71,85 +86,45 @@ namespace OSVR
             #endregion
 
             #region Public Methods
-            public void MatchCamera(Camera sourceCamera)
-            {
-                Camera.CopyFrom(sourceCamera);
-                SetViewportRects();
-
-            }
-
-            //rotate each eye outward
-            public void SetEyeRotationY(float y)
-            {
-                cachedTransform.Rotate(0, y, 0, Space.Self);
-            }
-            //set the z rotation of the eye
-            public void SetEyeRoll(float rollAmount)
-            {
-                cachedTransform.Rotate(0, 0, rollAmount, Space.Self);
-            }
-
-            //call this from endofframe coroutine in VRHead
-            public void Render(DisplayInterface displayInterface)
-            {
-                //Set the projection matrix
-                //@todo get near and far values from somewhere
-                _camera.projectionMatrix = displayInterface.GetProjectionMatrix(this, _camera.nearClipPlane, _camera.farClipPlane);
-               
-                //Set the viewport
-                //@todo need a viewport.Top for this constructor
-                OSVR.ClientKit.Viewport viewport = displayInterface.GetViewport(this);
-                Rect viewportRect = new Rect(viewport.Left, 1 - viewport.Bottom, viewport.Width, viewport.Height);
-                _camera.rect = viewportRect;
-            }
             #endregion
 
             #region Private Methods
             void Init()
             {
-                if(clientKit == null)
-                {
-                    clientKit = GameObject.FindObjectOfType<ClientKit>();
-                }
                 //cache:
                 cachedTransform = transform;
+            }         
+            #endregion
 
-                if (Camera == null)
-                {
-                    if ((Camera = GetComponent<Camera>()) == null)
-                    {
-                        Camera = gameObject.AddComponent<Camera>();
-                    }
-                }
-
-                SetViewportRects();
-            }
-
-            //helper method to set correct viewport for each eye
-            private void SetViewportRects()
+            #region Loop
+            // Update is called once per frame.
+            void Update()
             {
-                if (Camera == null)
+                updated = false;  // OK to recompute head pose.
+                if (updateEarly)
                 {
-                    Init();
-                }
-                //camera setups:
-                switch (eye)
-                {
-                    case Eye.left:
-                        Camera.rect = new Rect(0, 0, .5f, 1);
-                        break;
-                    case Eye.right:
-                        Camera.rect = new Rect(.5f, 0, .5f, 1);
-                        break;
+                    UpdateEyePose();
                 }
             }
-
-            //Called after a camera finishes rendering the scene.
-            //the goal here is to update the client often to make sure we have the most recent tracker data
-            //this helps reduce latency
-            void OnPostRender()
+            // LateUpdate is called once per frame, after Update has finished. 
+            void LateUpdate()
             {
-                clientKit.context.update();
+                UpdateEyePose();
+            }
+            //Updates the position and rotation of the head
+            private void UpdateEyePose()
+            {
+                if (updated)
+                {  // Only one update per frame.
+                    return;
+                }
+                updated = true;
+
+                _displayController.UpdateClient();
+
+                OSVR.ClientKit.Pose3 eyePose = _displayController.DisplayConfig.GetViewerEyePose(DisplayController.DEFAULT_VIEWER, (byte)_eyeIndex);
+                cachedTransform.localPosition = Math.ConvertPosition(eyePose.translation);
+                cachedTransform.localRotation = Math.ConvertOrientation(eyePose.rotation);
             }
             #endregion
 
