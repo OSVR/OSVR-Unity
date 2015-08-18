@@ -201,7 +201,7 @@ namespace OSVR
                     OSVR.ClientKit.Viewport viewport = _displayConfig.GetRelativeViewportForViewerEyeSurface(DEFAULT_VIEWER, (byte)i, DEFAULT_SURFACE);
                     surface.SetViewport(Math.ConvertViewport(viewport));
                     OSVR.ClientKit.Matrix44f projMatrix = _displayConfig.GetProjectionMatrixForViewerEyeSurfacef(DEFAULT_VIEWER, (byte)i, DEFAULT_SURFACE,
-                        near, far, OSVR.ClientKit.MatrixConventionsFlags.RowMajor);
+                        near, far, OSVR.ClientKit.MatrixConventionsFlags.ColMajor);
                     surface.SetProjectionMatrix(Math.ConvertMatrix(projMatrix));
                     surface.Render();
                 }
