@@ -84,6 +84,67 @@ namespace OSVR
             {
                 return _deviceDescriptorJson == null ? null : DeviceDescriptor.Parse(_deviceDescriptorJson);               
             }
+
+             public int GetWidth()
+            {
+                return 1920;
+                //return _displayConfig.GetWidth?
+            }
+            public int GetHeight()
+            {
+                return 1080;
+                //return _displayConfig.GetHeight?
+            }
+
+            public float GetFieldOfView()
+            {
+                return 100f;
+                //return _displayConfig.GetMonocularFieldOfView()?
+            }
+
+            //@todo convert OSVR.ClientKit.Matrix44f to Matrix4x4
+            public Matrix4x4 GetProjectionMatrix(VREye eye, float near, float far)
+            {
+                OSVR.ClientKit.Matrix44f matrix = _displayConfig.GetProjectionMatrixForViewerEyeSurfacef(0, (byte)eye.eye, 0, near, far, OSVR.ClientKit.MatrixConventionsFlags.RowMajor);
+                return Matrix4x4.identity;
+            }
+
+            public OSVR.ClientKit.Pose3 GetEyePose(VREye eye)
+            {
+                //@todo eye to byte?
+                return _displayConfig.GetViewerEyePose(0, (byte)eye.eye);
+            }
+
+            public OSVR.ClientKit.Viewport GetViewport(VREye eye)
+            {
+                //@todo eye to byte?
+                return _displayConfig.GetRelativeViewportForViewerEyeSurface(0, (byte)eye.eye, 0);
+            }
+
+            public float GetDistortionK1()
+            {
+                throw new NotImplementedException();
+            }
+
+            public float GetDistortionK2()
+            {
+                throw new NotImplementedException();
+            }
+
+            public float GetDistortionK3()
+            {
+                throw new NotImplementedException();
+            }
+
+            public float GetCenterProjX()
+            {
+                throw new NotImplementedException();
+            }
+
+            public float GetCenterProjY()
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }       
