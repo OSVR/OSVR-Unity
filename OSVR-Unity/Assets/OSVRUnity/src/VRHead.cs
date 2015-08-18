@@ -46,6 +46,7 @@ namespace OSVR
             #endregion
 
             #region Private Variables
+            private ClientKit _clientKit;
             private VREye _leftEye;
             private VREye _rightEye;
             private bool swapEyes = false;
@@ -58,6 +59,10 @@ namespace OSVR
             #endregion
 
             #region Init
+            void Awake()
+            {
+                _clientKit = FindObjectOfType<ClientKit>();
+            }
             void Start()
             {
                 Init();
@@ -69,6 +74,7 @@ namespace OSVR
                 }
 */
                 _displayInterface = GetComponent<DisplayInterface>();
+                _displayInterface.DisplayConfig = _clientKit.context.GetDisplayConfig();
 
                 //update VRHead with info from the display interface if it has been initialized
                 //it might not be initialized if it is still parsing a display json file
