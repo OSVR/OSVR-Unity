@@ -47,7 +47,6 @@ GameObject:
   - 114: {fileID: 11431734}
   - 114: {fileID: 11431736}
   - 114: {fileID: 11400556}
-  - 114: {fileID: 11417594}
   m_Layer: 0
   m_Name: VRDisplayTracked
   m_TagString: Untagged
@@ -207,25 +206,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a288e4aec9950634b83d232abc73d1bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  JsonDescriptorFile: {fileID: 4900000, guid: 903a53a7997a82c42b329c472b623a4e, type: 3}
---- !u!114 &11417594
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 131736}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: db80e57e78593b64384f21c9a3022b68, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  k1Red: 0
-  k1Green: 0
-  k1Blue: 0
-  fullCenter: {x: .5, y: .5}
-  leftCenter: {x: .5, y: .5}
-  rightCenter: {x: .5, y: .5}
-  distortionShader: {fileID: 4800000, guid: 1dffc394b375bda49bb119de26c0bb35, type: 3}
 --- !u!114 &11431730
 MonoBehaviour:
   m_ObjectHideFlags: 1
