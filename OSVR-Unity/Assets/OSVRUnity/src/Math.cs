@@ -35,6 +35,11 @@ namespace OSVR
                 return new Vector3((float)vec.x, (float)vec.y, (float)-vec.z);
             }
 
+            public static Vector2 ConvertPosition(OSVR.ClientKit.Vec2 vec)
+            {
+                return new Vector2((float)vec.x, (float)vec.y);
+            }
+
             public static Quaternion ConvertOrientation(OSVR.ClientKit.Quaternion quat)
             {
                 /// Wikipedia may say quaternions are not handed, but these needed modification.
