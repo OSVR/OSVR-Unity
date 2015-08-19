@@ -104,9 +104,9 @@ namespace OSVR
 
                 _displayController.UpdateClient();
 
-                OSVR.ClientKit.Pose3 eyePose = _displayController.DisplayConfig.GetViewerEyePose(DisplayController.DEFAULT_VIEWER, (byte)_eyeIndex);
-                cachedTransform.localPosition = Math.ConvertPosition(eyePose.translation);
-                cachedTransform.localRotation = Math.ConvertOrientation(eyePose.rotation);
+               // OSVR.ClientKit.Pose3 eyePose = _displayController.DisplayConfig.GetViewerEyePose(DisplayController.DEFAULT_VIEWER, (byte)_eyeIndex);
+               // cachedTransform.localPosition = Math.ConvertPosition(eyePose.translation);
+               // cachedTransform.localRotation = Math.ConvertOrientation(eyePose.rotation);
             }
             #endregion
 
