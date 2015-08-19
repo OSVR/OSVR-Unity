@@ -64,6 +64,11 @@ namespace OSVR
             void SetupDisplay()
             {
                 //get the DisplayConfig object from ClientKit
+                if(_clientKit.context == null)
+                {
+                    Debug.LogError("ClientContext is null. Can't setup display.");
+                    return;
+                }
                 _displayConfig = _clientKit.context.GetDisplayConfig();
                 if (_displayConfig == null)
                 {
