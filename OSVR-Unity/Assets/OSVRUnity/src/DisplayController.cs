@@ -7,8 +7,8 @@ namespace OSVR
     {
         public class DisplayController : MonoBehaviour
         {
-            public const uint DEFAULT_VIEWER = 1; //assume exactly one viewer in this Unity implementation
-            public const uint DEFAULT_SURFACE = 1; //assume exactly one viewer in this Unity implementation
+            public const uint DEFAULT_VIEWER = 0; //assume exactly one viewer in this Unity implementation
+            public const uint DEFAULT_SURFACE = 0; //assume exactly one viewer in this Unity implementation
 
             private ClientKit _clientKit;
             private OSVR.ClientKit.DisplayConfig _displayConfig;
@@ -110,7 +110,6 @@ namespace OSVR
                 //create VREyes
                 _eyeCount = (uint)_displayConfig.GetNumEyesForViewer(DEFAULT_VIEWER); //get the number of eyes
                 eyes = new VREye[_eyeCount];
-                //@todo figure out why we have an eye count over 100
                 Debug.Log("Eye count is " + _eyeCount);
                 for (int i = 0; i < _eyeCount; i++)
                 {
