@@ -122,7 +122,9 @@ namespace OSVR
                     eyeGameObject.transform.localPosition = Vector3.zero;
                     eyes[i] = eye;
                     CreateEyeSurface(i);
-                    SetDistortion(i);
+
+                    //@todo figure out why this is causing a crash
+                    //SetDistortion(i);
                 }
             }
 
