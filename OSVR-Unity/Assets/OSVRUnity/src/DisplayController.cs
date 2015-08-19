@@ -139,11 +139,12 @@ namespace OSVR
                         "this implementation requires exactly one surface per eye.");
                     return;
                 }
-                GameObject surface = new GameObject("Surface");
-                surface.AddComponent<Camera>();
-                surface.AddComponent<VRSurface>();
-                surface.transform.parent = eyes[eyeIndex].transform; //child of Eye
-                surface.transform.localPosition = Vector3.zero;
+                GameObject surfaceGameObject = new GameObject("Surface");
+                VRSurface surface = surfaceGameObject.AddComponent<VRSurface>();
+                surface.Camera = surfaceGameObject.AddComponent<Camera>();
+                surface.Camera.enabled = false; //@todo do we want this disabled?
+                surfaceGameObject.transform.parent = eyes[eyeIndex].transform; //child of Eye
+                surfaceGameObject.transform.localPosition = Vector3.zero;
             }
 
             //determines if distortion will be used, and what type of distortion will be used
