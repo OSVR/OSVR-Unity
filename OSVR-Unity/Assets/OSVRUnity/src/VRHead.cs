@@ -29,21 +29,41 @@ namespace OSVR
 {
     namespace Unity
     {
-        //[RequireComponent(typeof(Camera))]
+        [RequireComponent(typeof(Camera))]
         public class VRHead : MonoBehaviour
         {
             #region Public Variables
-            //public Camera Camera { get { return _camera; } set { _camera = value; } }
+            public Camera Camera 
+            { 
+                get 
+                { 
+                    if(_camera == null)
+                    {
+                        _camera = GetComponent<Camera>();
+                    }
+                    return _camera; 
+                } 
+                set { _camera = value; } }
             public DisplayController DisplayController { get { return _displayController; } set { _displayController = value; } }
             #endregion
 
             #region Private Variables
             private DisplayController _displayController;
-            //private Camera _camera;
-            //private bool renderedStereo = true;
+            private Camera _camera;
+            private bool renderedStereo = true;
             private bool updated = false; //whether the headpose has been updated this frame
             private bool updateEarly = false; //if false, update in LateUpdate
             #endregion
+
+            void OnEnable()
+            {
+                StartCoroutine("EndOfFrame");
+            }
+
+            void OnDisable()
+            {
+                StopCoroutine("EndOfFrame");
+            }
 
             // Update is called once per frame.
             void Update()
@@ -73,6 +93,58 @@ namespace OSVR
                // OSVR.ClientKit.Pose3 headPose = _displayController.DisplayConfig.GetViewerPose(DisplayController.DEFAULT_VIEWER);
                // transform.localPosition = Math.ConvertPosition(headPose.translation);
                // transform.localRotation = Math.ConvertOrientation(headPose.rotation);
+            void OnPreCull()
+            {
+                _displayController.UpdateClient();
+
+                // Turn off the mono camera so it doesn't waste time rendering.
+                // @note mono camera is left on from beginning of frame till now
+                // in order that other game logic (e.g. Camera.main) continues
+                // to work as expected.
+                _camera.enabled = false;
+
+                float near = 0.1f;
+                float far = 1000f;
+
+                //render each eye camera (each surface)
+                //assumes one surface per eye
+                //@todo cache eyes, eyecount?
+                for (int i = 0; i < _displayController.EyeCount; i++)
+                {
+                    //get the eye's surface
+                    VRSurface surface = _displayController.Eyes[i].Surface;
+                    
+                    //get viewport from ClientKit
+                    OSVR.ClientKit.Viewport viewport = _displayController.DisplayConfig.GetRelativeViewportForViewerEyeSurface(
+                        DisplayController.DEFAULT_VIEWER, (byte)i, DisplayController.DEFAULT_SURFACE);
+                    
+                    surface.SetViewport(Math.ConvertViewport(viewport));
+                    
+                    //get projection matrix from ClientKit
+                    OSVR.ClientKit.Matrix44f projMatrix = _displayController.DisplayConfig.GetProjectionMatrixForViewerEyeSurfacef(
+                        DisplayController.DEFAULT_VIEWER, (byte)i, DisplayController.DEFAULT_SURFACE,
+                        near, far, OSVR.ClientKit.MatrixConventionsFlags.ColMajor);
+                    
+                    surface.SetProjectionMatrix(Math.ConvertMatrix(projMatrix));
+                    //surface.Render();
+                }
+
+                // Remember to reenable.
+                renderedStereo = true;
+            }
+
+            IEnumerator EndOfFrame()
+            {
+                while (true)
+                {
+                    // If *we* turned off the mono cam, turn it back on for next frame.
+                    if (renderedStereo)
+                    {
+                        Camera.enabled = true;
+                        renderedStereo = false;
+                    }
+                    yield return new WaitForEndOfFrame();
+                }
             }         
         }
     }

@@ -16,7 +16,6 @@ namespace OSVR
             private VREye[] eyes;
             private uint _eyeCount;
             private uint _viewerCount;
-            private Camera _camera;
             private bool renderedStereo = false;
             private bool displayConfigInitialized = false;
 
@@ -98,9 +97,10 @@ namespace OSVR
                 /* ASSUME ONE VIEWER */
                 //create a VRHead
                 GameObject vrHead = new GameObject("VRHead");
-                //vrHead.AddComponent<Camera>(); //add a dummy camera
                 vrHead.AddComponent<AudioListener>(); //add an audio listener
                 _head = vrHead.AddComponent<VRHead>();
+                _head.Camera = vrHead.GetComponent<Camera>(); //add a dummy camera, VRHead requires that it has a camera already
+                _head.tag = "MainCamera"; //tag this as the MainCamera so other gameobjects can reference it
                 _head.DisplayController = this; //pass DisplayController to Head           
                 vrHead.transform.parent = this.transform; //child of DisplayController
                 vrHead.transform.localPosition = Vector3.zero;
@@ -137,7 +137,7 @@ namespace OSVR
                 GameObject surfaceGameObject = new GameObject("Surface");
                 VRSurface surface = surfaceGameObject.AddComponent<VRSurface>();
                 surface.Camera = surfaceGameObject.AddComponent<Camera>();
-                surface.Camera.enabled = false; //@todo do we want this disabled?
+                surface.Camera.enabled = true; //@todo do we want this disabled?
                 surfaceGameObject.transform.parent = eyes[eyeIndex].transform; //child of Eye
                 surfaceGameObject.transform.localPosition = Vector3.zero;
                 eyes[eyeIndex].Surface = surface;
@@ -195,50 +195,6 @@ namespace OSVR
                 if(!displayConfigInitialized)
                 {
                     SetupDisplay();
-                }
-            }
-
-            void OnPreCull()
-            {
-                UpdateClient();
-
-                // Turn off the mono camera so it doesn't waste time rendering.
-                // @note mono camera is left on from beginning of frame till now
-                // in order that other game logic (e.g. Camera.main) continues
-                // to work as expected.
-                _camera.enabled = false;
-
-                float near = 0.1f;
-                float far = 1000f;
-
-                //render each eye camera (each surface)
-                //assumes one surface per eye
-                for (int i = 0; i < _eyeCount; i++)
-                {
-                    VRSurface surface = eyes[i].Surface;
-                    OSVR.ClientKit.Viewport viewport = _displayConfig.GetRelativeViewportForViewerEyeSurface(DEFAULT_VIEWER, (byte)i, DEFAULT_SURFACE);
-                    surface.SetViewport(Math.ConvertViewport(viewport));
-                    OSVR.ClientKit.Matrix44f projMatrix = _displayConfig.GetProjectionMatrixForViewerEyeSurfacef(DEFAULT_VIEWER, (byte)i, DEFAULT_SURFACE,
-                        near, far, OSVR.ClientKit.MatrixConventionsFlags.ColMajor);
-                    surface.SetProjectionMatrix(Math.ConvertMatrix(projMatrix));
-                    surface.Render();
-                }
-
-                // Remember to reenable.
-                renderedStereo = true;
-            }
-
-            IEnumerator EndOfFrame()
-            {
-                while (true)
-                {
-                    // If *we* turned off the mono cam, turn it back on for next frame.
-                    if (renderedStereo)
-                    {
-                        _camera.enabled = true;
-                        renderedStereo = false;
-                    }
-                    yield return new WaitForEndOfFrame();
                 }
             }
 
