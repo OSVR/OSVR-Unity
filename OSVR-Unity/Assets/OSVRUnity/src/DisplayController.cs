@@ -78,8 +78,10 @@ namespace OSVR
                 }
                 Debug.Log("DisplayConfig initialized on frame " + Time.frameCount);
                 displayConfigInitialized = true;
+                Debug.Log("Let's get the viewer count");
                 //get the number of viewers, bail if there isn't exactly one viewer for now
                 _viewerCount = _displayConfig.GetNumViewers();
+                Debug.Log("Viewer count is " + _viewerCount);
                 if(_viewerCount != 1)
                 {
                     Debug.LogError(_viewerCount + " viewers found, but this implementation requires exactly one viewer.");
@@ -108,6 +110,8 @@ namespace OSVR
                 //create VREyes
                 _eyeCount = (uint)_displayConfig.GetNumEyesForViewer(DEFAULT_VIEWER); //get the number of eyes
                 eyes = new VREye[_eyeCount];
+                //@todo figure out why we have an eye count over 100
+                Debug.Log("Eye count is " + _eyeCount);
                 for (int i = 0; i < _eyeCount; i++)
                 {
                     GameObject eyeGameObject = new GameObject("Eye" + i); //add an eye gameobject to the scene
