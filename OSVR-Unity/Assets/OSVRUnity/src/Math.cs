@@ -54,7 +54,7 @@ namespace OSVR
             //@todo Rect takes left, top, width, height
             public static Rect ConvertViewport(OSVR.ClientKit.Viewport viewport)
             {
-                return new Rect(viewport.Left, viewport.Bottom + viewport.Height, viewport.Width, viewport.Height);
+                return new Rect(viewport.Left, viewport.Bottom, viewport.Width, viewport.Height);
             }
 
             //@todo is this correct?
