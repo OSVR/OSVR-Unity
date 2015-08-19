@@ -140,6 +140,7 @@ namespace OSVR
                 surface.Camera.enabled = false; //@todo do we want this disabled?
                 surfaceGameObject.transform.parent = eyes[eyeIndex].transform; //child of Eye
                 surfaceGameObject.transform.localPosition = Vector3.zero;
+                eyes[eyeIndex].Surface = surface;
             }
 
             //determines if distortion will be used, and what type of distortion will be used
