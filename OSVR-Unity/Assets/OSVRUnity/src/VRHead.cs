@@ -29,7 +29,7 @@ namespace OSVR
 {
     namespace Unity
     {
-        [RequireComponent(typeof(Camera))]
+        //[RequireComponent(typeof(Camera))]
         public class VRHead : MonoBehaviour
         {
             #region Public Variables
@@ -40,7 +40,7 @@ namespace OSVR
             #region Private Variables
             private DisplayController _displayController;
             //private Camera _camera;
-            private bool renderedStereo = true;
+            //private bool renderedStereo = true;
             private bool updated = false; //whether the headpose has been updated this frame
             private bool updateEarly = false; //if false, update in LateUpdate
             #endregion

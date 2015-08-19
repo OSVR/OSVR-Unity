@@ -36,10 +36,8 @@ namespace OSVR
                 {
                     Debug.LogError("DisplayController requires a ClientKit object in the scene.");
                 }
-                if((_camera == GetComponent<Camera>() == null))
-                {
                     _camera = gameObject.AddComponent<Camera>();
-                }
+                
             }
             void OnEnable()
             {
@@ -100,7 +98,7 @@ namespace OSVR
                 /* ASSUME ONE VIEWER */
                 //create a VRHead
                 GameObject vrHead = new GameObject("VRHead");
-                vrHead.AddComponent<Camera>(); //add a dummy camera
+                //vrHead.AddComponent<Camera>(); //add a dummy camera
                 vrHead.AddComponent<AudioListener>(); //add an audio listener
                 _head = vrHead.AddComponent<VRHead>();
                 _head.DisplayController = this; //pass DisplayController to Head           
