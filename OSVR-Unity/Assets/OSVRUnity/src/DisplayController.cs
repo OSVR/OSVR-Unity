@@ -26,8 +26,8 @@ namespace OSVR
             }          
             public VRHead Head { get { return _head; } }           
             public VREye[] Eyes { get { return eyes; } }
-            
-              
+            public uint EyeCount { get { return _eyeCount; } }
+
             void Awake()
             {
                 _clientKit = FindObjectOfType<ClientKit>();
@@ -35,20 +35,12 @@ namespace OSVR
                 {
                     Debug.LogError("DisplayController requires a ClientKit object in the scene.");
                 }
-                    _camera = gameObject.AddComponent<Camera>();
-                
-            }
-            void OnEnable()
-            {
                 SetupApplicationSettings();
-                SetupDisplay();
-                StartCoroutine("EndOfFrame");
             }
-
-            void OnDisable()
+            void Start()
             {
-                StopCoroutine("EndOfFrame");
-            }
+                SetupDisplay();
+            }           
 
             void SetupApplicationSettings()
             {
@@ -96,7 +88,7 @@ namespace OSVR
             {
                 /* ASSUME ONE VIEWER */
                 //create a VRHead
-                GameObject vrHead = new GameObject("VRHead");
+                GameObject vrHead = new GameObject("VRHead");             
                 vrHead.AddComponent<AudioListener>(); //add an audio listener
                 _head = vrHead.AddComponent<VRHead>();
                 _head.Camera = vrHead.GetComponent<Camera>(); //add a dummy camera, VRHead requires that it has a camera already
