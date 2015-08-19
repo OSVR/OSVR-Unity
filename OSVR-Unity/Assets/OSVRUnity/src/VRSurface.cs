@@ -8,7 +8,27 @@ namespace OSVR
         {
 
             private Camera _camera;
+            private K1RadialDistortion _distortionEffect;
+
             public Camera Camera { get { return _camera; } set { _camera = value; } }
+
+            [HideInInspector]
+            public K1RadialDistortion DistortionEffect
+            {
+                get
+                {
+                    if (!_distortionEffect)
+                    {
+                        _distortionEffect = GetComponent<K1RadialDistortion>();
+                    }
+                    return _distortionEffect;
+                }
+                set
+                {
+                    _distortionEffect = value;
+                }
+            }
+
 
             public void SetViewport(Rect rect)
             {

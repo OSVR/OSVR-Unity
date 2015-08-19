@@ -33,9 +33,7 @@ namespace OSVR
         public class VREye : MonoBehaviour
         {
             #region Private Variables
-
             private DisplayController _displayController;
-            private K1RadialDistortion _distortionEffect;
             private VRSurface _surface; //the surface associated with this eye
             private int _eyeIndex;
             private bool updated = false; //whether the headpose has been updated this frame
@@ -60,22 +58,6 @@ namespace OSVR
             }
             [HideInInspector]
             public Transform cachedTransform;
-            [HideInInspector]
-            public K1RadialDistortion DistortionEffect
-            {
-              get
-              {
-                if (!_distortionEffect)
-                {
-                  _distortionEffect = GetComponent<K1RadialDistortion>();
-                }
-                return _distortionEffect;
-              }
-              set
-              {
-                _distortionEffect = value;
-              }
-            }
             #endregion
 
             #region Init

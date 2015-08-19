@@ -170,22 +170,21 @@ namespace OSVR
             }
 
             //set distortion parameters for K1 Radial Distortion method
-            //@todo move distortion to Surface instead of Eye
             private void SetK1RadialDistortion(int eyeIndex, float k1Red, float k1Green, float k1Blue, Vector2 center)
             {
                 VREye eye = eyes[eyeIndex];
                 // disable distortion if there is no distortion for this HMD
                 if (k1Red == 0 && k1Green == 0 && k1Blue == 0)
                 {
-                    if (eye.DistortionEffect)
+                    if (eye.Surface.DistortionEffect)
                     {
-                        eye.DistortionEffect.enabled = false;
+                        eye.Surface.DistortionEffect.enabled = false;
                     }
                     return;
                 }
                 // Otherwise try to create distortion and set its parameters
                 var distortionFactory = new K1RadialDistortionFactory();
-                var effect = distortionFactory.GetOrCreateDistortion(eye);
+                var effect = distortionFactory.GetOrCreateDistortion(eye.Surface);
                 if (effect)
                 {
                     effect.k1Red = k1Red;
