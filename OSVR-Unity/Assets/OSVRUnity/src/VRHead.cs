@@ -90,9 +90,11 @@ namespace OSVR
 
                 _displayController.UpdateClient();
                 
-               // OSVR.ClientKit.Pose3 headPose = _displayController.DisplayConfig.GetViewerPose(DisplayController.DEFAULT_VIEWER);
-               // transform.localPosition = Math.ConvertPosition(headPose.translation);
-               // transform.localRotation = Math.ConvertOrientation(headPose.rotation);
+                OSVR.ClientKit.Pose3 headPose = _displayController.DisplayConfig.GetViewerPose(DisplayController.DEFAULT_VIEWER);
+                transform.localPosition = Math.ConvertPosition(headPose.translation);
+                transform.localRotation = Math.ConvertOrientation(headPose.rotation);
+            }
+
             void OnPreCull()
             {
                 _displayController.UpdateClient();
@@ -145,7 +147,7 @@ namespace OSVR
                     }
                     yield return new WaitForEndOfFrame();
                 }
-            }         
+            }
         }
     }
 }
