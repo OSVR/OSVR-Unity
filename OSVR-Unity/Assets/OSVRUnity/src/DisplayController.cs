@@ -18,6 +18,7 @@ namespace OSVR
             private uint _viewerCount;
             private Camera _camera;
             private bool renderedStereo = false;
+            private bool displayConfigInitialized = false;
 
             public OSVR.ClientKit.DisplayConfig DisplayConfig
             {
@@ -75,6 +76,8 @@ namespace OSVR
                     Debug.LogError("Unable to setup display. No DisplayConfig object found.");
                     return;
                 }
+                Debug.Log("DisplayConfig initialized on frame " + Time.frameCount);
+                displayConfigInitialized = true;
                 //get the number of viewers, bail if there isn't exactly one viewer for now
                 _viewerCount = _displayConfig.GetNumViewers();
                 if(_viewerCount != 1)
@@ -182,6 +185,14 @@ namespace OSVR
                     effect.k1Green = k1Green;
                     effect.k1Blue = k1Blue;
                     effect.center = center;
+                }
+            }
+
+            void Update()
+            {
+                if(!displayConfigInitialized)
+                {
+                    SetupDisplay();
                 }
             }
 
