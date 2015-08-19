@@ -108,7 +108,6 @@ namespace OSVR
                     eye.EyeIndex = i; //set the eye's index
                     eyeGameObject.transform.parent = this.transform; //child of DisplayController
                     eyeGameObject.transform.localPosition = Vector3.zero;
-                    //@todo add more eyes to enum other than left and right and center?
                     eyes[i] = eye;
                     CreateEyeSurface(i);
                     SetDistortion(i);
@@ -156,6 +155,7 @@ namespace OSVR
             }
 
             //set distortion parameters for K1 Radial Distortion method
+            //@todo move distortion to Surface instead of Eye
             private void SetK1RadialDistortion(int eyeIndex, float k1Red, float k1Green, float k1Blue, Vector2 center)
             {
                 VREye eye = eyes[eyeIndex];
