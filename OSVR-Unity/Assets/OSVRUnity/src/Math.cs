@@ -54,7 +54,9 @@ namespace OSVR
             //@todo Rect takes left, top, width, height
             public static Rect ConvertViewport(OSVR.ClientKit.Viewport viewport)
             {
-                return new Rect(viewport.Left, viewport.Bottom, viewport.Width, viewport.Height);
+                //Unity expects normalized coordinates, not pixel coordinates
+                //@todo below assumes left and right eyes split the screen in half
+                return new Rect(viewport.Left / (2f*viewport.Width), viewport.Bottom / viewport.Height, viewport.Width*0.5f, viewport.Height);
             }
 
             //@todo is this correct?
