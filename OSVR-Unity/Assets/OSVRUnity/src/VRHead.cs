@@ -115,6 +115,11 @@ namespace OSVR
                 {
                     //get the eye's surface
                     VRSurface surface = _displayController.Eyes[i].Surface;
+
+                   // OSVR.ClientKit.Matrix44f viewMatrix = _displayController.DisplayConfig.GetViewerEyeViewMatrixf(
+                       // DisplayController.DEFAULT_VIEWER, (byte)i, OSVR.ClientKit.MatrixConventionsFlags.ColMajor);
+
+                    //surface.SetViewMatrix(Math.ConvertMatrix(viewMatrix));
                     
                     //get viewport from ClientKit
                     OSVR.ClientKit.Viewport viewport = _displayController.DisplayConfig.GetRelativeViewportForViewerEyeSurface(
