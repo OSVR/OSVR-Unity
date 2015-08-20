@@ -35,6 +35,11 @@ namespace OSVR
                 _camera.rect = rect;
             }
 
+            public void SetViewMatrix(Matrix4x4 viewMatrix)
+            {
+                _camera.worldToCameraMatrix = viewMatrix;
+            }
+
             public void SetProjectionMatrix(Matrix4x4 projMatrix)
             {
                 _camera.projectionMatrix = projMatrix;
