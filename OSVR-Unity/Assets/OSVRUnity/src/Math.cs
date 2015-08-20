@@ -56,7 +56,7 @@ namespace OSVR
             {
                 //Unity expects normalized coordinates, not pixel coordinates
                 //@todo below assumes left and right eyes split the screen in half
-                return new Rect(viewport.Left / (2f*viewport.Width), viewport.Bottom / viewport.Height, viewport.Width*0.5f, viewport.Height);
+                return new Rect(viewport.Left / (2f*viewport.Width), viewport.Bottom / viewport.Height, viewport.Width/(viewport.Width*2f), 1);
             }
 
             //@todo is this correct?
