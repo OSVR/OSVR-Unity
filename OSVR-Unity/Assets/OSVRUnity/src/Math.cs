@@ -63,22 +63,22 @@ namespace OSVR
             public static Matrix4x4 ConvertMatrix(OSVR.ClientKit.Matrix44f matrix)
             {
                 Matrix4x4 matrix4x4 = new Matrix4x4();
-                matrix4x4.m00 = matrix.M0;
-                matrix4x4.m01 = matrix.M1;
-                matrix4x4.m02 = matrix.M2;
-                matrix4x4.m03 = matrix.M3;
-                matrix4x4.m10 = matrix.M4;
-                matrix4x4.m11 = matrix.M5;
-                matrix4x4.m12 = matrix.M6;
-                matrix4x4.m13 = matrix.M7;
-                matrix4x4.m20 = matrix.M8;
-                matrix4x4.m21 = matrix.M9;
-                matrix4x4.m22 = matrix.M10;
-                matrix4x4.m23 = matrix.M11;
-                matrix4x4.m30 = matrix.M12;
-                matrix4x4.m31 = matrix.M13;
-                matrix4x4.m32 = matrix.M14;
-                matrix4x4.m33 = matrix.M15;
+                matrix4x4[0, 0] = matrix.M0;
+                matrix4x4[1, 0] = matrix.M1;
+                matrix4x4[2, 0] = matrix.M2;
+                matrix4x4[3, 0] = matrix.M3;
+                matrix4x4[0, 1] = matrix.M4;
+                matrix4x4[1, 1] = matrix.M5;
+                matrix4x4[2, 1] = matrix.M6;
+                matrix4x4[3, 1] = matrix.M7;
+                matrix4x4[0, 2] = matrix.M8;
+                matrix4x4[1, 2] = matrix.M9;
+                matrix4x4[2, 2] = matrix.M10; //flip?
+                matrix4x4[3, 2] = matrix.M11;
+                matrix4x4[0, 3] = matrix.M12;
+                matrix4x4[1, 3] = matrix.M13;
+                matrix4x4[2, 3] = matrix.M14;
+                matrix4x4[3, 3] = matrix.M15;
                 return matrix4x4;
             }
         }
