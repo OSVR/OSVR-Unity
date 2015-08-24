@@ -1,10 +1,37 @@
-﻿using UnityEngine;
+﻿/// OSVR-Unity Connection
+///
+/// http://sensics.com/osvr
+///
+/// <copyright>
+/// Copyright 2015 Sensics, Inc.
+///
+/// Licensed under the Apache License, Version 2.0 (the "License");
+/// you may not use this file except in compliance with the License.
+/// You may obtain a copy of the License at
+///
+///     http://www.apache.org/licenses/LICENSE-2.0
+///
+/// Unless required by applicable law or agreed to in writing, software
+/// distributed under the License is distributed on an "AS IS" BASIS,
+/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+/// See the License for the specific language governing permissions and
+/// limitations under the License.
+/// </copyright>
+/// <summary>
+/// Author: Greg Aring
+/// Email: greg@sensics.com
+/// </summary>
+using UnityEngine;
 using System.Collections;
 
 namespace OSVR
 {
     namespace Unity
     {
+        //This class is responsible for creating the head, eyes, and surfaces in our scene.
+        //Rendering parameters are obtained from ClientKit.
+        //DisplayController creates VRHead and VREyes as children. Each eye has a VRSurface child with a camera.
+        //In this implementation, we are assuming that there is exactly one viewer and one surface per eye.
         public class DisplayController : MonoBehaviour
         {
             public const uint DEFAULT_VIEWER = 0; //assume exactly one viewer in this Unity implementation
@@ -190,6 +217,7 @@ namespace OSVR
                 }
             }
 
+            //helper method for updating the client context
             public void UpdateClient()
             {
                 _clientKit.context.update(); //update the client
