@@ -105,9 +105,6 @@ namespace OSVR
                 // to work as expected.
                 _camera.enabled = false;
 
-                float near = 0.1f;
-                float far = 1000f;
-
                 //render each eye camera (each surface)
                 //assumes one surface per eye
                 //@todo cache eyes, eyecount?
@@ -130,7 +127,7 @@ namespace OSVR
                     //get projection matrix from ClientKit
                     OSVR.ClientKit.Matrix44f projMatrix = _displayController.DisplayConfig.GetProjectionMatrixForViewerEyeSurfacef(
                         DisplayController.DEFAULT_VIEWER, (byte)i, DisplayController.DEFAULT_SURFACE,
-                        near, far, OSVR.ClientKit.MatrixConventionsFlags.ColMajor);
+                        _camera.nearClipPlane, _camera.farClipPlane, OSVR.ClientKit.MatrixConventionsFlags.ColMajor);
                     
                     surface.SetProjectionMatrix(Math.ConvertMatrix(projMatrix));
                     //surface.Render();

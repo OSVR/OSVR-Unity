@@ -54,6 +54,8 @@ namespace OSVR
             public VRHead Head { get { return _head; } }           
             public VREye[] Eyes { get { return eyes; } }
             public uint EyeCount { get { return _eyeCount; } }
+            public float nearClippingPlane = 0.01f;
+            public float farClippingPlane = 1000f;
 
             void Awake()
             {
@@ -119,6 +121,8 @@ namespace OSVR
                 vrHead.AddComponent<AudioListener>(); //add an audio listener
                 _head = vrHead.AddComponent<VRHead>();
                 _head.Camera = vrHead.GetComponent<Camera>(); //add a dummy camera, VRHead requires that it has a camera already
+                _head.Camera.nearClipPlane = nearClippingPlane;
+                _head.Camera.farClipPlane = farClippingPlane;
                 _head.tag = "MainCamera"; //tag this as the MainCamera so other gameobjects can reference it
                 _head.DisplayController = this; //pass DisplayController to Head           
                 vrHead.transform.parent = this.transform; //child of DisplayController
@@ -156,6 +160,8 @@ namespace OSVR
                 GameObject surfaceGameObject = new GameObject("Surface");
                 VRSurface surface = surfaceGameObject.AddComponent<VRSurface>();
                 surface.Camera = surfaceGameObject.AddComponent<Camera>();
+                surface.Camera.nearClipPlane = nearClippingPlane;
+                surface.Camera.farClipPlane = farClippingPlane;
                 surface.Camera.enabled = true; //@todo do we want this disabled?
                 surfaceGameObject.transform.parent = eyes[eyeIndex].transform; //child of Eye
                 surfaceGameObject.transform.localPosition = Vector3.zero;
