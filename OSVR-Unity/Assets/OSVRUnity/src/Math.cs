@@ -51,15 +51,15 @@ namespace OSVR
                 return Matrix4x4.TRS(Math.ConvertPosition(pose.translation), Math.ConvertOrientation(pose.rotation), Vector3.zero);
             }
 
-            //@todo Rect takes left, top, width, height
+            //Convert OSVR.ClientKit.Viewport to Rect
             public static Rect ConvertViewport(OSVR.ClientKit.Viewport viewport)
             {
                 //Unity expects normalized coordinates, not pixel coordinates
-                //@todo below assumes left and right eyes split the screen in half
+                //@todo below assumes left and right eyes split the screen in half horizontally
                 return new Rect(viewport.Left / (2f*viewport.Width), viewport.Bottom / viewport.Height, viewport.Width/(viewport.Width*2f), 1);
             }
 
-            //@todo is this correct?
+            //Convert OSVR.ClientKit.Matrix44f to Matrix4x4
             public static Matrix4x4 ConvertMatrix(OSVR.ClientKit.Matrix44f matrix)
             {
                 Matrix4x4 matrix4x4 = new Matrix4x4();
@@ -73,7 +73,7 @@ namespace OSVR
                 matrix4x4[3, 1] = matrix.M7;
                 matrix4x4[0, 2] = matrix.M8;
                 matrix4x4[1, 2] = matrix.M9;
-                matrix4x4[2, 2] = matrix.M10; //flip?
+                matrix4x4[2, 2] = matrix.M10;
                 matrix4x4[3, 2] = matrix.M11;
                 matrix4x4[0, 3] = matrix.M12;
                 matrix4x4[1, 3] = matrix.M13;
