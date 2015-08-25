@@ -30,7 +30,7 @@ namespace OSVR
     namespace Unity
     {
         [RequireComponent(typeof(Camera))]
-        public class VRHead : MonoBehaviour
+        public class VRViewer : MonoBehaviour
         {
             #region Public Variables
             public Camera Camera 

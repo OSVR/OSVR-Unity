@@ -30,16 +30,18 @@ namespace OSVR
     {
         //This class is responsible for creating the head, eyes, and surfaces in our scene.
         //Rendering parameters are obtained from ClientKit.
-        //DisplayController creates VRHead and VREyes as children. Each eye has a VRSurface child with a camera.
+        //DisplayController creates VRViewer and VREyes as children. Each eye has a VRSurface child with a camera.
         //In this implementation, we are assuming that there is exactly one viewer and one surface per eye.
         public class DisplayController : MonoBehaviour
         {
             public const uint DEFAULT_VIEWER = 0; //assume exactly one viewer in this Unity implementation
             public const uint DEFAULT_SURFACE = 0; //assume exactly one viewer in this Unity implementation
+            public const uint NUM_VIEWERS = 1;
+            public const uint NUM_SURFACE_PER_EYE = 1; 
 
             private ClientKit _clientKit;
             private OSVR.ClientKit.DisplayConfig _displayConfig;
-            private VRHead _head;
+            private VRViewer[] viewers;
             private VREye[] eyes;
             private uint _eyeCount;
             private uint _viewerCount;
@@ -51,9 +53,10 @@ namespace OSVR
                 get { return _displayConfig; }
                 set { _displayConfig = value; }
             }          
-            public VRHead Head { get { return _head; } }           
+            public VRViewer[] Viewers { get { return viewers; } }           
             public VREye[] Eyes { get { return eyes; } }
             public uint EyeCount { get { return _eyeCount; } }
+            public uint ViewerCount { get { return _viewerCount; } }
             public float nearClippingPlane = 0.01f;
             public float farClippingPlane = 1000f;
 
@@ -111,27 +114,41 @@ namespace OSVR
             }
 
             //Creates a head and eyes as configured in clientKit
-            //Head and Eyes are siblings, children of DisplayController
+            //Viewers and Eyes are siblings, children of DisplayController
             //Each eye has one child Surface which has a camera
             private void CreateHeadAndEyes()
             {
                 /* ASSUME ONE VIEWER */
-                //create a VRHead
-                GameObject vrHead = new GameObject("VRHead");             
-                vrHead.AddComponent<AudioListener>(); //add an audio listener
-                _head = vrHead.AddComponent<VRHead>();
-                _head.Camera = vrHead.GetComponent<Camera>(); //add a dummy camera, VRHead requires that it has a camera already
-                _head.Camera.nearClipPlane = nearClippingPlane;
-                _head.Camera.farClipPlane = farClippingPlane;
-                _head.tag = "MainCamera"; //tag this as the MainCamera so other gameobjects can reference it
-                _head.DisplayController = this; //pass DisplayController to Head           
-                vrHead.transform.parent = this.transform; //child of DisplayController
-                vrHead.transform.localPosition = Vector3.zero;
+                //Create VRViewers, only one in this implementation
+                _viewerCount = (uint)_displayConfig.GetNumViewers();
+                if(_viewerCount != NUM_VIEWERS)
+                {
+                    Debug.LogError(_viewerCount + " viewers detected. This implementation supports exactly one viewer.");
+                    return;
+                }               
+                viewers = new VRViewer[_viewerCount];
+                for (int i = 0; i < _viewerCount; i++)
+                {
+                    //create a VRViewer
+                    GameObject vrViewer = new GameObject("VRViewer" + i);
+                    vrViewer.AddComponent<AudioListener>(); //add an audio listener
+                    VRViewer vrViewerComponent = vrViewer.AddComponent<VRViewer>();
+                    vrViewerComponent.Camera = vrViewer.GetComponent<Camera>(); //add a dummy camera, VRViewer requires that it has a camera already
+                    vrViewerComponent.Camera.nearClipPlane = nearClippingPlane;
+                    vrViewerComponent.Camera.farClipPlane = farClippingPlane;
+                    vrViewerComponent.DisplayController = this; //pass DisplayController to Viewers  
+                    if(i == 0)
+                    {
+                        vrViewer.tag = "MainCamera"; //tag a VRViewer as the MainCamera so other gameobjects can reference it 
+                    }                                             
+                    vrViewer.transform.parent = this.transform; //child of DisplayController
+                    vrViewer.transform.localPosition = Vector3.zero;
+                }
+                
 
                 //create VREyes
                 _eyeCount = (uint)_displayConfig.GetNumEyesForViewer(DEFAULT_VIEWER); //get the number of eyes
                 eyes = new VREye[_eyeCount];
-                Debug.Log("Eye count is " + _eyeCount);
                 for (int i = 0; i < _eyeCount; i++)
                 {
                     GameObject eyeGameObject = new GameObject("Eye" + i); //add an eye gameobject to the scene
