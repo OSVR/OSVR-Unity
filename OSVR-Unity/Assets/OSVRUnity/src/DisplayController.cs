@@ -23,6 +23,9 @@
 /// </summary>
 using UnityEngine;
 using System.Collections;
+using System.Text.RegularExpressions;
+using System;
+
 
 namespace OSVR
 {
@@ -40,6 +43,7 @@ namespace OSVR
             public const uint NUM_SURFACE_PER_EYE = 1; 
 
             private ClientKit _clientKit;
+            private OsvrRenderManager _renderManager;
             private OSVR.ClientKit.DisplayConfig _displayConfig;
             private VRViewer[] viewers;
             private VREye[] eyes;
@@ -47,12 +51,25 @@ namespace OSVR
             private uint _viewerCount;
             private bool renderedStereo = false;
             private bool displayConfigInitialized = false;
+            public bool IsInitialized
+            {
+                get { return displayConfigInitialized; }
+            }
+            private bool rtSet = false;
+            public bool RtSet
+            {
+                get { return rtSet; }
+            }
 
             public OSVR.ClientKit.DisplayConfig DisplayConfig
             {
                 get { return _displayConfig; }
                 set { _displayConfig = value; }
-            }          
+            } 
+            public OsvrRenderManager RenderManager
+            {
+                get { return _renderManager; }
+            }
             public VRViewer[] Viewers { get { return viewers; } }           
             public VREye[] Eyes { get { return eyes; } }
             public uint EyeCount { get { return _eyeCount; } }
@@ -66,13 +83,73 @@ namespace OSVR
                 if(_clientKit == null)
                 {
                     Debug.LogError("DisplayController requires a ClientKit object in the scene.");
+                    return;
+                }
+
+                if(SupportsRenderManager() && _renderManager == null)
+                {
+                    _renderManager = GameObject.FindObjectOfType<OsvrRenderManager>();
+                    if(_renderManager == null)
+                    {
+                        //Add a rendermanager to this gameobject if there isn't one in the scene
+                        _renderManager = gameObject.AddComponent<OsvrRenderManager>();
+                        _renderManager.InitRenderManager(_clientKit.context);
+                    }
+                    
                 }
                 SetupApplicationSettings();
             }
             void Start()
             {
                 SetupDisplay();
-            }           
+            }
+           
+            public bool SupportsRenderManager()
+            {
+                bool support = true;
+#if UNITY_ANDROID
+                Debug.Log("RenderManager not yet supported on Android.");
+                support = false;
+#endif
+                if(!SystemInfo.graphicsDeviceVersion.Contains("Direct3D 11.0"))
+                {
+                    Debug.Log("RenderManager not yet supported on " + 
+                        SystemInfo.graphicsDeviceVersion + ". Only D3D11 is currently supported.");
+                    support = false;
+                }
+
+                if(!SystemInfo.supportsRenderTextures)
+                {
+                    Debug.Log("RenderManager not supported. RenderTexture (Unity 4 Pro feature) is unavailable.");
+                    support = false;
+                }
+
+                if(!SupportsUnityRenderEvent())
+                {
+                    Debug.Log("RenderManager not supported. Unity 4.5+ is needed for UnityRenderEvent.");
+                    support = false;
+                }
+                return support;
+            }
+
+            //Unity 4.5+ is needed for UnityRenderEvent.
+            private bool SupportsUnityRenderEvent()
+            {
+                bool support = true;
+                try
+                {
+                    string version = new Regex(@"(\d+\.\d+)\..*").Replace(Application.unityVersion, "$1");
+                    if (new Version(version) < new Version("4.5"))
+                    {
+                        support = false;
+                    }
+                }
+                catch
+                {
+                    Debug.LogWarning("Unable to determine Unity version from: " + Application.unityVersion);
+                }
+                return support;
+            }
 
             void SetupApplicationSettings()
             {
@@ -85,6 +162,7 @@ namespace OSVR
 
             void SetupDisplay()
             {
+                Debug.Log("SetupDisplay");
                 //get the DisplayConfig object from ClientKit
                 if(_clientKit.context == null)
                 {
@@ -118,6 +196,7 @@ namespace OSVR
             //Each eye has one child Surface which has a camera
             private void CreateHeadAndEyes()
             {
+                Debug.Log("CreateHeadAndEyes");
                 /* ASSUME ONE VIEWER */
                 //Create VRViewers, only one in this implementation
                 _viewerCount = (uint)_displayConfig.GetNumViewers();
@@ -159,7 +238,15 @@ namespace OSVR
                     eyeGameObject.transform.localPosition = Vector3.zero;
                     eyes[i] = eye;
                     CreateEyeSurface(i);
-                    SetDistortion(i);
+                    if (SupportsRenderManager())
+                    {
+                        //@todo do something here
+                    }
+                    else
+                    {
+                        SetDistortion(i);
+                    }
+                    
                 }
             }
 
@@ -167,6 +254,7 @@ namespace OSVR
             //bail if there isn't exactly one surface per eye
             private void CreateEyeSurface(int eyeIndex)
             {
+                Debug.Log("Create Eye Surface");
                 uint surfaceCount = _displayConfig.GetNumSurfacesForViewerEye(DEFAULT_VIEWER, (byte)eyeIndex);
                 if(surfaceCount != 1)
                 {
@@ -179,7 +267,23 @@ namespace OSVR
                 surface.Camera = surfaceGameObject.AddComponent<Camera>();
                 surface.Camera.nearClipPlane = nearClippingPlane;
                 surface.Camera.farClipPlane = farClippingPlane;
-                surface.Camera.enabled = true; //@todo do we want this disabled?
+                if(SupportsRenderManager())
+                {                   
+                    Debug.Log("About to create render textures");
+                    surface.Camera.enabled = false; //only enabled if not rendering to texture                   
+                    int width = _renderManager.GetRenderTextureWidth();
+                    int height = _renderManager.GetRenderTextureHeight();
+                    //create a RenderTexture for this surface
+                    Debug.Log("Creating surface rendertexture with dimensions (" + width + ", " + height + ")");
+                    surface.SetRenderTexture(new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32));
+                    _renderManager.SetEyeColorBuffer(surface.GetTex2D.GetNativeTexturePtr(), eyeIndex);
+                    if (eyeIndex == 1) rtSet = true;
+                }
+                else
+                {
+                    surface.Camera.enabled = true;
+                }
+                
                 surfaceGameObject.transform.parent = eyes[eyeIndex].transform; //child of Eye
                 surfaceGameObject.transform.localPosition = Vector3.zero;
                 eyes[eyeIndex].Surface = surface;

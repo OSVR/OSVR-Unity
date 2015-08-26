@@ -97,6 +97,7 @@ namespace OSVR
 
             void OnPreCull()
             {
+                if (!_displayController.IsInitialized) return;
                 _displayController.UpdateClient();
 
                 // Turn off the mono camera so it doesn't waste time rendering.
@@ -112,11 +113,6 @@ namespace OSVR
                 {
                     //get the eye's surface
                     VRSurface surface = _displayController.Eyes[i].Surface;
-
-                   // OSVR.ClientKit.Matrix44f viewMatrix = _displayController.DisplayConfig.GetViewerEyeViewMatrixf(
-                       // DisplayController.DEFAULT_VIEWER, (byte)i, OSVR.ClientKit.MatrixConventionsFlags.ColMajor);
-
-                    //surface.SetViewMatrix(Math.ConvertMatrix(viewMatrix));
                     
                     //get viewport from ClientKit
                     OSVR.ClientKit.Viewport viewport = _displayController.DisplayConfig.GetRelativeViewportForViewerEyeSurface(
@@ -130,7 +126,10 @@ namespace OSVR
                         _camera.nearClipPlane, _camera.farClipPlane, OSVR.ClientKit.MatrixConventionsFlags.ColMajor);
                     
                     surface.SetProjectionMatrix(Math.ConvertMatrix(projMatrix));
-                    //surface.Render();
+                    if (DisplayController.SupportsRenderManager() && DisplayController.IsInitialized)
+                    {
+                        surface.Render();
+                    }
                 }
 
                 // Remember to reenable.
@@ -148,6 +147,44 @@ namespace OSVR
                         renderedStereo = false;
                     }
                     yield return new WaitForEndOfFrame();
+                    GL.IssuePluginEvent(0); 
+                   /* if(DisplayController.SupportsRenderManager() && DisplayController.IsInitialized && DisplayController.RtSet)
+                    {
+                        DisplayController.RenderManager.SetRenderEventTime(Time.time);
+                        for (int i = 0; i < _displayController.EyeCount; i++)
+                        {
+                            //get the eye's surface
+                            VRSurface surface = _displayController.Eyes[i].Surface;
+
+                            // Remember current render textures
+                            RenderTexture currentActiveRT = RenderTexture.active;
+                            RenderTexture currentCamRT = surface.Camera.targetTexture;
+
+                            // Force rendering of the camera to my render texture
+                            surface.Camera.targetTexture = surface.GetRenderTexture;
+                            surface.Camera.Render(); // 2nd Render seems to be necessary, but why??
+                            surface.Camera.targetTexture = currentCamRT;
+
+                            // Get a copy of the rendered data
+                            RenderTexture.active = surface.GetRenderTexture;
+                            surface.GetTex2D.ReadPixels(new Rect(0, 0, surface.GetRenderTexture.width*2, surface.GetRenderTexture.height), 0, 0);
+                            surface.GetTex2D.Apply(); // hits perf significantly but needed otherwise actual copy does not occur
+
+                            // Restorie previously assigned render texture
+                            RenderTexture.active = currentActiveRT;
+                            //Destroy(rt);
+                            
+                        }*/
+                        
+
+                        // Issue a plugin event with arbitrary integer identifier.
+                        // The plugin can distinguish between different
+                        // things it needs to do based on this ID.
+                        // For our simple plugin, it does not matter which ID we pass here.
+                        //DisplayController.RenderManager.SetRenderEventTime(Time.time);
+                        
+                    }
+                    
                 }
             }
         }
