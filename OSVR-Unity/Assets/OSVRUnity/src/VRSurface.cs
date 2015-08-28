@@ -78,15 +78,16 @@ namespace OSVR
             {
                 _camera.Render();
             }
-            public void PostRender(bool vrMode)
+
+            void OnPostRender()
             {
-                
+                //GL.IssuePluginEvent(0); 
             }
 
             public void SetRenderTexture(RenderTexture renderTexture)
             {
                 rt = renderTexture;
-                tex2D = new Texture2D(rt.width, rt.height, TextureFormat.ARGB32, false);
+               // tex2D = new Texture2D(rt.width, rt.height, TextureFormat.ARGB32, false);
                 Camera.targetTexture = rt;
             }
         }
