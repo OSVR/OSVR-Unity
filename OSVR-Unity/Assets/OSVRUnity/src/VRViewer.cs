@@ -104,7 +104,7 @@ namespace OSVR
                 // @note mono camera is left on from beginning of frame till now
                 // in order that other game logic (e.g. Camera.main) continues
                 // to work as expected.
-                _camera.enabled = false;
+                _camera.enabled = true;
 
                 //render each eye camera (each surface)
                 //assumes one surface per eye
@@ -147,7 +147,8 @@ namespace OSVR
                         renderedStereo = false;
                     }
                     yield return new WaitForEndOfFrame();
-                    GL.IssuePluginEvent(0); 
+                    _displayController.RenderManager.SetRenderEventTime(Time.time);
+                    GL.IssuePluginEvent(0);
                    /* if(DisplayController.SupportsRenderManager() && DisplayController.IsInitialized && DisplayController.RtSet)
                     {
                         DisplayController.RenderManager.SetRenderEventTime(Time.time);
@@ -174,7 +175,7 @@ namespace OSVR
                             RenderTexture.active = currentActiveRT;
                             //Destroy(rt);
                             
-                        }*/
+                        }
                         
 
                         // Issue a plugin event with arbitrary integer identifier.
@@ -183,7 +184,7 @@ namespace OSVR
                         // For our simple plugin, it does not matter which ID we pass here.
                         //DisplayController.RenderManager.SetRenderEventTime(Time.time);
                         
-                    }
+                }*/
                     
                 }
             }
