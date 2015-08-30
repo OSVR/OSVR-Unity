@@ -46,6 +46,8 @@ namespace OSVR
             [HideInInspector]
             public Transform cachedTransform;
             [HideInInspector]
+            public VRHead head;
+            [HideInInspector]
             public K1RadialDistortion DistortionEffect
             {
               get
@@ -97,6 +99,10 @@ namespace OSVR
                 {
                     clientKit = GameObject.FindObjectOfType<ClientKit>();
                 }
+                if (head == null)
+                {
+                    gameObject.GetComponentInParent<VRHead>();
+                }
                 //cache:
                 cachedTransform = transform;
 
@@ -136,6 +142,10 @@ namespace OSVR
             void OnPreRender()
             {
                 clientKit.context.update();
+                if (head)
+                {
+                    head.UpdatePose();
+                }
             }
             #endregion
 
