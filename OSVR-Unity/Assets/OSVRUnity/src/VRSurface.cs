@@ -35,11 +35,11 @@ namespace OSVR
             private K1RadialDistortion _distortionEffect;
 
             public Camera Camera { get { return _camera; } set { _camera = value; } }
-            private RenderTexture rt;
-            public RenderTexture GetRenderTexture { get { return rt; } }
+            private RenderTexture _renderTarget;
+            public RenderTexture RenderTarget { get { return _renderTarget; } set { _renderTarget = value; } }
 
-            private Texture2D tex2D;
-            public Texture2D GetTex2D { get { return tex2D; } }
+            private Texture2D _textureToNative;
+            public Texture2D TextureToNative { get { return _textureToNative; } set { _textureToNative = value; } }
 
             [HideInInspector]
             public K1RadialDistortion DistortionEffect
@@ -86,9 +86,16 @@ namespace OSVR
 
             public void SetRenderTexture(RenderTexture renderTexture)
             {
-                rt = renderTexture;
-               // tex2D = new Texture2D(rt.width, rt.height, TextureFormat.ARGB32, false);
-                Camera.targetTexture = rt;
+                _renderTarget = renderTexture;
+                Camera.targetTexture = _renderTarget;
+
+                //also create a texture2d of the same size
+                _textureToNative = new Texture2D(_renderTarget.width, _renderTarget.height, TextureFormat.ARGB32, false);
+                RenderTexture.active = _renderTarget;
+                _textureToNative.ReadPixels(new Rect(0, 0, _renderTarget.width, _renderTarget.height), 0, 0);
+                _textureToNative.Apply();
+                
+               // Camera.targetTexture = rt;
             }
         }
     }

@@ -276,7 +276,7 @@ namespace OSVR
                     //create a RenderTexture for this surface
                     Debug.Log("Creating surface rendertexture with dimensions (" + width + ", " + height + ")");
                     surface.SetRenderTexture(new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32));
-                    _renderManager.SetEyeColorBuffer(surface.Camera.targetTexture.GetNativeTexturePtr(), eyeIndex);
+                    _renderManager.SetEyeColorBuffer(surface.TextureToNative.GetNativeTexturePtr(), eyeIndex);
                     if (eyeIndex == 1) rtSet = true;
                 }
                 else

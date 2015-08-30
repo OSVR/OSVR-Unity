@@ -45,11 +45,17 @@ namespace OSVR
                 } 
                 set { _camera = value; } }
             public DisplayController DisplayController { get { return _displayController; } set { _displayController = value; } }
+            public RenderTexture RenderTarget
+            {
+                get { return _renderTarget; }
+                set { _renderTarget = value; }
+            }
             #endregion
 
             #region Private Variables
             private DisplayController _displayController;
             private Camera _camera;
+            private RenderTexture _renderTarget;
             private bool renderedStereo = true;
             private bool updated = false; //whether the headpose has been updated this frame
             private bool updateEarly = false; //if false, update in LateUpdate
@@ -147,8 +153,46 @@ namespace OSVR
                         renderedStereo = false;
                     }
                     yield return new WaitForEndOfFrame();
-                    _displayController.RenderManager.SetRenderEventTime(Time.time);
-                    GL.IssuePluginEvent(0);
+                    if (DisplayController.SupportsRenderManager() && DisplayController.IsInitialized && DisplayController.RtSet)
+                    {
+                        
+                        for (int i = 0; i < _displayController.EyeCount; i++)
+                        {
+
+
+                                //get the eye's surface
+                                VRSurface surface = _displayController.Eyes[i].Surface;
+
+                                // _displayController.RenderManager.SetRenderEventTime(Time.time);
+                                // GL.IssuePluginEvent(0);
+                                // Remember current render textures
+                                RenderTexture currentActiveRT = RenderTexture.active;
+                                RenderTexture currentCamRT = surface.Camera.targetTexture;
+
+                                // Force rendering of the camera to my render texture
+                                surface.Camera.targetTexture = surface.RenderTarget;
+                                surface.Camera.Render(); // 2nd Render seems to be necessary, but why??
+                                surface.Camera.targetTexture = currentCamRT;
+
+                                // Get a copy of the rendered data
+                                RenderTexture.active = surface.RenderTarget;
+                                surface.TextureToNative.ReadPixels(new Rect(0, 0, currentCamRT.width, currentCamRT.height), 0, 0);
+                                surface.TextureToNative.Apply(); // hits perf significantly but needed otherwise actual copy does not occur
+
+                                // Restorie previously assigned render texture
+                                RenderTexture.active = currentActiveRT;
+                                //Destroy(rt);
+                            }
+  
+                            
+                        }
+                        // Issue a plugin event with arbitrary integer identifier.
+                        // The plugin can distinguish between different
+                        // things it needs to do based on this ID.
+                        // For our simple plugin, it does not matter which ID we pass here.
+                        GL.IssuePluginEvent(0); 
+                       
+                    }
                    /* if(DisplayController.SupportsRenderManager() && DisplayController.IsInitialized && DisplayController.RtSet)
                     {
                         DisplayController.RenderManager.SetRenderEventTime(Time.time);
@@ -184,9 +228,9 @@ namespace OSVR
                         // For our simple plugin, it does not matter which ID we pass here.
                         //DisplayController.RenderManager.SetRenderEventTime(Time.time);
                         
-                }*/
-                    
                 }
+                    
+                }*/
             }
         }
     }
