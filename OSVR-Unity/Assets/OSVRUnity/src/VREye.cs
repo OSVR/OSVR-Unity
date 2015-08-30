@@ -130,10 +130,10 @@ namespace OSVR
                 }
             }
 
-            //Called after a camera finishes rendering the scene.
+            //Called before a camera renders the scene.
             //the goal here is to update the client often to make sure we have the most recent tracker data
             //this helps reduce latency
-            void OnPostRender()
+            void OnPreRender()
             {
                 clientKit.context.update();
             }
