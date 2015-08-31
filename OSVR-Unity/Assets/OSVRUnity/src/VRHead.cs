@@ -55,6 +55,7 @@ namespace OSVR
             private DeviceDescriptor _deviceDescriptor;
             private DisplayInterface _displayInterface;
             private bool _initDisplayInterface = false;
+            private PoseInterface _poseIf;
             #endregion
 
             #region Init
@@ -69,6 +70,7 @@ namespace OSVR
                 }
 */
                 _displayInterface = GetComponent<DisplayInterface>();
+                _poseIf = GetComponent<PoseInterface>();
 
                 //update VRHead with info from the display interface if it has been initialized
                 //it might not be initialized if it is still parsing a display json file
@@ -102,6 +104,12 @@ namespace OSVR
                     UpdateStereoAmount();
                     UpdateViewMode();
                 }
+            }
+            public void UpdatePose()
+            {
+                var state = _poseIf.Interface.GetState();
+                transform.localPosition = state.Value.Position;
+                transform.localRotation = state.Value.Rotation;
             }
             #endregion
 
@@ -165,6 +173,8 @@ namespace OSVR
                     switch (currentEye.eye)
                     {
                         case Eye.left:
+                            // Only need one eye to update the head.
+                            currentEye.head = this;
                             _leftEye = currentEye;
                             break;
 
