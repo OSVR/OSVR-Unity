@@ -33,28 +33,26 @@ namespace OSVR
         public class VREye : MonoBehaviour
         {
             #region Private Variables
-            private DisplayController _displayController;
             private VRSurface _surface; //the surface associated with this eye
-            private int _eyeIndex;
-            private bool updated = false; //whether the headpose has been updated this frame
-            private bool updateEarly = false; //if false, update in LateUpdate
+            private VRViewer viewer; //the viewer associated with this eye
+            private uint _eyeIndex;
             
             #endregion
             #region Public Variables  
-            public int EyeIndex
+            public uint EyeIndex
             {
                 get { return _eyeIndex; }
                 set { _eyeIndex = value; }
-            }
-            public DisplayController DisplayController 
-            { 
-                get { return _displayController; } 
-                set { _displayController = value; } 
             }
             public VRSurface Surface
             {
                 get { return _surface; }
                 set { _surface = value; }
+            }
+            public VRViewer Viewer
+            {
+                get { return viewer; }
+                set { viewer = value; }
             }
             [HideInInspector]
             public Transform cachedTransform;
@@ -78,39 +76,13 @@ namespace OSVR
             }         
             #endregion
 
-            #region Loop
-            // Update is called once per frame.
-            void Update()
-            {
-                updated = false;  // OK to recompute head pose.
-                if (updateEarly)
-                {
-                    UpdateEyePose();
-                }
-            }
-            // LateUpdate is called once per frame, after Update has finished. 
-            void LateUpdate()
-            {
-                UpdateEyePose();
-            }
-            //Updates the position and rotation of the head
-            private void UpdateEyePose()
-            {
-                if (updated)
-                {  // Only one update per frame.
-                    return;
-                }
-                updated = true;
-
-                _displayController.UpdateClient();
-
-                OSVR.ClientKit.Pose3 eyePose = _displayController.DisplayConfig.GetViewerEyePose(DisplayController.DEFAULT_VIEWER, (byte)_eyeIndex);
+            // Updates the position and rotation of the eye
+            // Optionally, update the viewer associated with this eye
+            public void UpdateEyePose(OSVR.ClientKit.Pose3 eyePose)
+            { 
                 cachedTransform.localPosition = Math.ConvertPosition(eyePose.translation);
                 cachedTransform.localRotation = Math.ConvertOrientation(eyePose.rotation);
             }
-            #endregion
-
-
         }
     }
 }
