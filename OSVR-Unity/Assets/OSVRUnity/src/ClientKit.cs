@@ -114,20 +114,12 @@ namespace OSVR
                 EnsureStarted();
             }
 
-            void FixedUpdate()
+            void Update()
             {
                 EnsureStarted();
                 contextObject.update();
             }
-          
-            //may seem superfluous. the goal here is to update the client more often to make sure we have the most recent tracker data
-            //this helps reduce latency
-            void Update()
-            {
-                contextObject.update();
-            }
-            //may seem superfluous. the goal here is to update the client more often to make sure we have the most recent tracker data
-            //this helps reduce latency
+
             void LateUpdate()
             {
                 contextObject.update();
