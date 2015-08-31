@@ -94,15 +94,12 @@ namespace OSVR
                 _displayConfig = _clientKit.context.GetDisplayConfig();
                 if (_displayConfig == null)
                 {
-                    Debug.LogError("Unable to setup display. No DisplayConfig object found.");
                     return;
                 }
-                Debug.Log("DisplayConfig initialized on frame " + Time.frameCount);
                 displayConfigInitialized = true;
-                Debug.Log("Let's get the viewer count");
+
                 //get the number of viewers, bail if there isn't exactly one viewer for now
                 _viewerCount = _displayConfig.GetNumViewers();
-                Debug.Log("Viewer count is " + _viewerCount);
                 if(_viewerCount != 1)
                 {
                     Debug.LogError(_viewerCount + " viewers found, but this implementation requires exactly one viewer.");
@@ -127,45 +124,45 @@ namespace OSVR
                     return;
                 }               
                 viewers = new VRViewer[_viewerCount];
-                for (int i = 0; i < _viewerCount; i++)
+                for (uint viewerIndex = 0; viewerIndex < _viewerCount; viewerIndex++)
                 {
                     //create a VRViewer
-                    GameObject vrViewer = new GameObject("VRViewer" + i);
+                    GameObject vrViewer = new GameObject("VRViewer" + viewerIndex);
                     vrViewer.AddComponent<AudioListener>(); //add an audio listener
                     VRViewer vrViewerComponent = vrViewer.AddComponent<VRViewer>();
                     vrViewerComponent.Camera = vrViewer.GetComponent<Camera>(); //add a dummy camera, VRViewer requires that it has a camera already
                     vrViewerComponent.Camera.nearClipPlane = nearClippingPlane;
                     vrViewerComponent.Camera.farClipPlane = farClippingPlane;
                     vrViewerComponent.DisplayController = this; //pass DisplayController to Viewers  
-                    if(i == 0)
+                    if(viewerIndex == 0)
                     {
                         vrViewer.tag = "MainCamera"; //tag a VRViewer as the MainCamera so other gameobjects can reference it 
                     }                                             
                     vrViewer.transform.parent = this.transform; //child of DisplayController
                     vrViewer.transform.localPosition = Vector3.zero;
-                }
-                
+                    viewers[viewerIndex] = vrViewerComponent;
 
-                //create VREyes
-                _eyeCount = (uint)_displayConfig.GetNumEyesForViewer(DEFAULT_VIEWER); //get the number of eyes
-                eyes = new VREye[_eyeCount];
-                for (int i = 0; i < _eyeCount; i++)
-                {
-                    GameObject eyeGameObject = new GameObject("Eye" + i); //add an eye gameobject to the scene
-                    VREye eye = eyeGameObject.AddComponent<VREye>(); //add the VReye component
-                    eye.DisplayController = this; //pass DisplayController to Eye
-                    eye.EyeIndex = i; //set the eye's index
-                    eyeGameObject.transform.parent = this.transform; //child of DisplayController
-                    eyeGameObject.transform.localPosition = Vector3.zero;
-                    eyes[i] = eye;
-                    CreateEyeSurface(i);
-                    SetDistortion(i);
-                }
+                    //create Viewer's VREyes
+                    _eyeCount = (uint)_displayConfig.GetNumEyesForViewer(viewerIndex); //get the number of eyes
+                    eyes = new VREye[_eyeCount];
+                    for (uint eyeIndex = 0; eyeIndex < _eyeCount; eyeIndex++)
+                    {
+                        GameObject eyeGameObject = new GameObject("Eye" + eyeIndex); //add an eye gameobject to the scene
+                        VREye eye = eyeGameObject.AddComponent<VREye>(); //add the VReye component
+                        eye.Viewer = viewers[viewerIndex]; //ASSUME THERE IS ONLY ONE VIEWER
+                        eye.EyeIndex = eyeIndex; //set the eye's index
+                        eyeGameObject.transform.parent = this.transform; //child of DisplayController
+                        eyeGameObject.transform.localPosition = Vector3.zero;
+                        eyes[eyeIndex] = eye;
+                        CreateEyeSurface(eyeIndex);
+                        SetDistortion(eyeIndex);
+                    }
+                }            
             }
 
             //Creates a Surface for a given Eye
             //bail if there isn't exactly one surface per eye
-            private void CreateEyeSurface(int eyeIndex)
+            private void CreateEyeSurface(uint eyeIndex)
             {
                 uint surfaceCount = _displayConfig.GetNumSurfacesForViewerEye(DEFAULT_VIEWER, (byte)eyeIndex);
                 if(surfaceCount != 1)
@@ -176,18 +173,19 @@ namespace OSVR
                 }
                 GameObject surfaceGameObject = new GameObject("Surface");
                 VRSurface surface = surfaceGameObject.AddComponent<VRSurface>();
+                surface.Eye = eyes[eyeIndex];
                 surface.Camera = surfaceGameObject.AddComponent<Camera>();
                 surface.Camera.nearClipPlane = nearClippingPlane;
                 surface.Camera.farClipPlane = farClippingPlane;
-                surface.Camera.enabled = true; //@todo do we want this disabled?
-                surfaceGameObject.transform.parent = eyes[eyeIndex].transform; //child of Eye
+                surface.Camera.enabled = false;
+                surfaceGameObject.transform.parent = eyes[eyeIndex].transform; //surface is child of Eye
                 surfaceGameObject.transform.localPosition = Vector3.zero;
                 eyes[eyeIndex].Surface = surface;
             }
 
             //determines if distortion will be used, and what type of distortion will be used
             //set distortion parameters accordingly for the given eye.
-            private void SetDistortion(int eyeIndex)
+            private void SetDistortion(uint eyeIndex)
             {
                 bool useDistortion = _displayConfig.DoesViewerEyeSurfaceWantDistortion(DEFAULT_VIEWER, (byte)eyeIndex, DEFAULT_SURFACE);
                 if (!useDistortion)
@@ -208,7 +206,7 @@ namespace OSVR
             }
 
             //set distortion parameters for K1 Radial Distortion method
-            private void SetK1RadialDistortion(int eyeIndex, float k1Red, float k1Green, float k1Blue, Vector2 center)
+            private void SetK1RadialDistortion(uint eyeIndex, float k1Red, float k1Green, float k1Blue, Vector2 center)
             {
                 VREye eye = eyes[eyeIndex];
                 // disable distortion if there is no distortion for this HMD
