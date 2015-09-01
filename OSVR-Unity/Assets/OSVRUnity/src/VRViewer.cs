@@ -79,9 +79,9 @@ namespace OSVR
 
             //Updates the position and rotation of the head
             public void UpdateViewerHeadPose(OSVR.ClientKit.Pose3 headPose)
-            {              
-                transform.localPosition = Math.ConvertPosition(headPose.translation);
-                transform.localRotation = Math.ConvertOrientation(headPose.rotation);
+            {
+                cachedTransform.localPosition = Math.ConvertPosition(headPose.translation);
+                cachedTransform.localRotation = Math.ConvertOrientation(headPose.rotation);
             }
 
             //Culling determines which objects are visible to the camera. OnPreCull is called just before this process.
