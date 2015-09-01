@@ -53,27 +53,29 @@ namespace OSVR
                 }
             }
 
-
+            //Set the camera's viewport rect
             public void SetViewport(Rect rect)
             {
                 _camera.rect = rect;
             }
 
+            //Set the camera's view matrix
             public void SetViewMatrix(Matrix4x4 viewMatrix)
             {
                 _camera.worldToCameraMatrix = viewMatrix;
             }
 
+            //Set the camera's projection matrix
             public void SetProjectionMatrix(Matrix4x4 projMatrix)
             {
                 _camera.projectionMatrix = projMatrix;
             }
 
+            //Render the camera
             public void Render()
             {
                 _camera.Render();
             }
-
         }
     }
 }

@@ -173,7 +173,6 @@ namespace OSVR
                 }
                 GameObject surfaceGameObject = new GameObject("Surface");
                 VRSurface surface = surfaceGameObject.AddComponent<VRSurface>();
-                surface.Eye = eyes[eyeIndex];
                 surface.Camera = surfaceGameObject.AddComponent<Camera>();
                 surface.Camera.nearClipPlane = nearClippingPlane;
                 surface.Camera.farClipPlane = farClippingPlane;
