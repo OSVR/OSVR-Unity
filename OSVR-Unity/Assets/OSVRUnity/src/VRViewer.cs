@@ -43,17 +43,29 @@ namespace OSVR
                     }
                     return _camera; 
                 } 
-                set { _camera = value; } }
+                set { _camera = value; } 
+            }
             public DisplayController DisplayController { get { return _displayController; } set { _displayController = value; } }
+            [HideInInspector]
+            public Transform cachedTransform;
             #endregion
 
             #region Private Variables
             private DisplayController _displayController;
             private Camera _camera;
-            private bool renderedStereo = true;
-            private bool updated = false; //whether the headpose has been updated this frame
-            private bool updateEarly = false; //if false, update in LateUpdate
+            private bool disabledCamera = true;
             #endregion
+
+            void Awake()
+            {
+                Init();
+            }
+
+            void Init()
+            {
+                //cache:
+                cachedTransform = transform;
+            }
 
             void OnEnable()
             {
@@ -65,87 +77,67 @@ namespace OSVR
                 StopCoroutine("EndOfFrame");
             }
 
-            // Update is called once per frame.
-            void Update()
-            {
-                updated = false;  // OK to recompute head pose.
-                if (updateEarly)
-                {
-                    UpdateHeadPose();
-                }
-            }
-            // LateUpdate is called once per frame, after Update has finished. 
-            void LateUpdate()
-            {
-                UpdateHeadPose();
-            }
             //Updates the position and rotation of the head
-            private void UpdateHeadPose()
-            {
-                if (updated)
-                {  // Only one update per frame.
-                    return;
-                }
-                updated = true;
-
-                _displayController.UpdateClient();
-                
-                OSVR.ClientKit.Pose3 headPose = _displayController.DisplayConfig.GetViewerPose(DisplayController.DEFAULT_VIEWER);
+            public void UpdateViewerHeadPose(OSVR.ClientKit.Pose3 headPose)
+            {              
                 transform.localPosition = Math.ConvertPosition(headPose.translation);
                 transform.localRotation = Math.ConvertOrientation(headPose.rotation);
             }
 
+            //Culling determines which objects are visible to the camera. OnPreCull is called just before this process.
             void OnPreCull()
             {
+                //update the client
                 _displayController.UpdateClient();
 
-                // Turn off the mono camera so it doesn't waste time rendering.
-                // @note mono camera is left on from beginning of frame till now
-                // in order that other game logic (e.g. Camera.main) continues
-                // to work as expected.
+                // Disable dummy camera during rendering
+                // Enable after frame ends
                 _camera.enabled = false;
+
+                //update the viewer's head pose
+                UpdateViewerHeadPose(_displayController.DisplayConfig.GetViewerPose(DisplayController.DEFAULT_VIEWER));
 
                 //render each eye camera (each surface)
                 //assumes one surface per eye
-                //@todo cache eyes, eyecount?
                 for (int i = 0; i < _displayController.EyeCount; i++)
                 {
+                    //update the eye pose
+                    VREye eye = _displayController.Eyes[i];
+                    eye.UpdateEyePose(_displayController.DisplayConfig.GetViewerEyePose(DisplayController.DEFAULT_VIEWER, (byte)i));
+
                     //get the eye's surface
-                    VRSurface surface = _displayController.Eyes[i].Surface;
+                    VRSurface surface = eye.Surface;
 
-                   // OSVR.ClientKit.Matrix44f viewMatrix = _displayController.DisplayConfig.GetViewerEyeViewMatrixf(
-                       // DisplayController.DEFAULT_VIEWER, (byte)i, OSVR.ClientKit.MatrixConventionsFlags.ColMajor);
-
-                    //surface.SetViewMatrix(Math.ConvertMatrix(viewMatrix));
-                    
-                    //get viewport from ClientKit
+                    //get viewport from ClientKit and set surface viewport
                     OSVR.ClientKit.Viewport viewport = _displayController.DisplayConfig.GetRelativeViewportForViewerEyeSurface(
                         DisplayController.DEFAULT_VIEWER, (byte)i, DisplayController.DEFAULT_SURFACE);
                     
                     surface.SetViewport(Math.ConvertViewport(viewport));
                     
-                    //get projection matrix from ClientKit
+                    //get projection matrix from ClientKit and set surface projection matrix
                     OSVR.ClientKit.Matrix44f projMatrix = _displayController.DisplayConfig.GetProjectionMatrixForViewerEyeSurfacef(
                         DisplayController.DEFAULT_VIEWER, (byte)i, DisplayController.DEFAULT_SURFACE,
                         _camera.nearClipPlane, _camera.farClipPlane, OSVR.ClientKit.MatrixConventionsFlags.ColMajor);
                     
                     surface.SetProjectionMatrix(Math.ConvertMatrix(projMatrix));
-                    //surface.Render();
+                    
+                    //render the surface
+                    surface.Render();
                 }
 
                 // Remember to reenable.
-                renderedStereo = true;
+                disabledCamera = true;
             }
 
             IEnumerator EndOfFrame()
             {
                 while (true)
                 {
-                    // If *we* turned off the mono cam, turn it back on for next frame.
-                    if (renderedStereo)
+                    //if we disabled the dummy camera, enable it here
+                    if (disabledCamera)
                     {
                         Camera.enabled = true;
-                        renderedStereo = false;
+                        disabledCamera = false;
                     }
                     yield return new WaitForEndOfFrame();
                 }
