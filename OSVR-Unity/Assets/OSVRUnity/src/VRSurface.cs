@@ -71,6 +71,45 @@ namespace OSVR
                 _camera.projectionMatrix = projMatrix;
             }
 
+            //Given distortion parameters, setup the appropriate distortion method
+            //@todo this should be more generalized when we have more distortion options
+            public void SetDistortion(OSVR.ClientKit.RadialDistortionParameters distortionParameters)
+            {
+                float k1Red = (float)distortionParameters.k1.x;
+                float k1Green = (float)distortionParameters.k1.y;
+                float k1Blue = (float)distortionParameters.k1.z;
+                Vector2 center = new Vector2((float)distortionParameters.centerOfProjection.x,
+                    (float)distortionParameters.centerOfProjection.y);
+
+                //@todo figure out which type of distortion to use
+                //right now, there is only one option
+                SetK1RadialDistortion(k1Red, k1Green, k1Blue, center);
+            }
+
+            //set distortion parameters for K1 Radial Distortion method
+            private void SetK1RadialDistortion(float k1Red, float k1Green, float k1Blue, Vector2 center)
+            {
+                // disable distortion if there is no distortion for this HMD
+                if (k1Red == 0 && k1Green == 0 && k1Blue == 0)
+                {
+                    if (DistortionEffect)
+                    {
+                        DistortionEffect.enabled = false;
+                    }
+                    return;
+                }
+                // Otherwise try to create distortion and set its parameters
+                var distortionFactory = new K1RadialDistortionFactory();
+                var effect = distortionFactory.GetOrCreateDistortion(this);
+                if (effect)
+                {
+                    effect.k1Red = k1Red;
+                    effect.k1Green = k1Green;
+                    effect.k1Blue = k1Blue;
+                    effect.center = center;
+                }
+            }
+
             //Render the camera
             public void Render()
             {
