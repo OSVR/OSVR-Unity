@@ -34,7 +34,7 @@ namespace OSVR
         {
             #region Private Variables
             private VRSurface _surface; //the surface associated with this eye
-            private VRViewer viewer; //the viewer associated with this eye
+            private VRViewer _viewer; //the viewer associated with this eye
             private uint _eyeIndex;
             
             #endregion
@@ -51,8 +51,8 @@ namespace OSVR
             }
             public VRViewer Viewer
             {
-                get { return viewer; }
-                set { viewer = value; }
+                get { return _viewer; }
+                set { _viewer = value; }
             }
             [HideInInspector]
             public Transform cachedTransform;

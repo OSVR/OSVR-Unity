@@ -41,20 +41,20 @@ namespace OSVR
 
             private ClientKit _clientKit;
             private OSVR.ClientKit.DisplayConfig _displayConfig;
-            private VRViewer[] viewers;
-            private VREye[] eyes;
+            private VRViewer[] _viewers;
+            private VREye[] _eyes;
             private uint _eyeCount;
             private uint _viewerCount;
-            private bool renderedStereo = false;
-            private bool displayConfigInitialized = false;
+            private bool _renderedStereo = false;
+            private bool _displayConfigInitialized = false;
 
             public OSVR.ClientKit.DisplayConfig DisplayConfig
             {
                 get { return _displayConfig; }
                 set { _displayConfig = value; }
             }          
-            public VRViewer[] Viewers { get { return viewers; } }           
-            public VREye[] Eyes { get { return eyes; } }
+            public VRViewer[] Viewers { get { return _viewers; } }           
+            public VREye[] Eyes { get { return _eyes; } }
             public uint EyeCount { get { return _eyeCount; } }
             public uint ViewerCount { get { return _viewerCount; } }
             public float nearClippingPlane = 0.01f;
@@ -96,7 +96,7 @@ namespace OSVR
                 {
                     return;
                 }
-                displayConfigInitialized = true;
+                _displayConfigInitialized = true;
 
                 //get the number of viewers, bail if there isn't exactly one viewer for now
                 _viewerCount = _displayConfig.GetNumViewers();
@@ -123,7 +123,7 @@ namespace OSVR
                     Debug.LogError(_viewerCount + " viewers detected. This implementation supports exactly one viewer.");
                     return;
                 }               
-                viewers = new VRViewer[_viewerCount];
+                _viewers = new VRViewer[_viewerCount];
                 for (uint viewerIndex = 0; viewerIndex < _viewerCount; viewerIndex++)
                 {
                     //create a VRViewer
@@ -140,20 +140,20 @@ namespace OSVR
                     }                                             
                     vrViewer.transform.parent = this.transform; //child of DisplayController
                     vrViewer.transform.localPosition = Vector3.zero;
-                    viewers[viewerIndex] = vrViewerComponent;
+                    _viewers[viewerIndex] = vrViewerComponent;
 
                     //create Viewer's VREyes
                     _eyeCount = (uint)_displayConfig.GetNumEyesForViewer(viewerIndex); //get the number of eyes
-                    eyes = new VREye[_eyeCount];
+                    _eyes = new VREye[_eyeCount];
                     for (uint eyeIndex = 0; eyeIndex < _eyeCount; eyeIndex++)
                     {
                         GameObject eyeGameObject = new GameObject("Eye" + eyeIndex); //add an eye gameobject to the scene
                         VREye eye = eyeGameObject.AddComponent<VREye>(); //add the VReye component
-                        eye.Viewer = viewers[viewerIndex]; //ASSUME THERE IS ONLY ONE VIEWER
+                        eye.Viewer = _viewers[viewerIndex]; //ASSUME THERE IS ONLY ONE VIEWER
                         eye.EyeIndex = eyeIndex; //set the eye's index
                         eyeGameObject.transform.parent = this.transform; //child of DisplayController
                         eyeGameObject.transform.localPosition = Vector3.zero;
-                        eyes[eyeIndex] = eye;
+                        _eyes[eyeIndex] = eye;
                         CreateEyeSurface(eyeIndex);
                         SetDistortion(eyeIndex);
                     }
@@ -177,9 +177,9 @@ namespace OSVR
                 surface.Camera.nearClipPlane = nearClippingPlane;
                 surface.Camera.farClipPlane = farClippingPlane;
                 surface.Camera.enabled = false;
-                surfaceGameObject.transform.parent = eyes[eyeIndex].transform; //surface is child of Eye
+                surfaceGameObject.transform.parent = _eyes[eyeIndex].transform; //surface is child of Eye
                 surfaceGameObject.transform.localPosition = Vector3.zero;
-                eyes[eyeIndex].Surface = surface;
+                _eyes[eyeIndex].Surface = surface;
             }
 
             //determines if distortion will be used, and what type of distortion will be used
@@ -207,7 +207,7 @@ namespace OSVR
             //set distortion parameters for K1 Radial Distortion method
             private void SetK1RadialDistortion(uint eyeIndex, float k1Red, float k1Green, float k1Blue, Vector2 center)
             {
-                VREye eye = eyes[eyeIndex];
+                VREye eye = _eyes[eyeIndex];
                 // disable distortion if there is no distortion for this HMD
                 if (k1Red == 0 && k1Green == 0 && k1Blue == 0)
                 {
@@ -231,7 +231,7 @@ namespace OSVR
 
             void Update()
             {
-                if(!displayConfigInitialized)
+                if(!_displayConfigInitialized)
                 {
                     SetupDisplay();
                 }

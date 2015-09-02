@@ -53,7 +53,7 @@ namespace OSVR
             #region Private Variables
             private DisplayController _displayController;
             private Camera _camera;
-            private bool disabledCamera = true;
+            private bool _disabledCamera = true;
             #endregion
 
             void Awake()
@@ -126,7 +126,7 @@ namespace OSVR
                 }
 
                 // Remember to reenable.
-                disabledCamera = true;
+                _disabledCamera = true;
             }
 
             IEnumerator EndOfFrame()
@@ -134,10 +134,10 @@ namespace OSVR
                 while (true)
                 {
                     //if we disabled the dummy camera, enable it here
-                    if (disabledCamera)
+                    if (_disabledCamera)
                     {
                         Camera.enabled = true;
-                        disabledCamera = false;
+                        _disabledCamera = false;
                     }
                     yield return new WaitForEndOfFrame();
                 }

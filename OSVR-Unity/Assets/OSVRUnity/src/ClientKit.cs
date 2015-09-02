@@ -29,7 +29,7 @@ namespace OSVR
             [Tooltip("A string uniquely identifying your application, in reverse domain-name format.")]
             public string AppID;
 
-            private OSVR.ClientKit.ClientContext contextObject;
+            private OSVR.ClientKit.ClientContext _contextObject;
 
             /// Uses the Unity "Persistent Singleton" pattern, see http://unitypatterns.com/singletons/
             private static ClientKit _instance;
@@ -66,13 +66,13 @@ namespace OSVR
                 get
                 {
                     EnsureStarted();
-                    return contextObject;
+                    return _contextObject;
                 }
             }
 
             private void EnsureStarted()
             {
-                if (contextObject == null)
+                if (_contextObject == null)
                 {
                     if (0 == AppID.Length)
                     {
@@ -80,7 +80,7 @@ namespace OSVR
                         AppID = "com.osvr.osvr-unity.dummy";
                     }
                     Debug.Log("[OSVR] Starting with app ID: " + AppID);
-                    contextObject = new OSVR.ClientKit.ClientContext(AppID, 0);
+                    _contextObject = new OSVR.ClientKit.ClientContext(AppID, 0);
                 }
             }
 
@@ -113,24 +113,24 @@ namespace OSVR
                 Debug.Log("[OSVR] In OnEnable()");
                 EnsureStarted();
             }
-
+            
             void Update()
             {
                 EnsureStarted();
-                contextObject.update();
+                _contextObject.update();
             }
 
             void LateUpdate()
             {
-                contextObject.update();
+                _contextObject.update();
             }
             void Stop()
             {
-                if (null != contextObject)
+                if (null != _contextObject)
                 {
                     Debug.Log("Shutting down OSVR.");
-                    contextObject.Dispose();
-                    contextObject = null;
+                    _contextObject.Dispose();
+                    _contextObject = null;
                 }
             }
 
