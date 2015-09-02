@@ -28,10 +28,17 @@ namespace OSVR
 {
     namespace Unity
     {
-        //This class is responsible for creating the head, eyes, and surfaces in our scene.
-        //Rendering parameters are obtained from ClientKit.
-        //DisplayController creates VRViewer and VREyes as children. Each eye has a VRSurface child with a camera.
-        //In this implementation, we are assuming that there is exactly one viewer and one surface per eye.
+        //*This class is responsible for creating stereo rendering in a scene, and updating viewing parameters
+        // throughout a scene's lifecycle. 
+        // The number of viewers, eyes, and surfaces, as well as viewports, projection matrices,and distortion 
+        // paramerters are obtained from OSVR via ClientKit.
+        // 
+        // DisplayController creates VRViewers and VREyes as children. Although VRViewers and VREyes are siblings
+        // in the scene hierarchy, conceptually VREyes are indeed children of VRViewers. The reason they are siblings
+        // in the Unity scene is because GetViewerEyePose(...) returns a pose relative to world space, not head space.
+        //
+        // In this implementation, we are assuming that there is exactly one viewer and one surface per eye.
+        //*/
         [RequireComponent(typeof(Camera))] //requires a "dummy" camera
         public class DisplayController : MonoBehaviour
         {
@@ -41,7 +48,7 @@ namespace OSVR
 
             private ClientKit _clientKit;
             private OSVR.ClientKit.DisplayConfig _displayConfig;
-            private VRViewer[] _viewers;
+            private VRViewer[] _viewers; 
             private uint _viewerCount;
             private bool _renderedStereo = false;
             private bool _displayConfigInitialized = false;
@@ -80,6 +87,7 @@ namespace OSVR
             }
             void Start()
             {
+                //attempt to setup the display here, but it might take a few frames before we have data
                 SetupDisplay();
             }
 
@@ -104,6 +112,8 @@ namespace OSVR
                 Application.targetFrameRate = TARGET_FRAME_RATE;
             }
 
+            //Get a DisplayConfig object from the server via ClientKit.
+            //Setup stereo rendering with DisplayConfig data.
             void SetupDisplay()
             {
                 //get the DisplayConfig object from ClientKit
@@ -178,15 +188,16 @@ namespace OSVR
             //helper method for updating the client context
             public void UpdateClient()
             {
-                _clientKit.context.update(); //update the client
+                _clientKit.context.update();
             }
 
             //Culling determines which objects are visible to the camera. OnPreCull is called just before this process.
+            //This gets called because we have a camera component, but we disable the camera here so it doesn't render.
+            //We have the "dummy" camera so existing Unity game code can refer to a MainCamera object.
+            //We update our viewer and eye transforms here because it is as late as possible before rendering happens.
+            //OnPreRender is not called because we disable the camera here.
             void OnPreCull()
             {
-                //update the client
-                UpdateClient();
-
                 // Disable dummy camera during rendering
                 // Enable after frame ends
                 _camera.enabled = false;
@@ -222,6 +233,9 @@ namespace OSVR
                         _disabledCamera = false;
                     }
                     yield return new WaitForEndOfFrame();
+                    //@todo any post-frame activity goes here. 
+                    //Send a timestamp?
+                    //GL.IssuePluginEvent?
                 }
             }
         }
