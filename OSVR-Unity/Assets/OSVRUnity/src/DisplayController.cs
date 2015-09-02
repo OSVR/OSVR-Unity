@@ -37,6 +37,7 @@ namespace OSVR
         {
             
             public const uint NUM_VIEWERS = 1;
+            private const int TARGET_FRAME_RATE = 60; //@todo get from OSVR
 
             private ClientKit _clientKit;
             private OSVR.ClientKit.DisplayConfig _displayConfig;
@@ -97,8 +98,10 @@ namespace OSVR
                 //VR should never timeout the screen:
                 Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
-                //60 FPS whenever possible:
-                Application.targetFrameRate = 60;
+                //Set the framerate
+                //@todo get this value from OSVR, not a const value
+                //Performance note: Developers should try setting Time.fixedTimestep to 1/Application.targetFrameRate
+                Application.targetFrameRate = TARGET_FRAME_RATE;
             }
 
             void SetupDisplay()
