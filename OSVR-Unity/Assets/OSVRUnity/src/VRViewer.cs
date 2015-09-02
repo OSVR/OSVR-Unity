@@ -28,32 +28,24 @@ using System.Collections;
 namespace OSVR
 {
     namespace Unity
-    {
-        [RequireComponent(typeof(Camera))]
+    {       
         public class VRViewer : MonoBehaviour
-        {
-            #region Public Variables
-            public Camera Camera 
-            { 
-                get 
-                { 
-                    if(_camera == null)
-                    {
-                        _camera = GetComponent<Camera>();
-                    }
-                    return _camera; 
-                } 
-                set { _camera = value; } 
-            }
+        {   
+            #region Public Variables         
             public DisplayController DisplayController { get { return _displayController; } set { _displayController = value; } }
+            public VREye[] Eyes { get { return _eyes; } }
+            public uint EyeCount { get { return _eyeCount; } }
+            public uint ViewerIndex { get { return _viewerIndex; } set { _viewerIndex = value; } }
             [HideInInspector]
             public Transform cachedTransform;
             #endregion
 
             #region Private Variables
             private DisplayController _displayController;
-            private Camera _camera;
-            private bool _disabledCamera = true;
+            private VREye[] _eyes;
+            private uint _eyeCount;
+            private uint _viewerIndex;
+
             #endregion
 
             void Awake()
@@ -67,15 +59,24 @@ namespace OSVR
                 cachedTransform = transform;
             }
 
-            void OnEnable()
+            //Creates the Eyes of this Viewer
+            public void CreateEyes(uint eyeCount)
             {
-                StartCoroutine("EndOfFrame");
-            }
-
-            void OnDisable()
-            {
-                StopCoroutine("EndOfFrame");
-            }
+                _eyeCount = eyeCount; //cache the number of eyes this viewer controls
+                _eyes = new VREye[_eyeCount];
+                for (uint eyeIndex = 0; eyeIndex < _eyeCount; eyeIndex++)
+                {
+                    GameObject eyeGameObject = new GameObject("Eye" + eyeIndex); //add an eye gameobject to the scene
+                    VREye eye = eyeGameObject.AddComponent<VREye>(); //add the VReye component
+                    eye.Viewer = this; //ASSUME THERE IS ONLY ONE VIEWER
+                    eye.EyeIndex = eyeIndex; //set the eye's index
+                    eyeGameObject.transform.parent = _displayController.transform; //child of DisplayController
+                    eyeGameObject.transform.localPosition = Vector3.zero;
+                    _eyes[eyeIndex] = eye;
+                    uint eyeSurfaceCount = DisplayController.DisplayConfig.GetNumSurfacesForViewerEye(ViewerIndex, (byte)eyeIndex);
+                    eye.CreateSurfaces(eyeSurfaceCount);
+                }
+            }  
 
             //Updates the position and rotation of the head
             public void UpdateViewerHeadPose(OSVR.ClientKit.Pose3 headPose)
@@ -84,64 +85,22 @@ namespace OSVR
                 cachedTransform.localRotation = Math.ConvertOrientation(headPose.rotation);
             }
 
-            //Culling determines which objects are visible to the camera. OnPreCull is called just before this process.
-            void OnPreCull()
+            //Update the pose of each eye, then update and render each eye's surfaces
+            public void UpdateEyes()
             {
-                //update the client
-                _displayController.UpdateClient();
-
-                // Disable dummy camera during rendering
-                // Enable after frame ends
-                _camera.enabled = false;
-
-                //update the viewer's head pose
-                UpdateViewerHeadPose(_displayController.DisplayConfig.GetViewerPose(DisplayController.DEFAULT_VIEWER));
-
-                //render each eye camera (each surface)
-                //assumes one surface per eye
-                for (int i = 0; i < _displayController.EyeCount; i++)
+                for (uint eyeIndex = 0; eyeIndex < EyeCount; eyeIndex++)
                 {
+                    //update the client
+                    DisplayController.UpdateClient();
+
                     //update the eye pose
-                    VREye eye = _displayController.Eyes[i];
-                    eye.UpdateEyePose(_displayController.DisplayConfig.GetViewerEyePose(DisplayController.DEFAULT_VIEWER, (byte)i));
+                    VREye eye = Eyes[eyeIndex];
+                    eye.UpdateEyePose(_displayController.DisplayConfig.GetViewerEyePose(ViewerIndex, (byte)eyeIndex));
 
-                    //get the eye's surface
-                    VRSurface surface = eye.Surface;
-
-                    //get viewport from ClientKit and set surface viewport
-                    OSVR.ClientKit.Viewport viewport = _displayController.DisplayConfig.GetRelativeViewportForViewerEyeSurface(
-                        DisplayController.DEFAULT_VIEWER, (byte)i, DisplayController.DEFAULT_SURFACE);
-                    
-                    surface.SetViewport(Math.ConvertViewport(viewport));
-                    
-                    //get projection matrix from ClientKit and set surface projection matrix
-                    OSVR.ClientKit.Matrix44f projMatrix = _displayController.DisplayConfig.GetProjectionMatrixForViewerEyeSurfacef(
-                        DisplayController.DEFAULT_VIEWER, (byte)i, DisplayController.DEFAULT_SURFACE,
-                        _camera.nearClipPlane, _camera.farClipPlane, OSVR.ClientKit.MatrixConventionsFlags.ColMajor);
-                    
-                    surface.SetProjectionMatrix(Math.ConvertMatrix(projMatrix));
-                    
-                    //render the surface
-                    surface.Render();
+                   //update the eye's surfaces, includes a call to Render the surface
+                    eye.UpdateSurfaces();                   
                 }
-
-                // Remember to reenable.
-                _disabledCamera = true;
-            }
-
-            IEnumerator EndOfFrame()
-            {
-                while (true)
-                {
-                    //if we disabled the dummy camera, enable it here
-                    if (_disabledCamera)
-                    {
-                        Camera.enabled = true;
-                        _disabledCamera = false;
-                    }
-                    yield return new WaitForEndOfFrame();
-                }
-            }
+            }               
         }
     }
 }
