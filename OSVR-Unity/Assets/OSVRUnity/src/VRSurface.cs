@@ -29,12 +29,17 @@ namespace OSVR
     namespace Unity
     {
         //This class is responsible for rendering for a VREye.
+        [RequireComponent(typeof(Camera))]
         public class VRSurface : MonoBehaviour
         {
             private Camera _camera;
             private K1RadialDistortion _distortionEffect;
+            private uint _surfaceIndex; //index in the eye's VRSurface array
+            private VREye _eye; //the eye that this surface controls rendering for
 
             public Camera Camera { get { return _camera; } set { _camera = value; } }
+            public uint SurfaceIndex { get { return _surfaceIndex; } set { _surfaceIndex = value; } }
+            public VREye Eye { get { return _eye; } set { _eye = value; } }
 
             [HideInInspector]
             public K1RadialDistortion DistortionEffect
