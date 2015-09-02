@@ -195,17 +195,22 @@ namespace OSVR
                 for (uint viewerIndex = 0; viewerIndex < _viewerCount; viewerIndex++)
                 {
                     VRViewer viewer = Viewers[viewerIndex];
+
+                    //update the client
+                    UpdateClient();
+
                     //update the viewer's head pose
                     viewer.UpdateViewerHeadPose(DisplayConfig.GetViewerPose(viewerIndex));
 
-                    //have each viewer update its eyes
+                    //each viewer update its eyes
                     viewer.UpdateEyes();
                 }       
 
-                // Remember to reenable.
+                // Flag that we disabled the camera
                 _disabledCamera = true;
             }
 
+            //This couroutine is called every frame.
             IEnumerator EndOfFrame()
             {
                 while (true)
