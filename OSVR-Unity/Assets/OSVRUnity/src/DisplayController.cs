@@ -45,6 +45,8 @@ namespace OSVR
             
             public const uint NUM_VIEWERS = 1;
             private const int TARGET_FRAME_RATE = 60; //@todo get from OSVR
+            private const int DISTORTION_MESH_QUADS_WIDTH = 96; //distortion mesh width in quads
+            private const int DISTORTION_MESH_QUADS_HEIGHT = 48; //distortion mesh height in quads
 
             private ClientKit _clientKit;
             private OSVR.ClientKit.DisplayConfig _displayConfig;
@@ -54,6 +56,17 @@ namespace OSVR
             private bool _displayConfigInitialized = false;
             private Camera _camera;
             private bool _disabledCamera = true;
+
+            //distortion mesh
+            public bool useDistortionMesh = true;
+            private bool loadStaticMesh = true;
+            private Mesh _distortionMesh;
+            private Material _distortionMaterial;
+            private RenderTexture _distortionRenderTexture;
+            public RenderTexture DistortionRenderTexture
+            {
+                get { return _distortionRenderTexture; }
+            }
 
             public Camera Camera
             {
@@ -136,8 +149,37 @@ namespace OSVR
                     Debug.LogError(_viewerCount + " viewers found, but this implementation requires exactly one viewer.");
                     return;
                 }
-                //create scene objects 
-                CreateHeadAndEyes();              
+
+                //distortion mesh
+                if (useDistortionMesh)
+                {
+                    _camera.orthographic = true;
+                    _camera.orthographicSize = 1f;
+                    _distortionMaterial = Resources.Load<Material>("RGBDistortionMesh");
+                    if(loadStaticMesh)
+                    {
+                        //load a static mesh
+                        _distortionMesh = DistortionMesh.LoadDistortionMesh();
+                    }
+                    else
+                    {
+                        //create a mesh
+                        _distortionMesh = DistortionMesh.CreateFullScreenMesh(Camera.orthographicSize,
+                            (float)Screen.width / (float)Screen.height, DISTORTION_MESH_QUADS_WIDTH, DISTORTION_MESH_QUADS_HEIGHT);
+                    }
+                    //Create RenderTexture with dimensions twice the width of one eye, and height of one eye
+                    OSVR.ClientKit.Viewport viewport = _displayConfig.GetRelativeViewportForViewerEyeSurface(0, 0, 0);
+                    _distortionRenderTexture = new RenderTexture(viewport.Width * 2, viewport.Height, 24);
+                    //create scene objects 
+                    CreateHeadAndEyes();
+                    //set the culling mask to nothing after Surfaces have been created by copying this camera
+                    _camera.cullingMask = 0; 
+                }
+                else
+                {
+                    //create scene objects 
+                    CreateHeadAndEyes(); 
+                }                         
             }
 
 
@@ -200,7 +242,7 @@ namespace OSVR
             {
                 // Disable dummy camera during rendering
                 // Enable after frame ends
-                _camera.enabled = false;
+                _camera.enabled = useDistortionMesh;
 
                 //for each viewer, update each eye, which will update each surface
                 for (uint viewerIndex = 0; viewerIndex < _viewerCount; viewerIndex++)
@@ -211,7 +253,7 @@ namespace OSVR
                     UpdateClient();
 
                     //update the viewer's head pose
-                    viewer.UpdateViewerHeadPose(DisplayConfig.GetViewerPose(viewerIndex));
+                    viewer.UpdateViewerHeadPose(DisplayConfig.GetViewerPose(viewerIndex));                    
 
                     //each viewer update its eyes
                     viewer.UpdateEyes();
@@ -233,6 +275,12 @@ namespace OSVR
                         _disabledCamera = false;
                     }
                     yield return new WaitForEndOfFrame();
+                    if (useDistortionMesh && _distortionMesh != null && _distortionMaterial != null)
+                    {                       
+                        _distortionMaterial.SetPass(0);
+                        _distortionMaterial.mainTexture = _distortionRenderTexture;
+                        Graphics.DrawMeshNow(_distortionMesh, this.transform.position + new Vector3(0, 0, 1), this.transform.rotation);
+                    }
                     //@todo any post-frame activity goes here. 
                     //Send a timestamp?
                     //GL.IssuePluginEvent?
