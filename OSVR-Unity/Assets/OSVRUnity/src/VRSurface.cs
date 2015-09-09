@@ -91,6 +91,12 @@ namespace OSVR
                 SetK1RadialDistortion(k1Red, k1Green, k1Blue, center);
             }
 
+            //Set the camera's RenderTexture
+            public void SetRenderTexture(RenderTexture renderTexture)
+            {
+                _camera.targetTexture = renderTexture;
+            }
+
             //set distortion parameters for K1 Radial Distortion method
             private void SetK1RadialDistortion(float k1Red, float k1Green, float k1Blue, Vector2 center)
             {
@@ -118,7 +124,7 @@ namespace OSVR
             //Render the camera
             public void Render()
             {
-                _camera.Render();
+                _camera.Render();               
             }
         }
     }

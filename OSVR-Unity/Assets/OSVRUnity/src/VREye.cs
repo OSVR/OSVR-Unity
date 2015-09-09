@@ -138,18 +138,27 @@ namespace OSVR
                     Surfaces[surfaceIndex] = surface;
 
                     //distortion
-                    bool useDistortion = Viewer.DisplayController.DisplayConfig.DoesViewerEyeSurfaceWantDistortion(Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex);
-                    if(useDistortion)
+                    if (Viewer.DisplayController.useDistortionMesh)
                     {
-                        //@todo figure out which type of distortion to use
-                        //right now, there is only one option, SurfaceRadialDistortion
-                        //get distortion parameters
-                        OSVR.ClientKit.RadialDistortionParameters distortionParameters =
-                        Viewer.DisplayController.DisplayConfig.GetViewerEyeSurfaceRadialDistortion(
-                        Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex);
+                        //Distortion Mesh
+                        surface.SetRenderTexture(Viewer.DisplayController.DistortionRenderTexture);
+                    }
+                    else
+                    {
+                        //Radial Distortion
+                        bool useDistortion = Viewer.DisplayController.DisplayConfig.DoesViewerEyeSurfaceWantDistortion(Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex);
+                        if (useDistortion)
+                        {
+                            //@todo figure out which type of distortion to use
+                            //right now, there is only one option, SurfaceRadialDistortion
+                            //get distortion parameters
+                            OSVR.ClientKit.RadialDistortionParameters distortionParameters =
+                            Viewer.DisplayController.DisplayConfig.GetViewerEyeSurfaceRadialDistortion(
+                            Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex);
 
-                        surface.SetDistortion(distortionParameters);
-                    }                 
+                            surface.SetDistortion(distortionParameters);
+                        }
+                    }
                 }
             }
 
