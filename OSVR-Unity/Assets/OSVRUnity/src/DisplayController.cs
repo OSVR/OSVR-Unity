@@ -111,10 +111,10 @@ namespace OSVR
                 Debug.Log("RenderManager not yet supported on Android.");
                 support = false;
 #endif
-                if(!SystemInfo.graphicsDeviceVersion.Contains("Direct3D 11.0"))
+                if(!SystemInfo.graphicsDeviceVersion.Contains("Direct3D 11.0") && !SystemInfo.graphicsDeviceVersion.Contains("OpenGL"))
                 {
                     Debug.Log("RenderManager not yet supported on " + 
-                        SystemInfo.graphicsDeviceVersion + ". Only D3D11 is currently supported.");
+                        SystemInfo.graphicsDeviceVersion + ". Only D3D11 and OpenGL are currently supported.");
                     support = false;
                 }
 
