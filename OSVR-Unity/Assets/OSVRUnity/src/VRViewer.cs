@@ -190,7 +190,7 @@ namespace OSVR
                         // The plugin can distinguish between different
                         // things it needs to do based on this ID.
                         // For our simple plugin, it does not matter which ID we pass here.
-                        GL.IssuePluginEvent(0); 
+                        GL.IssuePluginEvent(DisplayController.RenderManager.GetRenderEventFunction(), 0); 
                        
                     }
                    /* if(DisplayController.SupportsRenderManager() && DisplayController.IsInitialized && DisplayController.RtSet)
