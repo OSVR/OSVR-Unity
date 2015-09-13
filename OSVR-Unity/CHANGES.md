@@ -4,6 +4,18 @@ This is an abbreviated changelog for the OSVR Unity Plugin.
 
 Use git for a full changelog.
 ##Recent Changes
+### ClientKit Rendering Parameters update
+> 13-September-2015 (commit 34fd6f1) v0.2.119-g34fd6f1
+
+- This update simplifies the Unity plugin by retrieving the output of the computational display model (viewport, projection matrices) from the OSVR-Core API. This eliminates the need to parse JSON display descriptor data in Unity, which allows for improvements in the display model without having to rebuild a game. 
+
+- VRHead.cs has been renamed VRViewer.cs to fit with the display model. Conceptually, a VRViewer has one or more VREyes, and each VREye has a VRSurface which controls rendering (has the camera component) for that VREye. In the scene hierarchy, VRViewer and VREyes are siblings, although conceptually this is a parent-child relationship. The reason for this is because VREye poses are reported in world space, not head space. VRSurfaces are children of VREyes, both conceptually and in the scene hierarchy.
+
+- The “VRDisplayTracked” prefab has been improved to create a stereo display at runtime based on the configured number of viewers and eyes. DisplayController.cs is the new script responsible for setting up the display at runtime. The VRDisplayTracked prefab should still work in existing scenes so long as the prefab instance is intact.
+
+- The VRDisplayTracked prefab no longer uses a PoseInterface to update its pose. Rather, viewer and eye poses are retrieved from ClientKit.
+
+- Since the VREyes are now created at runtime and do not exist in the scene hierarchy, developers should be aware that they will need to apply any additional components/effects to each VREye after they are created, rather than in the scene. Each camera's settings are copied from camera component on the VRDisplayTracked gameobject, but for now, additional components/effects that are attached to VRDisplayTracked are not copied to each eye. This will be a future addition to the plugin.
 
 ### InterfaceAdapter update
 > 07-July-2015 - v0.2-23-gc3c5dc0
