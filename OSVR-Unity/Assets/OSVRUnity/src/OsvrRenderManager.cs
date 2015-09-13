@@ -27,6 +27,12 @@ namespace OSVR
             private static extern int GetEventID();
 
             [DllImport(PluginName, CallingConvention = CallingConvention.StdCall)]
+            private static extern void SetUnityStreamingAssetsPath([MarshalAs(UnmanagedType.LPStr)] string path);
+
+            [DllImport(PluginName, CallingConvention = CallingConvention.StdCall)]
+            private static extern IntPtr GetRenderEventFunc();
+
+            [DllImport(PluginName, CallingConvention = CallingConvention.StdCall)]
             private static extern void SetColorBufferFromUnity(System.IntPtr texturePtr, int eye);
 
             //@todo the IntPtr should be a SafeClientContextHandle
@@ -85,6 +91,11 @@ namespace OSVR
             public int GetRenderEventID()
             {
                 return GetEventID();
+            }
+
+            public IntPtr GetRenderEventFunction()
+            {
+                return GetRenderEventFunc();
             }
 
             //Pass Unity time to Unity Rendering Plugin
