@@ -69,11 +69,11 @@ namespace OSVR.Unity
 		/// <summary>
 		/// Creates a K1RadialDistortion effect and adds it as a component to the given eye, if possible.
 		/// </summary>
-		/// <param name="Eye">VREye to apply the effect to.</param>
+		/// <param name="Surface">VRSurface to apply the effect to.</param>
 		/// <returns>K1RadialDistortion object for parameter setting, or null if not supported</returns>
-		public K1RadialDistortion GetOrCreateDistortion(OSVR.Unity.VREye eye)
+		public K1RadialDistortion GetOrCreateDistortion(OSVR.Unity.VRSurface surface)
 		{
-			K1RadialDistortion ret = eye.DistortionEffect;
+			K1RadialDistortion ret = surface.DistortionEffect;
 			if (!Supported)
 			{
 				if (ret)
@@ -86,8 +86,8 @@ namespace OSVR.Unity
 			}
 			if (ret == null)
 			{
-				ret = eye.gameObject.AddComponent<K1RadialDistortion>();
-				eye.DistortionEffect = ret;
+				ret = surface.gameObject.AddComponent<K1RadialDistortion>();
+				surface.DistortionEffect = ret;
 				ret.hideFlags = HideFlags.HideAndDontSave;
 				ret.DistortionMaterial = new Material(DistortionShader);
 				if (!ret.DistortionMaterial)
