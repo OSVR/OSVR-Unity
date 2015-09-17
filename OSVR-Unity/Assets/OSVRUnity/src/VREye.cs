@@ -149,7 +149,9 @@ namespace OSVR
                         Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex);
 
                         surface.SetDistortion(distortionParameters);
-                    }                 
+                    }    
+                    
+                    //render manager             
                 }
             }
 

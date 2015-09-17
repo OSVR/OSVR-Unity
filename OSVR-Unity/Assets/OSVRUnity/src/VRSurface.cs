@@ -115,6 +115,16 @@ namespace OSVR
                 }
             }
 
+            //set the render texture that this camera will render into
+            public void SetRenderTexture(RenderTexture rt)
+            {
+                Camera.targetTexture = rt;
+            }
+            public RenderTexture getRenderTexture()
+            {
+                return Camera.targetTexture;
+            }
+
             //Render the camera
             public void Render()
             {

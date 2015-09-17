@@ -8,7 +8,7 @@ namespace OSVR
     {
         public class OsvrRenderManager : MonoBehaviour
         {
-            
+
             private const string PluginName = "OsvrRenderingPlugin";
 
             // The block of code below is a neat trick to allow for calling into the debug console from C++
@@ -49,10 +49,10 @@ namespace OSVR
             private static extern int GetEyeHeight();
 
             [DllImport(PluginName, CallingConvention = CallingConvention.StdCall)]
-            private static extern void Shutdown();           
+            private static extern void Shutdown();
 
-           // [DllImport(PluginName, CallingConvention = CallingConvention.StdCall)]
-           // private static extern int GetPixels(IntPtr buffer, int x, int y, int width, int height);
+            // [DllImport(PluginName, CallingConvention = CallingConvention.StdCall)]
+            // private static extern int GetPixels(IntPtr buffer, int x, int y, int width, int height);
 
             public void InitRenderManager(OSVR.ClientKit.ClientContext clientContext)
             {

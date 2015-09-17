@@ -23,6 +23,8 @@
 /// </summary>
 using UnityEngine;
 using System.Collections;
+using System.Text.RegularExpressions;
+using System;
 
 namespace OSVR
 {
@@ -55,6 +57,10 @@ namespace OSVR
             private bool _checkDisplayStartup = false;
             private Camera _camera;
             private bool _disabledCamera = true;
+            private OsvrRenderManager _renderManager;
+
+            //for testing
+            private bool _useRenderManager = true;
 
             public Camera Camera
             {
@@ -75,6 +81,7 @@ namespace OSVR
             }          
             public VRViewer[] Viewers { get { return _viewers; } }           
             public uint ViewerCount { get { return _viewerCount; } }
+            public OsvrRenderManager RenderManager { get { return _renderManager; } }
 
             void Awake()
             {
@@ -85,6 +92,7 @@ namespace OSVR
                 }
                 _camera = GetComponent<Camera>(); //get the "dummy" camera
                 SetupApplicationSettings();
+                SetupRenderManager();
             }
             void Start()
             {
@@ -111,6 +119,26 @@ namespace OSVR
                 //@todo get this value from OSVR, not a const value
                 //Performance note: Developers should try setting Time.fixedTimestep to 1/Application.targetFrameRate
                 Application.targetFrameRate = TARGET_FRAME_RATE;
+            }
+
+            void SetupRenderManager()
+            {
+                if (_useRenderManager && SupportsRenderManager())
+                {
+                    //Initialize the RenderManager
+                    _renderManager = GameObject.FindObjectOfType<OsvrRenderManager>();
+                    if (_renderManager == null)
+                    {
+                        //add a RenderManager component if we're not on mobile
+                        _renderManager = gameObject.AddComponent<OsvrRenderManager>();
+                    }
+
+                    _renderManager.InitRenderManager(FindObjectOfType<ClientKit>().context);
+                }
+                else
+                {
+                    Debug.LogError("RenderManager not supported.");
+                }
             }
 
             //Get a DisplayConfig object from the server via ClientKit.
@@ -246,6 +274,53 @@ namespace OSVR
                     //Send a timestamp?
                     //GL.IssuePluginEvent?
                 }
+            }
+
+            //Is the RenderManager supported? Requires D3D11 or OpenGL, currently.
+            private bool SupportsRenderManager()
+            {
+                bool support = true;
+#if UNITY_ANDROID
+                Debug.Log("RenderManager not yet supported on Android.");
+                support = false;
+#endif
+                if (!SystemInfo.graphicsDeviceVersion.Contains("OpenGL") && !SystemInfo.graphicsDeviceVersion.Contains("Direct3D 11"))
+                {
+                    Debug.Log("RenderManager not supported on " +
+                        SystemInfo.graphicsDeviceVersion + ". Only OpenGL and Direct3D 11 are currently supported.");
+                    support = false;
+                }
+
+                if (!SystemInfo.supportsRenderTextures)
+                {
+                    Debug.Log("RenderManager not supported. RenderTexture (Unity Pro feature) is unavailable.");
+                    support = false;
+                }
+                if (!SupportsUnityRenderEvent())
+                {
+                    Debug.Log("RenderManager not supported. Unity 4.5+ is needed for UnityRenderEvent.");
+                    support = false;
+                }
+                return support;
+            }
+
+            //Unity 4.5+ is needed for UnityRenderEvent.
+            private bool SupportsUnityRenderEvent()
+            {
+                bool support = true;
+                try
+                {
+                    string version = new Regex(@"(\d+\.\d+)\..*").Replace(Application.unityVersion, "$1");
+                    if (new Version(version) < new Version("4.5"))
+                    {
+                        support = false;
+                    }
+                }
+                catch
+                {
+                    Debug.LogWarning("Unable to determine Unity version from: " + Application.unityVersion);
+                }
+                return support;
             }
         }
     }
