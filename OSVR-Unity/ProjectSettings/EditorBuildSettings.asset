@@ -7,5 +7,7 @@ EditorBuildSettings:
   m_Scenes:
   - enabled: 0
     path: Assets/OSVRUnity/Sample/minigame.unity
-  - enabled: 1
+  - enabled: 0
     path: Assets/OSVRUnity/Sample/Demo/Scenes/OSVRDemo.unity
+  - enabled: 1
+    path: Assets/OSVRUnity/Sample/Demo/Scenes/OSVRDemo2.unity
