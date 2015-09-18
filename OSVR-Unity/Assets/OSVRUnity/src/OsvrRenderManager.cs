@@ -56,7 +56,9 @@ namespace OSVR
 
             public void InitRenderManager(OSVR.ClientKit.ClientContext clientContext)
             {
+#if UNITY_EDITOR
                 LinkDebug(functionPointer); // Hook our c++ plugin into Unitys console log.
+#endif
                 Debug.Log("Event id is " + GetRenderEventID()); //test that this works
                 CreateRenderManager(clientContext);
             }
