@@ -60,7 +60,7 @@ namespace OSVR
             private OsvrRenderManager _renderManager;
 
             //for testing
-            private bool _useRenderManager = true;
+            public bool _useRenderManager = true;
 
             public Camera Camera
             {
@@ -270,9 +270,8 @@ namespace OSVR
                         _disabledCamera = false;
                     }
                     yield return new WaitForEndOfFrame();
-                    //@todo any post-frame activity goes here. 
-                    //Send a timestamp?
-                    //GL.IssuePluginEvent?
+                    if(_useRenderManager)
+                        GL.IssuePluginEvent(RenderManager.GetRenderEventFunction(), 0);
                 }
             }
 
