@@ -36,10 +36,12 @@ namespace OSVR
             private K1RadialDistortion _distortionEffect;
             private uint _surfaceIndex; //index in the eye's VRSurface array
             private VREye _eye; //the eye that this surface controls rendering for
+            private Texture2D _pluginTexture;
 
             public Camera Camera { get { return _camera; } set { _camera = value; } }
             public uint SurfaceIndex { get { return _surfaceIndex; } set { _surfaceIndex = value; } }
             public VREye Eye { get { return _eye; } set { _eye = value; } }
+            public Texture2D PluginTexture { get { return _pluginTexture; } set { _pluginTexture = value; } }
 
             [HideInInspector]
             public K1RadialDistortion DistortionEffect
@@ -119,10 +121,19 @@ namespace OSVR
             public void SetRenderTexture(RenderTexture rt)
             {
                 Camera.targetTexture = rt;
+                PluginTexture = new Texture2D(Camera.targetTexture.width, Camera.targetTexture.height, TextureFormat.ARGB32, false);
+                PluginTexture.filterMode = FilterMode.Point;
+                PluginTexture.Apply();
             }
             public RenderTexture getRenderTexture()
             {
                 return Camera.targetTexture;
+            }
+            public void UpdateTexture()
+            {
+                RenderTexture.active = Camera.targetTexture;
+                PluginTexture.ReadPixels(new Rect(0, 0, Camera.targetTexture.width, Camera.targetTexture.height), 0, 0);
+                PluginTexture.Apply();
             }
 
             //Render the camera
