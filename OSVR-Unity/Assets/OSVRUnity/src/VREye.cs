@@ -108,6 +108,11 @@ namespace OSVR
 
                     //render the surface
                     surface.Render();
+
+                    if(Viewer.DisplayController._useRenderManager)
+                    {
+                        surface.UpdateTexture();
+                    }
                 }
             }
 
@@ -151,7 +156,22 @@ namespace OSVR
                         surface.SetDistortion(distortionParameters);
                     }    
                     
-                    //render manager             
+                    //render manager
+                    if(Viewer.DisplayController._useRenderManager)
+                    {
+                        //@todo get width and height for each eye, not just once
+                        int width = Viewer.DisplayController.RenderManager.GetRenderTextureWidth();
+                        int height = Viewer.DisplayController.RenderManager.GetRenderTextureHeight();
+                        if(surface.getRenderTexture() == null)
+                        {
+                            //create a RenderTexture for this eye's camera to render into
+                            //@todo what is the correct rendertexture format?
+                            Debug.Log("Creating render texture (" + width + "," + height + ")");
+                            RenderTexture renderTexture = new RenderTexture(width, height, 16, RenderTextureFormat.ARGB32);
+                            surface.SetRenderTexture(renderTexture);
+                            Viewer.DisplayController.RenderManager.SetEyeColorBuffer(surface.PluginTexture.GetNativeTexturePtr(), (int)EyeIndex);
+                        }
+                    }             
                 }
             }
 
