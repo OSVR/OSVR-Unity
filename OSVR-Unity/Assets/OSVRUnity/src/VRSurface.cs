@@ -23,7 +23,10 @@
 /// </summary>
 /// 
 using UnityEngine;
+using UnityEngine.Rendering;
 using System.Collections;
+using System.Runtime.InteropServices;
+
 namespace OSVR
 {
     namespace Unity
@@ -36,12 +39,14 @@ namespace OSVR
             private K1RadialDistortion _distortionEffect;
             private uint _surfaceIndex; //index in the eye's VRSurface array
             private VREye _eye; //the eye that this surface controls rendering for
-            private Texture2D _pluginTexture;
+            public Texture2D PluginTexture;
+            public RenderTexture RenderToTexture;
+            private Color[] m_Pixels;
+            private GCHandle m_PixelsHandle;
 
             public Camera Camera { get { return _camera; } set { _camera = value; } }
             public uint SurfaceIndex { get { return _surfaceIndex; } set { _surfaceIndex = value; } }
             public VREye Eye { get { return _eye; } set { _eye = value; } }
-            public Texture2D PluginTexture { get { return _pluginTexture; } set { _pluginTexture = value; } }
 
             [HideInInspector]
             public K1RadialDistortion DistortionEffect
@@ -120,25 +125,36 @@ namespace OSVR
             //set the render texture that this camera will render into
             public void SetRenderTexture(RenderTexture rt)
             {
-                Camera.targetTexture = rt;
-                PluginTexture = new Texture2D(Camera.targetTexture.width, Camera.targetTexture.height, TextureFormat.ARGB32, false);
+                RenderToTexture = rt;
+                Camera.targetTexture = RenderToTexture;
+                Camera.Render();
+                // Get a copy of the rendered data
+                RenderTexture.active = RenderToTexture;
+                PluginTexture = new Texture2D(rt.width, rt.height, TextureFormat.ARGB32, false);
                 PluginTexture.filterMode = FilterMode.Point;
+                PluginTexture.ReadPixels(new Rect(0, 0, RenderToTexture.width, RenderToTexture.height), 0, 0);
                 PluginTexture.Apply();
+
+                //Set the native texture pointer so we can access this texture from the plugin
+                Eye.Viewer.DisplayController.RenderManager.SetEyeColorBuffer(PluginTexture.GetNativeTexturePtr(), (int)Eye.EyeIndex);
             }
             public RenderTexture getRenderTexture()
             {
                 return Camera.targetTexture;
             }
-            public void UpdateTexture()
+            public void ReadPixelsFromRender()
             {
-                RenderTexture.active = Camera.targetTexture;
-                PluginTexture.ReadPixels(new Rect(0, 0, Camera.targetTexture.width, Camera.targetTexture.height), 0, 0);
-                PluginTexture.Apply();
+                // Get a copy of the rendered data
+                RenderTexture.active = RenderToTexture;
+                PluginTexture.ReadPixels(new Rect(0, 0, RenderToTexture.width, RenderToTexture.height), 0, 0);
+                PluginTexture.Apply(); // hits perf significantly but needed otherwise actual copy does not occur
+
             }
 
             //Render the camera
             public void Render()
             {
+                Camera.targetTexture = RenderToTexture;
                 _camera.Render();
             }
         }

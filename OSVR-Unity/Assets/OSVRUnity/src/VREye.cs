@@ -40,6 +40,7 @@ namespace OSVR
             private uint _surfaceCount;
             private uint _eyeIndex;
             
+            
             #endregion
             #region Public Variables  
             public uint EyeIndex
@@ -104,14 +105,16 @@ namespace OSVR
                         Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex,
                         surface.Camera.nearClipPlane, surface.Camera.farClipPlane, OSVR.ClientKit.MatrixConventionsFlags.ColMajor);
 
-                    surface.SetProjectionMatrix(Math.ConvertMatrix(projMatrix));
-
-                    //render the surface
-                    surface.Render();
+                    surface.SetProjectionMatrix(Math.ConvertMatrix(projMatrix));                   
 
                     if(Viewer.DisplayController._useRenderManager)
                     {
-                        surface.UpdateTexture();
+                        surface.Render();
+                        surface.ReadPixelsFromRender();
+                    }
+                    else
+                    {
+                        surface.Render();
                     }
                 }
             }
@@ -137,7 +140,7 @@ namespace OSVR
                     surface.Eye = this;
                     surface.Camera = surfaceGameObject.GetComponent<Camera>(); //VRSurface has camera component by default
                     CopyCamera(Viewer.DisplayController.Camera, surface.Camera); //copy camera properties from the "dummy" camera to surface camera
-                    surface.Camera.enabled = false; //disabled so we can control rendering manually
+                    surface.Camera.enabled = !Viewer.DisplayController._useRenderManager; //disabled so we can control rendering manually
                     surfaceGameObject.transform.parent = this.transform; //surface is child of Eye
                     surfaceGameObject.transform.localPosition = Vector3.zero;
                     Surfaces[surfaceIndex] = surface;
@@ -167,7 +170,7 @@ namespace OSVR
                             //create a RenderTexture for this eye's camera to render into
                             //@todo what is the correct rendertexture format?
                             Debug.Log("Creating render texture (" + width + "," + height + ")");
-                            RenderTexture renderTexture = new RenderTexture(width, height, 16, RenderTextureFormat.ARGB32);
+                            RenderTexture renderTexture = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32);
                             surface.SetRenderTexture(renderTexture);
                             Viewer.DisplayController.RenderManager.SetEyeColorBuffer(surface.PluginTexture.GetNativeTexturePtr(), (int)EyeIndex);
                         }
@@ -181,7 +184,7 @@ namespace OSVR
             {
                 //Copy the camera properties.
                 destCamera.CopyFrom(srcCamera);
-
+                destCamera.depth = 0;
                 //@todo Copy other components attached to the DisplayController?
             }           
         }

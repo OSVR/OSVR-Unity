@@ -22,6 +22,7 @@
 /// Email: greg@sensics.com
 /// </summary>
 using UnityEngine;
+using UnityEngine.Rendering;
 using System.Collections;
 using System.Text.RegularExpressions;
 using System;
@@ -58,6 +59,7 @@ namespace OSVR
             private Camera _camera;
             private bool _disabledCamera = true;
             private OsvrRenderManager _renderManager;
+            private bool _issuePluginEvent = false;
 
             //for testing
             public bool _useRenderManager = true;
@@ -166,7 +168,8 @@ namespace OSVR
                     return;
                 }
                 //create scene objects 
-                CreateHeadAndEyes();              
+                CreateHeadAndEyes();
+                Camera.cullingMask = 0;              
             }
 
 
@@ -212,6 +215,15 @@ namespace OSVR
                 {
                     SetupDisplay();
                 }
+               /* if (Input.GetKeyDown(KeyCode.Alpha1))
+                {
+                    DoRendering();
+
+                }
+                if (Input.GetKeyDown(KeyCode.Alpha2))
+                {
+                    _issuePluginEvent = true;
+                }*/
             }
 
             //helper method for updating the client context
@@ -231,6 +243,20 @@ namespace OSVR
                 // Enable after frame ends
                 _camera.enabled = false;
 
+                DoRendering();
+                if (_useRenderManager && _checkDisplayStartup)
+                {
+                    //Debug.Log("Issue Plugin Event on Frame " + Time.frameCount);
+                    Camera.depth = 10;
+                   
+                }
+                      
+                // Flag that we disabled the camera
+                _disabledCamera = true;
+            }
+
+            void DoRendering()
+            {
                 //for each viewer, update each eye, which will update each surface
                 for (uint viewerIndex = 0; viewerIndex < _viewerCount; viewerIndex++)
                 {
@@ -250,12 +276,10 @@ namespace OSVR
                     }
                     else
                     {
+                        //Debug.Log("No Display " + Time.time);
                         _checkDisplayStartup = DisplayConfig.CheckDisplayStartup();
                     }
-                }       
-
-                // Flag that we disabled the camera
-                _disabledCamera = true;
+                }
             }
 
             //This couroutine is called every frame.
@@ -270,8 +294,12 @@ namespace OSVR
                         _disabledCamera = false;
                     }
                     yield return new WaitForEndOfFrame();
-                    if(_useRenderManager)
-                        GL.IssuePluginEvent(RenderManager.GetRenderEventFunction(), 0);
+                    if(_useRenderManager && _checkDisplayStartup)
+                    {
+                       // _issuePluginEvent = false;
+                        GL.IssuePluginEvent(_renderManager.GetRenderEventFunction(), 0);
+                    }
+               
                 }
             }
 

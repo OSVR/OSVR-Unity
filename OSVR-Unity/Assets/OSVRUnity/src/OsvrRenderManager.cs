@@ -32,7 +32,7 @@ namespace OSVR
             [DllImport(PluginName, CallingConvention = CallingConvention.StdCall)]
             private static extern IntPtr GetRenderEventFunc();
 
-            [DllImport(PluginName, CallingConvention = CallingConvention.StdCall)]
+            [DllImport(PluginName, CallingConvention = CallingConvention.Cdecl)]
             private static extern void SetColorBufferFromUnity(System.IntPtr texturePtr, int eye);
 
             //@todo the IntPtr should be a SafeClientContextHandle
@@ -51,14 +51,17 @@ namespace OSVR
             [DllImport(PluginName, CallingConvention = CallingConvention.StdCall)]
             private static extern void Shutdown();
 
+            // Link to the UnityTexture plugin and call the UpdateTexture function there.
+            [DllImport(PluginName, CallingConvention = CallingConvention.StdCall)]
+            private static extern void UpdateTexture(IntPtr colors, int index);
+
+
             // [DllImport(PluginName, CallingConvention = CallingConvention.StdCall)]
             // private static extern int GetPixels(IntPtr buffer, int x, int y, int width, int height);
 
             public void InitRenderManager(OSVR.ClientKit.ClientContext clientContext)
             {
-#if UNITY_EDITOR
                 LinkDebug(functionPointer); // Hook our c++ plugin into Unitys console log.
-#endif
                 Debug.Log("Event id is " + GetRenderEventID()); //test that this works
                 CreateRenderManager(clientContext);
             }
@@ -86,6 +89,7 @@ namespace OSVR
             //Pass pointer to eye-camera RenderTexture to the Unity Rendering Plugin
             public void SetEyeColorBuffer(IntPtr colorBuffer, int eye)
             {
+                Debug.Log("About to call native plugin with color buffer");
                 SetColorBufferFromUnity(colorBuffer, eye);
             }
 
@@ -109,6 +113,11 @@ namespace OSVR
             public void ShutdownRenderManager()
             {
                 Shutdown();
+            }
+
+            public void UpdatePixels(System.IntPtr pixels, int index)
+            {
+                UpdateTexture(pixels, index);
             }
         }
     }
