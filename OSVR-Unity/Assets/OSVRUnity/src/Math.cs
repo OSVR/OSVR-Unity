@@ -58,6 +58,12 @@ namespace OSVR
                 //@todo below assumes left and right eyes split the screen in half horizontally
                 return new Rect(viewport.Left / (2f*viewport.Width), viewport.Bottom / viewport.Height, viewport.Width/(viewport.Width*2f), 1);
             }
+            public static Rect ConvertViewportRenderManager(OSVR.ClientKit.Viewport viewport)
+            {
+                //Unity expects normalized coordinates, not pixel coordinates
+                //@todo below assumes left and right eyes split the screen in half horizontally
+                return new Rect(viewport.Left / viewport.Width, viewport.Bottom / viewport.Height, viewport.Width / viewport.Width, 1);
+            }
 
             //Convert OSVR.ClientKit.Matrix44f to Matrix4x4
             public static Matrix4x4 ConvertMatrix(OSVR.ClientKit.Matrix44f matrix)
@@ -79,7 +85,7 @@ namespace OSVR
                 matrix4x4[1, 3] = matrix.M13;
                 matrix4x4[2, 3] = matrix.M14;
                 matrix4x4[3, 3] = matrix.M15;
-                return matrix4x4;
+                return matrix4x4;// * Matrix4x4.Scale(new Vector3(1, -1, 1)); ;
             }
         }
     }
