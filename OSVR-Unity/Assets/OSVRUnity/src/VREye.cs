@@ -25,6 +25,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Reflection;
+using System;
 
 namespace OSVR
 {
@@ -94,11 +95,21 @@ namespace OSVR
                     //get the eye's surface
                     VRSurface surface = Surfaces[surfaceIndex];
 
+                    OSVR.ClientKit.Viewport viewport;
                     //get viewport from ClientKit and set surface viewport
-                    OSVR.ClientKit.Viewport viewport = Viewer.DisplayController.DisplayConfig.GetRelativeViewportForViewerEyeSurface(
-                        Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex);
+                    if (Viewer.DisplayController._useRenderManager)
+                    {
+                        viewport = Viewer.DisplayController.RenderManager.GetEyeViewport((int)EyeIndex);
+                        surface.SetViewportRect(Math.ConvertViewportRenderManager(viewport));
+                    }
+                    else
+                    {
+                       viewport = Viewer.DisplayController.DisplayConfig.GetRelativeViewportForViewerEyeSurface(
+                       Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex);
+                       surface.SetViewportRect(Math.ConvertViewport(viewport));
+                    }
 
-                    surface.SetViewport(Math.ConvertViewport(viewport));
+                    
 
                     //get projection matrix from ClientKit and set surface projection matrix
                     OSVR.ClientKit.Matrix44f projMatrix = Viewer.DisplayController.DisplayConfig.GetProjectionMatrixForViewerEyeSurfacef(
@@ -110,7 +121,7 @@ namespace OSVR
                     if(Viewer.DisplayController._useRenderManager)
                     {
                         surface.Render();
-                        surface.ReadPixelsFromRender();
+                        surface.SetActiveRenderTexture();
                     }
                     else
                     {
@@ -162,17 +173,14 @@ namespace OSVR
                     //render manager
                     if(Viewer.DisplayController._useRenderManager)
                     {
-                        //@todo get width and height for each eye, not just once
-                        int width = Viewer.DisplayController.RenderManager.GetRenderTextureWidth();
-                        int height = Viewer.DisplayController.RenderManager.GetRenderTextureHeight();
-                        if(surface.getRenderTexture() == null)
+                        if(surface.GetRenderTexture() == null)
                         {
+                            //Set the surfaces viewport from RenderManager
+                            surface.SetViewport(Viewer.DisplayController.RenderManager.GetEyeViewport((int)EyeIndex));
                             //create a RenderTexture for this eye's camera to render into
-                            //@todo what is the correct rendertexture format?
-                            Debug.Log("Creating render texture (" + width + "," + height + ")");
-                            RenderTexture renderTexture = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32);
+                            Debug.Log("Creating render texture (" + surface.Viewport.Width + "," + surface.Viewport.Height + ")");
+                            RenderTexture renderTexture = new RenderTexture(surface.Viewport.Width, surface.Viewport.Height, 24, RenderTextureFormat.Default);
                             surface.SetRenderTexture(renderTexture);
-                            Viewer.DisplayController.RenderManager.SetEyeColorBuffer(surface.PluginTexture.GetNativeTexturePtr(), (int)EyeIndex);
                         }
                     }             
                 }
