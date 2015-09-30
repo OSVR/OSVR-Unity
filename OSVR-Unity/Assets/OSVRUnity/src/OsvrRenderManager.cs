@@ -42,37 +42,37 @@ namespace OSVR
             [DllImport(PluginName, CallingConvention = CallingConvention.StdCall)]
             private static extern void SetTimeFromUnity(float t);
 
-            [DllImport(PluginName, CallingConvention = CallingConvention.StdCall)]
-            private static extern int GetEyeWidth();
+            [StructLayout(LayoutKind.Sequential)]
+            public struct OSVR_ViewportDescription
+            {
+                public double left;    //< Left side of the viewport in pixels
+                public double lower;   //< First pixel in the viewport at the bottom.
+                public double width;   //< Last pixel in the viewport at the top
+                public double height;   //< Last pixel on the right of the viewport in pixels
+            }
 
-            [DllImport(PluginName, CallingConvention = CallingConvention.StdCall)]
-            private static extern int GetEyeHeight();
+            [DllImport(PluginName, CallingConvention = CallingConvention.Cdecl)]
+            private static extern OSVR_ViewportDescription GetViewport(int eye);
+
 
             [DllImport(PluginName, CallingConvention = CallingConvention.StdCall)]
             private static extern void Shutdown();
 
-            // Link to the UnityTexture plugin and call the UpdateTexture function there.
-            [DllImport(PluginName, CallingConvention = CallingConvention.StdCall)]
-            private static extern void UpdateTexture(IntPtr colors, int index);
-
-
-            // [DllImport(PluginName, CallingConvention = CallingConvention.StdCall)]
-            // private static extern int GetPixels(IntPtr buffer, int x, int y, int width, int height);
-
             public void InitRenderManager(OSVR.ClientKit.ClientContext clientContext)
             {
                 LinkDebug(functionPointer); // Hook our c++ plugin into Unitys console log.
-                Debug.Log("Event id is " + GetRenderEventID()); //test that this works
                 CreateRenderManager(clientContext);
             }
 
-            public int GetRenderTextureWidth()
+            public OSVR.ClientKit.Viewport GetEyeViewport(int eye)
             {
-                return GetEyeWidth();
-            }
-            public int GetRenderTextureHeight()
-            {
-                return GetEyeHeight();
+                OSVR.ClientKit.Viewport v = new OSVR.ClientKit.Viewport();
+                OSVR_ViewportDescription viewportDescription = GetViewport(eye);
+                v.Left = (int)viewportDescription.left;
+                v.Bottom = (int)viewportDescription.lower;
+                v.Width = (int)viewportDescription.width;
+                v.Height = (int)viewportDescription.height;
+                return v;
             }
 
             /*public int ReadPixels(IntPtr buffer, int x, int y, int width, int height)
@@ -113,11 +113,6 @@ namespace OSVR
             public void ShutdownRenderManager()
             {
                 Shutdown();
-            }
-
-            public void UpdatePixels(System.IntPtr pixels, int index)
-            {
-                UpdateTexture(pixels, index);
             }
         }
     }
