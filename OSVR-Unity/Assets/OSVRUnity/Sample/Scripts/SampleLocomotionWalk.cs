@@ -30,12 +30,15 @@ public class SampleLocomotionWalk : OSVR.Unity.RequiresNaviPositionInterface
     // Update is called once per frame
     void Update()
     {
-        var state = this.Interface.GetState();
-        this.transform.localPosition = new Vector3
-        {
-            x = state.Value.x,
-            y = this.transform.localPosition.y,
-            z = state.Value.y,
-        };
+		if (this.Interface != null)
+		{
+			var state = this.Interface.GetState ();
+			this.transform.localPosition = new Vector3
+	        {
+	            x = state.Value.x,
+	            y = this.transform.localPosition.y,
+	            z = state.Value.y,
+	        };
+		}
     }
 }
