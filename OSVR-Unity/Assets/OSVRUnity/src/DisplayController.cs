@@ -85,6 +85,8 @@ namespace OSVR
             public uint ViewerCount { get { return _viewerCount; } }
             public OsvrRenderManager RenderManager { get { return _renderManager; } }
 
+            private bool shutdown = false;
+
             void Awake()
             {
                 _clientKit = FindObjectOfType<ClientKit>();
@@ -99,7 +101,7 @@ namespace OSVR
             void Start()
             {
                 //attempt to setup the display here, but it might take a few frames before we have data
-                SetupDisplay();
+               // SetupDisplay();
             }
 
             void OnEnable()
@@ -110,6 +112,10 @@ namespace OSVR
             void OnDisable()
             {
                 StopCoroutine("EndOfFrame");
+                shutdown = true;
+                Debug.Log("About to shutdown Renderman");
+                RenderManager.ShutdownRenderManager();
+                Debug.Log("Actually shutdown Renderman");
             }
 
             void SetupApplicationSettings()
@@ -120,7 +126,7 @@ namespace OSVR
                 //Set the framerate
                 //@todo get this value from OSVR, not a const value
                 //Performance note: Developers should try setting Time.fixedTimestep to 1/Application.targetFrameRate
-                Application.targetFrameRate = TARGET_FRAME_RATE;
+               // Application.targetFrameRate = TARGET_FRAME_RATE;
             }
 
             void SetupRenderManager()
@@ -205,8 +211,7 @@ namespace OSVR
                     uint eyeCount = (uint)_displayConfig.GetNumEyesForViewer(viewerIndex); //get the number of eyes for this viewer
                     vrViewerComponent.CreateEyes(eyeCount);
                 }            
-            }                
-
+            }
             void Update()
             {
                 //sometimes it takes a few frames to get a DisplayConfig from ClientKit
@@ -215,15 +220,6 @@ namespace OSVR
                 {
                     SetupDisplay();
                 }
-               /* if (Input.GetKeyDown(KeyCode.Alpha1))
-                {
-                    DoRendering();
-
-                }
-                if (Input.GetKeyDown(KeyCode.Alpha2))
-                {
-                    _issuePluginEvent = true;
-                }*/
             }
 
             //helper method for updating the client context
@@ -243,12 +239,16 @@ namespace OSVR
                 // Enable after frame ends
                 _camera.enabled = false;
 
-                DoRendering();
+                
                 if (_useRenderManager && _checkDisplayStartup)
                 {
-                    //Debug.Log("Issue Plugin Event on Frame " + Time.frameCount);
+                    DoRendering();
                     Camera.depth = 10;
                    
+                }
+                else if(!_checkDisplayStartup)
+                {
+                    _checkDisplayStartup = DisplayConfig.CheckDisplayStartup();
                 }
                       
                 // Flag that we disabled the camera
@@ -281,7 +281,6 @@ namespace OSVR
                     }
                 }
             }
-
             //This couroutine is called every frame.
             IEnumerator EndOfFrame()
             {
@@ -296,7 +295,6 @@ namespace OSVR
                     yield return new WaitForEndOfFrame();
                     if(_useRenderManager && _checkDisplayStartup)
                     {
-                       // _issuePluginEvent = false;
                         GL.IssuePluginEvent(_renderManager.GetRenderEventFunction(), 0);
                     }
                
