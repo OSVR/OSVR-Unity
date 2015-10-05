@@ -112,7 +112,7 @@ namespace OSVR
             }
             public void ShutdownRenderManager()
             {
-                Shutdown();
+                GL.IssuePluginEvent(GetRenderEventFunc(), 1);
             }
         }
     }
