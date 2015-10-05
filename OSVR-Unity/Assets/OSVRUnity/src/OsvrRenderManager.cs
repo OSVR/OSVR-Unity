@@ -54,9 +54,19 @@ namespace OSVR
             [DllImport(PluginName, CallingConvention = CallingConvention.Cdecl)]
             private static extern OSVR_ViewportDescription GetViewport(int eye);
 
+            [StructLayout(LayoutKind.Sequential)]
+            public struct OSVR_ProjectionMatrix
+            {
+                public double left;
+                public double right;
+                public double top;
+                public double bottom;
+                public double nearClip;        //< Cannot name "near" because Visual Studio keyword
+                public double farClip;
+            }
 
-            [DllImport(PluginName, CallingConvention = CallingConvention.StdCall)]
-            private static extern void Shutdown();
+            [DllImport(PluginName, CallingConvention = CallingConvention.Cdecl)]
+            private static extern OSVR_ProjectionMatrix GetProjectionMatrix(int eye);
 
             public void InitRenderManager(OSVR.ClientKit.ClientContext clientContext)
             {
@@ -75,10 +85,41 @@ namespace OSVR
                 return v;
             }
 
-            /*public int ReadPixels(IntPtr buffer, int x, int y, int width, int height)
+            public Matrix4x4 GetEyeProjectionMatrix(int eye)
             {
-                return GetPixels(buffer, x, y, width, height);
-            }*/
+                OSVR_ProjectionMatrix pm = GetProjectionMatrix(eye);
+                return PerspectiveOffCenter((float)pm.left, (float)pm.right, (float)pm.bottom, (float)pm.top, (float)pm.nearClip, (float)pm.farClip);
+                
+            }
+            //from http://docs.unity3d.com/ScriptReference/Camera-projectionMatrix.html
+            static Matrix4x4 PerspectiveOffCenter(float left, float right, float bottom, float top, float near, float far)
+            {
+                float x = 2.0F * near / (right - left);
+                float y = 2.0F * near / (top - bottom);
+                float a = (right + left) / (right - left);
+                float b = (top + bottom) / (top - bottom);
+                float c = -(far + near) / (far - near);
+                float d = -(2.0F * far * near) / (far - near);
+                float e = -1.0F;
+                Matrix4x4 m = new Matrix4x4();
+                m[0, 0] = x;
+                m[0, 1] = 0;
+                m[0, 2] = a;
+                m[0, 3] = 0;
+                m[1, 0] = 0;
+                m[1, 1] = y;
+                m[1, 2] = b;
+                m[1, 3] = 0;
+                m[2, 0] = 0;
+                m[2, 1] = 0;
+                m[2, 2] = c;
+                m[2, 3] = d;
+                m[3, 0] = 0;
+                m[3, 1] = 0;
+                m[3, 2] = e;
+                m[3, 3] = 0;
+                return m;
+            }
 
             //Call the Unity Rendering Plugin to initialize the RenderManager
             public int CreateRenderManager(OSVR.ClientKit.ClientContext clientContext)
