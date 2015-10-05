@@ -53,13 +53,11 @@ namespace OSVR
             private OSVR.ClientKit.DisplayConfig _displayConfig;
             private VRViewer[] _viewers; 
             private uint _viewerCount;
-            private bool _renderedStereo = false;
             private bool _displayConfigInitialized = false;
             private bool _checkDisplayStartup = false;
             private Camera _camera;
             private bool _disabledCamera = true;
             private OsvrRenderManager _renderManager;
-            private bool _issuePluginEvent = false;
 
             //for testing
             public bool _useRenderManager = true;
