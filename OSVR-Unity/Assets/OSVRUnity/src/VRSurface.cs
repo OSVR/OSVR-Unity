@@ -156,6 +156,12 @@ namespace OSVR
                 Camera.targetTexture = RenderToTexture;
                 Camera.Render();
             }
+
+            public void ClearRenderTarget()
+            {
+                RenderTexture.active = null;
+                Camera.targetTexture = null;
+            }
         }
     }
 }

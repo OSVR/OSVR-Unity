@@ -100,7 +100,17 @@ namespace OSVR
                    //update the eye's surfaces, includes a call to Render the surface
                     eye.UpdateSurfaces();                   
                 }
-            }               
+            } 
+            
+            public void ClearEyes()
+            {
+                for (uint eyeIndex = 0; eyeIndex < EyeCount; eyeIndex++)
+                {
+                    //update the eye pose
+                    VREye eye = Eyes[eyeIndex];
+                    eye.ClearSurfaces();
+                }
+            }              
         }
     }
 }

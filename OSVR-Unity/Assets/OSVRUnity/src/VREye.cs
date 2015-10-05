@@ -130,6 +130,18 @@ namespace OSVR
                 }
             }
 
+            public void ClearSurfaces()
+            {
+                //for each surface
+                for (uint surfaceIndex = 0; surfaceIndex < SurfaceCount; surfaceIndex++)
+                {
+                    //get the eye's surface
+                    VRSurface surface = Surfaces[surfaceIndex];
+                    surface.ClearRenderTarget();
+                }
+            }
+
+
             //Create this Eye's VRSurfaces. 
             //Each VRSurface has a camera component which controls rendering for the VREye
             public void CreateSurfaces(uint surfaceCount)
