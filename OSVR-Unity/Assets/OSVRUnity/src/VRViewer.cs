@@ -95,7 +95,15 @@ namespace OSVR
 
                     //update the eye pose
                     VREye eye = Eyes[eyeIndex];
-                    eye.UpdateEyePose(_displayController.DisplayConfig.GetViewerEyePose(ViewerIndex, (byte)eyeIndex));
+                    if (DisplayController._useRenderManager)
+                    {
+                        eye.UpdateEyePose(DisplayController.RenderManager.GetRenderManagerEyePose((byte)eyeIndex));
+                    }
+                    else
+                    {
+                        eye.UpdateEyePose(_displayController.DisplayConfig.GetViewerEyePose(ViewerIndex, (byte)eyeIndex));
+                    }
+                        
 
                    //update the eye's surfaces, includes a call to Render the surface
                     eye.UpdateSurfaces();                   
