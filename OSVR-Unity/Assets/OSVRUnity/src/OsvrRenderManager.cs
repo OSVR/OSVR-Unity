@@ -68,10 +68,18 @@ namespace OSVR
             [DllImport(PluginName, CallingConvention = CallingConvention.Cdecl)]
             private static extern OSVR_ProjectionMatrix GetProjectionMatrix(int eye);
 
+            [DllImport(PluginName, CallingConvention = CallingConvention.Cdecl)]
+            private static extern OSVR.ClientKit.Pose3 GetEyePose(int eye);
+
             public void InitRenderManager(OSVR.ClientKit.ClientContext clientContext)
             {
                 LinkDebug(functionPointer); // Hook our c++ plugin into Unitys console log.
                 CreateRenderManager(clientContext);
+            }
+
+            public OSVR.ClientKit.Pose3 GetRenderManagerEyePose(int eye)
+            {
+                return GetEyePose(eye);
             }
 
             public OSVR.ClientKit.Viewport GetEyeViewport(int eye)
