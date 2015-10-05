@@ -106,16 +106,27 @@ namespace OSVR
 
             void OnEnable()
             {
+                shutdown = false;
                 StartCoroutine("EndOfFrame");
             }
 
+    
             void OnDisable()
             {
-                StopCoroutine("EndOfFrame");
+                ClearViewers();
                 shutdown = true;
-                Debug.Log("About to shutdown Renderman");
+                StopCoroutine("EndOfFrame");
                 RenderManager.ShutdownRenderManager();
-                Debug.Log("Actually shutdown Renderman");
+            }
+
+            void ClearViewers()
+            {
+                //for each viewer, update each eye, which will update each surface
+                for (uint viewerIndex = 0; viewerIndex < _viewerCount; viewerIndex++)
+                {
+                    VRViewer viewer = Viewers[viewerIndex];
+                    viewer.ClearEyes();
+                }
             }
 
             void SetupApplicationSettings()
@@ -235,24 +246,27 @@ namespace OSVR
             //OnPreRender is not called because we disable the camera here.
             void OnPreCull()
             {
-                // Disable dummy camera during rendering
-                // Enable after frame ends
-                _camera.enabled = false;
+                if (!shutdown)
+                {
+                    // Disable dummy camera during rendering
+                    // Enable after frame ends
+                    _camera.enabled = false;
 
-                
-                if (_useRenderManager && _checkDisplayStartup)
-                {
                     DoRendering();
-                    Camera.depth = 10;
-                   
+                    if (_useRenderManager && _checkDisplayStartup)
+                    {
+
+                        Camera.depth = 10;
+
+                    }
+                    else if (!_checkDisplayStartup)
+                    {
+                        _checkDisplayStartup = DisplayConfig.CheckDisplayStartup();
+                    }
+
+                    // Flag that we disabled the camera
+                    _disabledCamera = true;
                 }
-                else if(!_checkDisplayStartup)
-                {
-                    _checkDisplayStartup = DisplayConfig.CheckDisplayStartup();
-                }
-                      
-                // Flag that we disabled the camera
-                _disabledCamera = true;
             }
 
             void DoRendering()
@@ -293,7 +307,7 @@ namespace OSVR
                         _disabledCamera = false;
                     }
                     yield return new WaitForEndOfFrame();
-                    if(_useRenderManager && _checkDisplayStartup)
+                    if(_useRenderManager && _checkDisplayStartup && !shutdown)
                     {
                         GL.IssuePluginEvent(_renderManager.GetRenderEventFunction(), 0);
                     }
