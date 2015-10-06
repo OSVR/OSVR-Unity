@@ -138,6 +138,10 @@ namespace OSVR
                     Debug.LogError(_viewerCount + " viewers found, but this implementation requires exactly one viewer.");
                     return;
                 }
+
+                //Corresponds to video_inputs field in display descriptor.
+                _displayInputCount = _displayConfig.GetNumDisplayInputs();
+
                 //create scene objects 
                 CreateHeadAndEyes();              
             }
