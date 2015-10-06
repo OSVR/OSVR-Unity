@@ -48,6 +48,7 @@ namespace OSVR
 
             private ClientKit _clientKit;
             private OSVR.ClientKit.DisplayConfig _displayConfig;
+            private OSVR.ClientKit.DisplayDimensions _displayDimensions;
             private VRViewer[] _viewers; 
             private uint _viewerCount;
             private uint _displayInputCount;
@@ -72,7 +73,8 @@ namespace OSVR
             {
                 get { return _displayConfig; }
                 set { _displayConfig = value; }
-            }          
+            }
+            public OSVR.ClientKit.DisplayDimensions DisplayDimensions { get { return _displayDimensions; } }
             public VRViewer[] Viewers { get { return _viewers; } }           
             public uint ViewerCount { get { return _viewerCount; } }
             public uint DisplayInputCount { get { return _displayInputCount; } }
