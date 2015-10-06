@@ -55,8 +55,26 @@ namespace OSVR
             public static Rect ConvertViewport(OSVR.ClientKit.Viewport viewport)
             {
                 //Unity expects normalized coordinates, not pixel coordinates
-                //@todo below assumes left and right eyes split the screen in half horizontally
                 return new Rect(viewport.Left / (2f*viewport.Width), viewport.Bottom / viewport.Height, viewport.Width/(viewport.Width*2f), 1);
+            }
+
+            public static Rect ConvertViewport(OSVR.ClientKit.Viewport viewport, uint eyeIndex, uint numDisplayInputs)
+            {
+                if(numDisplayInputs == 1)
+                {
+                    return ConvertViewport(viewport);
+                }
+                else
+                {
+                    if(eyeIndex == 0)
+                    {
+                        return new Rect(0f, 0f, 1f, 1f);
+                    }
+                    else
+                    {
+                        return new Rect(0.5f, 0f, 1f, 1f);
+                    }
+                }
             }
 
             //Convert OSVR.ClientKit.Matrix44f to Matrix4x4
