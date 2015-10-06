@@ -141,6 +141,9 @@ namespace OSVR
                     return;
                 }
 
+                //get display dimensions
+                _displayDimensions = DisplayConfig.GetDisplayDimensions(0);
+
                 //Corresponds to video_inputs field in display descriptor.
                 _displayInputCount = _displayConfig.GetNumDisplayInputs();
 
