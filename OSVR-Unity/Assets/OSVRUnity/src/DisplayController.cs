@@ -75,6 +75,7 @@ namespace OSVR
             }          
             public VRViewer[] Viewers { get { return _viewers; } }           
             public uint ViewerCount { get { return _viewerCount; } }
+            public uint DisplayInputCount { get { return _displayInputCount; } }
 
             void Awake()
             {
