@@ -146,6 +146,11 @@ namespace OSVR
 
                 //Corresponds to video_inputs field in display descriptor.
                 _displayInputCount = _displayConfig.GetNumDisplayInputs();
+                if(_displayInputCount > 1)
+                {
+                    //set a double-wide window if we have multiple video inputs. Fullscreen = false.
+                    Screen.SetResolution(DisplayDimensions.Width * 2, DisplayDimensions.Height, false);
+                }
 
                 //create scene objects 
                 CreateHeadAndEyes();              
