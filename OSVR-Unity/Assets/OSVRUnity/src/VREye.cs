@@ -97,7 +97,7 @@ namespace OSVR
                     OSVR.ClientKit.Viewport viewport = Viewer.DisplayController.DisplayConfig.GetRelativeViewportForViewerEyeSurface(
                         Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex);
 
-                    surface.SetViewport(Math.ConvertViewport(viewport));
+                    surface.SetViewport(Math.ConvertViewport(viewport, EyeIndex, Viewer.DisplayController.DisplayInputCount));
 
                     //get projection matrix from ClientKit and set surface projection matrix
                     OSVR.ClientKit.Matrix44f projMatrix = Viewer.DisplayController.DisplayConfig.GetProjectionMatrixForViewerEyeSurfacef(
