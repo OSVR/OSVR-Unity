@@ -114,7 +114,10 @@ namespace OSVR
                 ClearViewers();
                 shutdown = true;
                 StopCoroutine("EndOfFrame");
-                RenderManager.ShutdownRenderManager();
+                if (_useRenderManager)
+                {
+                    RenderManager.ShutdownRenderManager();
+                }
             }
 
             void ClearViewers()
