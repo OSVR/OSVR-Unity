@@ -130,13 +130,6 @@ namespace OSVR
                 }
                 _displayConfigInitialized = true;               
 
-                //get the number of viewers, bail if there isn't exactly one viewer for now
-                _viewerCount = _displayConfig.GetNumViewers();
-                if(_viewerCount != 1)
-                {
-                    Debug.LogError(_viewerCount + " viewers found, but this implementation requires exactly one viewer.");
-                    return;
-                }
                 //create scene objects 
                 CreateHeadAndEyes();              
             }
