@@ -43,7 +43,8 @@ namespace OSVR
         public class DisplayController : MonoBehaviour
         {
             
-            public const uint NUM_VIEWERS = 1;
+            public const uint NUM_VIEWERS = 1; //ASSUME ONE VIEWER
+
             private const int TARGET_FRAME_RATE = 60; //@todo get from OSVR
 
             private ClientKit _clientKit;
@@ -140,7 +141,14 @@ namespace OSVR
             //Each eye has one child Surface which has a camera
             private void CreateHeadAndEyes()
             {
-                /* ASSUME ONE VIEWER */
+                //If we already have a camera rig set up, do not proceed with creating VRViewers, VREyes, and VRSurfaces
+                //Assume we are using the VRDisplayTracked_DefaultRig prefab
+                if(GetComponentInChildren<VRViewer>() != null)
+                {
+                    SetupDefaultRig();
+                    return;
+                }
+
                 //Create VRViewers, only one in this implementation
                 _viewerCount = (uint)_displayConfig.GetNumViewers();
                 if(_viewerCount != NUM_VIEWERS)
@@ -167,7 +175,51 @@ namespace OSVR
                     uint eyeCount = (uint)_displayConfig.GetNumEyesForViewer(viewerIndex); //get the number of eyes for this viewer
                     vrViewerComponent.CreateEyes(eyeCount);
                 }            
-            }                
+            }
+
+            //Called when we are using a pre-existing camera rig, rather than creating one at runtime
+            //This function finds the existing components in the rig and makes sure references are set
+            private void SetupDefaultRig()
+            {
+                _viewers = GetComponentsInChildren<VRViewer>();
+                _viewerCount = (uint)_viewers.Length;
+                for (uint viewerIndex = 0; viewerIndex < _viewerCount; viewerIndex++)
+                {
+                    VRViewer viewer = _viewers[viewerIndex];
+                    viewer.ViewerIndex = viewerIndex;
+                    viewer.DisplayController = this;
+                    viewer.Eyes = GetComponentsInChildren<VREye>();
+                    viewer.EyeCount = (uint)viewer.Eyes.Length;
+                    for (uint eyeIndex = 0; eyeIndex < viewer.EyeCount; eyeIndex++)
+                    {
+                        VREye eye = viewer.Eyes[eyeIndex];
+                        eye.EyeIndex = eyeIndex;
+                        eye.Viewer = viewer;
+                        eye.Surfaces = eye.GetComponentsInChildren<VRSurface>();
+                        eye.SurfaceCount = (uint)eye.Surfaces.Length;
+                        for (uint surfaceIndex = 0; surfaceIndex < eye.SurfaceCount; surfaceIndex++)
+                        {
+                            VRSurface surface = eye.Surfaces[surfaceIndex];
+                            surface.SurfaceIndex = surfaceIndex;
+                            surface.Eye = eye;
+                            surface.Camera = surface.gameObject.GetComponent<Camera>(); //VRSurface has camera component by default                            
+                            eye.CopyCamera(Camera, surface.Camera); //copy camera properties from the "dummy" camera to surface camera
+
+                            //distortion
+                            bool useDistortion = DisplayConfig.DoesViewerEyeSurfaceWantDistortion(viewerIndex, (byte)eyeIndex, surfaceIndex);
+                            if (useDistortion)
+                            {
+                                //@todo figure out which type of distortion to use
+                                //right now, there is only one option, SurfaceRadialDistortion
+                                //get distortion parameters
+                                OSVR.ClientKit.RadialDistortionParameters distortionParameters =
+                                    DisplayConfig.GetViewerEyeSurfaceRadialDistortion(viewerIndex, (byte)eyeIndex, surfaceIndex);
+                                surface.SetDistortion(distortionParameters);
+                            }
+                        }
+                    }
+                }
+            }
 
             void Update()
             {
