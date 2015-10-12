@@ -47,8 +47,8 @@ namespace OSVR
                 get { return _eyeIndex; }
                 set { _eyeIndex = value; }
             }
-            public VRSurface[] Surfaces { get { return _surfaces; } } 
-            public uint SurfaceCount { get { return _surfaceCount; } }
+            public VRSurface[] Surfaces { get { return _surfaces; } set { _surfaces = value; } }
+            public uint SurfaceCount { get { return _surfaceCount; } set { _surfaceCount = value; } }
             public VRViewer Viewer
             {
                 get { return _viewer; }
@@ -155,7 +155,7 @@ namespace OSVR
 
             //helper method that copies camera properties from one camera to another
             //copies from srcCamera to destCamera
-            private void CopyCamera(Camera srcCamera, Camera destCamera)
+            public void CopyCamera(Camera srcCamera, Camera destCamera)
             {
                 //Copy the camera properties.
                 destCamera.CopyFrom(srcCamera);
