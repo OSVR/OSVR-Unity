@@ -9,7 +9,7 @@ namespace OSVR
         public class OsvrRenderManager : MonoBehaviour
         {
 
-            private const string PluginName = "OsvrRenderingPlugin";
+            private const string PluginName = "osvrUnityRenderingPlugin";
 
             // The block of code below is a neat trick to allow for calling into the debug console from C++
             [DllImport(PluginName)]
