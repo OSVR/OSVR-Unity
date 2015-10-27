@@ -58,6 +58,7 @@ namespace OSVR
             private Camera _camera;
             private bool _disabledCamera = true;
             private OsvrRenderManager _renderManager;
+            private bool startRendering = false;
 
             //for testing
             public bool _useRenderManager = true;
@@ -83,8 +84,6 @@ namespace OSVR
             public uint ViewerCount { get { return _viewerCount; } }
             public OsvrRenderManager RenderManager { get { return _renderManager; } }
 
-            private bool shutdown = false;
-
             void Awake()
             {
                 _clientKit = FindObjectOfType<ClientKit>();
@@ -104,7 +103,6 @@ namespace OSVR
 
             void OnEnable()
             {
-                shutdown = false;
                 StartCoroutine("EndOfFrame");
             }
 
@@ -246,36 +244,36 @@ namespace OSVR
             //OnPreRender is not called because we disable the camera here.
             void OnPreCull()
             {
-                if (!shutdown)
+                // Disable dummy camera during rendering
+                // Enable after frame ends
+                _camera.enabled = false;
+
+                DoRendering();
+                if (!_checkDisplayStartup && _displayConfigInitialized)
                 {
-                    // Disable dummy camera during rendering
-                    // Enable after frame ends
-                    _camera.enabled = false;
-
-                    DoRendering();
-                    if (!_checkDisplayStartup && _displayConfigInitialized)
-                    {
-                        _checkDisplayStartup = DisplayConfig.CheckDisplayStartup();
-                    }
-
-                    // Flag that we disabled the camera
-                    _disabledCamera = true;
+                    _checkDisplayStartup = DisplayConfig.CheckDisplayStartup();
                 }
+
+                // Flag that we disabled the camera
+                _disabledCamera = true;              
             }
 
             void DoRendering()
             {
+                
                 //for each viewer, update each eye, which will update each surface
                 for (uint viewerIndex = 0; viewerIndex < _viewerCount; viewerIndex++)
                 {
                     VRViewer viewer = Viewers[viewerIndex];
 
-                    //update the client
-                    //UpdateClient();
-
                     //update poses once DisplayConfig is ready
                     if (_checkDisplayStartup)
                     {
+                        if (!startRendering)
+                        {
+                            startRendering = true;
+                        }
+
                         //update the viewer's head pose
                         viewer.UpdateViewerHeadPose(DisplayConfig.GetViewerPose(viewerIndex));
 
@@ -301,8 +299,9 @@ namespace OSVR
                         _disabledCamera = false;
                     }
                     yield return new WaitForEndOfFrame();
-                    if(_useRenderManager && _checkDisplayStartup && !shutdown)
+                    if(_useRenderManager && _checkDisplayStartup && startRendering)
                     {
+                       // Debug.Log("Unity GL.IssuePluginEvent(Render) at EndOfFrame: " + Time.frameCount);
                         GL.IssuePluginEvent(_renderManager.GetRenderEventFunction(), 0);
                     }
                
