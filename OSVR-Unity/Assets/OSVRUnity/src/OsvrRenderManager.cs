@@ -71,10 +71,13 @@ namespace OSVR
             [DllImport(PluginName, CallingConvention = CallingConvention.Cdecl)]
             private static extern OSVR.ClientKit.Pose3 GetEyePose(int eye);
 
-            public void InitRenderManager(OSVR.ClientKit.ClientContext clientContext)
+            private OSVR.ClientKit.ClientContext _renderManagerClientContext;
+
+            public void InitRenderManager()
             {
                 LinkDebug(functionPointer); // Hook our c++ plugin into Unitys console log.
-                CreateRenderManager(clientContext);
+                _renderManagerClientContext = new OSVR.ClientKit.ClientContext("com.sensics.rendermanagercontext", 0);
+                CreateRenderManager(_renderManagerClientContext);
             }
 
             public OSVR.ClientKit.Pose3 GetRenderManagerEyePose(int eye)
@@ -162,6 +165,12 @@ namespace OSVR
             public void ShutdownRenderManager()
             {
                 GL.IssuePluginEvent(GetRenderEventFunc(), 1);
+                if (null != _renderManagerClientContext)
+                {
+                    Debug.Log("Shutting down RenderManager Context.");
+                    _renderManagerClientContext.Dispose();
+                    _renderManagerClientContext = null;
+                }
             }
         }
     }
