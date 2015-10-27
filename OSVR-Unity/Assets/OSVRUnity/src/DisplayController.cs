@@ -111,8 +111,8 @@ namespace OSVR
 
             void OnDisable()
             {
+                ClearViewers();
                 StopCoroutine("EndOfFrame");
-                //ShutdownRenderManager();
                 if (_useRenderManager)
                 {
                     RenderManager.ExitRenderManager();
@@ -253,13 +253,7 @@ namespace OSVR
                     _camera.enabled = false;
 
                     DoRendering();
-                    if (_useRenderManager && _checkDisplayStartup)
-                    {
-
-                        Camera.depth = 10;
-
-                    }
-                    else if (!_checkDisplayStartup)
+                    if (!_checkDisplayStartup && _displayConfigInitialized)
                     {
                         _checkDisplayStartup = DisplayConfig.CheckDisplayStartup();
                     }
