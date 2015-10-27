@@ -40,7 +40,7 @@ namespace OSVR
             private static extern Byte CreateRenderManagerFromUnity(OSVR.ClientKit.SafeClientContextHandle /*OSVR_ClientContext*/ ctx);
 
             [DllImport(PluginName, CallingConvention = CallingConvention.StdCall)]
-            private static extern void SetTimeFromUnity(float t);
+            private static extern void UpdateRenderInfo();
 
             [StructLayout(LayoutKind.Sequential)]
             public struct OSVR_ViewportDescription
@@ -144,8 +144,7 @@ namespace OSVR
 
             //Pass pointer to eye-camera RenderTexture to the Unity Rendering Plugin
             public void SetEyeColorBuffer(IntPtr colorBuffer, int eye)
-            {
-                Debug.Log("About to call native plugin with color buffer");
+            {               
                 SetColorBufferFromUnity(colorBuffer, eye);
             }
 
@@ -160,11 +159,10 @@ namespace OSVR
                 return GetRenderEventFunc();
             }
 
-            //Pass Unity time to Unity Rendering Plugin
-            //Would probably pass in Time.time
-            public void SetRenderEventTime(float t)
+            public void GetRenderInfo()
             {
-                SetTimeFromUnity(t);
+                Debug.Log("Update Render Info, frame: " + Time.frameCount);
+                UpdateRenderInfo();
             }
             public void ExitRenderManager()
             {
