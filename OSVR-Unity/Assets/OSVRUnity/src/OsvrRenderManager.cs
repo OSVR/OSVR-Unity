@@ -169,6 +169,11 @@ namespace OSVR
             public void ExitRenderManager()
             {
                 ShutdownRenderManager();
+                if (null != _renderManagerClientContext)
+                {
+                    _renderManagerClientContext.Dispose();
+                    _renderManagerClientContext = null;
+                }
             }
         }
     }
