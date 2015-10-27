@@ -153,7 +153,7 @@ namespace OSVR
                         _renderManager = gameObject.AddComponent<OsvrRenderManager>();
                     }
 
-                    _renderManager.InitRenderManager(FindObjectOfType<ClientKit>().context);
+                    _renderManager.InitRenderManager();
                 }
                 else
                 {
