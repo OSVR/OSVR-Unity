@@ -159,8 +159,12 @@ namespace OSVR
 
             public void ClearRenderTarget()
             {
-                RenderTexture.active = null;
-                Camera.targetTexture = null;
+                if (RenderTexture.active != null)
+                {
+                    RenderTexture.active.DiscardContents();
+                    RenderTexture.active = null;
+                    GL.InvalidateState();
+                }
             }
         }
     }
