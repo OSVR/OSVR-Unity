@@ -235,10 +235,10 @@ namespace OSVR
             }
 
             //helper method for updating the client context
-            public void UpdateClient()
+            /*public void UpdateClient()
             {
                 _clientKit.context.update();
-            }
+            }*/
 
             //Culling determines which objects are visible to the camera. OnPreCull is called just before this process.
             //This gets called because we have a camera component, but we disable the camera here so it doesn't render.
@@ -278,7 +278,7 @@ namespace OSVR
                     VRViewer viewer = Viewers[viewerIndex];
 
                     //update the client
-                    UpdateClient();
+                    //UpdateClient();
 
                     //update poses once DisplayConfig is ready
                     if (_checkDisplayStartup)

@@ -91,7 +91,7 @@ namespace OSVR
                 for (uint eyeIndex = 0; eyeIndex < EyeCount; eyeIndex++)
                 {
                     //update the client
-                    DisplayController.UpdateClient();
+                   // DisplayController.UpdateClient();
 
                     //update the eye pose
                     VREye eye = Eyes[eyeIndex];
