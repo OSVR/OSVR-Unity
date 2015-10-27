@@ -71,6 +71,10 @@ namespace OSVR
             [DllImport(PluginName, CallingConvention = CallingConvention.Cdecl)]
             private static extern OSVR.ClientKit.Pose3 GetEyePose(int eye);
 
+
+            [DllImport(PluginName, CallingConvention = CallingConvention.Cdecl)]
+            private static extern void ShutdownRenderManager();
+
             private OSVR.ClientKit.ClientContext _renderManagerClientContext;
 
             public void InitRenderManager()
@@ -162,15 +166,9 @@ namespace OSVR
             {
                 SetTimeFromUnity(t);
             }
-            public void ShutdownRenderManager()
+            public void ExitRenderManager()
             {
-                GL.IssuePluginEvent(GetRenderEventFunc(), 1);
-                if (null != _renderManagerClientContext)
-                {
-                    Debug.Log("Shutting down RenderManager Context.");
-                    _renderManagerClientContext.Dispose();
-                    _renderManagerClientContext = null;
-                }
+                ShutdownRenderManager();
             }
         }
     }
