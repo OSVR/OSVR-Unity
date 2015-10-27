@@ -88,15 +88,21 @@ namespace OSVR
             //Update the pose of each eye, then update and render each eye's surfaces
             public void UpdateEyes()
             {
+                if (DisplayController._useRenderManager)
+                {
+                    //Update RenderInfo
+                    //DisplayController.RenderManager.GetRenderInfo();
+                    //Debug.Log("Unity GL.IssuePluginEvent(UpdateRenderInfo): " + Time.frameCount);
+                    GL.IssuePluginEvent(DisplayController.RenderManager.GetRenderEventFunction(), 2);
+                }
+                    
                 for (uint eyeIndex = 0; eyeIndex < EyeCount; eyeIndex++)
                 {
-                    //update the client
-                   // DisplayController.UpdateClient();
-
+                   
                     //update the eye pose
                     VREye eye = Eyes[eyeIndex];
                     if (DisplayController._useRenderManager)
-                    {
+                    {                      
                         eye.UpdateEyePose(DisplayController.RenderManager.GetRenderManagerEyePose((byte)eyeIndex));
                     }
                     else
