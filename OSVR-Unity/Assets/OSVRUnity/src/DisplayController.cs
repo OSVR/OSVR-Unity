@@ -54,6 +54,7 @@ namespace OSVR
             private uint _viewerCount;
             private bool _renderedStereo = false;
             private bool _displayConfigInitialized = false;
+            private bool _checkDisplayStartup = false;
             private Camera _camera;
             private bool _disabledCamera = true;
 
@@ -252,11 +253,19 @@ namespace OSVR
                     //update the client
                     UpdateClient();
 
+                    //update poses once DisplayConfig is ready
+                    if (_checkDisplayStartup)
+                    {
                     //update the viewer's head pose
-                    viewer.UpdateViewerHeadPose(DisplayConfig.GetViewerPose(viewerIndex));                    
+                        viewer.UpdateViewerHeadPose(DisplayConfig.GetViewerPose(viewerIndex));
 
                     //each viewer update its eyes
                     viewer.UpdateEyes();
+                }       
+                    else
+                    {
+                        _checkDisplayStartup = DisplayConfig.CheckDisplayStartup();
+                    }
                 }       
 
                 // Flag that we disabled the camera
