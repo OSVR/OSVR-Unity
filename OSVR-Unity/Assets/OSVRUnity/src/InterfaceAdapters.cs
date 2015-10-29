@@ -52,11 +52,7 @@ namespace OSVR.Unity
         public PoseAdapter(OSVR.ClientKit.IInterface<OSVR.ClientKit.Pose3> iface) : base(iface) {}
         protected override Pose3 Convert (OSVR.ClientKit.Pose3 sourceValue)
         {
-            return new Pose3
-            {
-                Rotation = OSVR.Unity.Math.ConvertOrientation(sourceValue.rotation),
-                Position = OSVR.Unity.Math.ConvertPosition (sourceValue.translation),
-            };
+            return OSVR.Unity.Math.Convert(sourceValue);
         }
     }
 
@@ -91,6 +87,76 @@ namespace OSVR.Unity
                 Direction = Math.ConvertPosition(sourceValue.direction),
                 DirectionValid = sourceValue.directionValid,
             };
+        }
+    }
+
+    public class SkeletonJointAdapter :
+        OSVR.ClientKit.InterfaceAdapter<OSVR.ClientKit.SkeletonJointState, SkeletonJointState>
+    {
+        public SkeletonJointAdapter(OSVR.ClientKit.IInterface<OSVR.ClientKit.SkeletonJointState> iface) : base(iface) { }
+        protected override SkeletonJointState Convert(OSVR.ClientKit.SkeletonJointState sourceValue)
+        {
+            return SkeletonJointState.Convert(sourceValue);
+        }
+    }
+
+    public class SkeletonTrimmedAdapter :
+        OSVR.ClientKit.InterfaceAdapter<OSVR.ClientKit.SkeletonTrimmedState, SkeletonTrimmedState>
+    {
+        public SkeletonTrimmedAdapter(OSVR.ClientKit.IInterface<OSVR.ClientKit.SkeletonTrimmedState> iface) : base(iface) { }
+        protected override SkeletonTrimmedState Convert(OSVR.ClientKit.SkeletonTrimmedState sourceValue)
+        {
+            return SkeletonTrimmedState.Convert(sourceValue);
+        }
+    }
+
+    public class SkeletonWholeAdapter :
+        OSVR.ClientKit.InterfaceAdapter<OSVR.ClientKit.SkeletonWholeState, SkeletonWholeState>
+    {
+        public SkeletonWholeAdapter(OSVR.ClientKit.IInterface<OSVR.ClientKit.SkeletonWholeState> iface) : base(iface) { }
+        protected override SkeletonWholeState Convert(OSVR.ClientKit.SkeletonWholeState sourceValue)
+        {
+            return SkeletonWholeState.Convert(sourceValue);
+        }
+    }
+
+    public class SkeletonHandAdapter :
+        OSVR.ClientKit.InterfaceAdapter<OSVR.ClientKit.SkeletonHandState, SkeletonHandState>
+    {
+        public SkeletonHandAdapter(OSVR.ClientKit.IInterface<OSVR.ClientKit.SkeletonHandState> iface) : base(iface) { }
+        protected override SkeletonHandState Convert(OSVR.ClientKit.SkeletonHandState sourceValue)
+        {
+            return SkeletonHandState.Convert(sourceValue);
+        }
+    }
+
+    public class SkeletonArmAdapter :
+        OSVR.ClientKit.InterfaceAdapter<OSVR.ClientKit.SkeletonArmState, SkeletonArmState>
+    {
+        public SkeletonArmAdapter(OSVR.ClientKit.IInterface<OSVR.ClientKit.SkeletonArmState> iface) : base(iface) { }
+        protected override SkeletonArmState Convert(OSVR.ClientKit.SkeletonArmState sourceValue)
+        {
+            return SkeletonArmState.Convert(sourceValue);
+        }
+    }
+
+    public class SkeletonFootAdapter :
+        OSVR.ClientKit.InterfaceAdapter<OSVR.ClientKit.SkeletonFootState, SkeletonFootState>
+    {
+        public SkeletonFootAdapter(OSVR.ClientKit.IInterface<OSVR.ClientKit.SkeletonFootState> iface) : base(iface) { }
+        protected override SkeletonFootState Convert(OSVR.ClientKit.SkeletonFootState sourceValue)
+        {
+            return SkeletonFootState.Convert(sourceValue);
+        }
+    }
+
+    public class SkeletonLegAdapter :
+        OSVR.ClientKit.InterfaceAdapter<OSVR.ClientKit.SkeletonLegState, SkeletonLegState>
+    {
+        public SkeletonLegAdapter(OSVR.ClientKit.IInterface<OSVR.ClientKit.SkeletonLegState> iface) : base(iface) { }
+        protected override SkeletonLegState Convert(OSVR.ClientKit.SkeletonLegState sourceValue)
+        {
+            return SkeletonLegState.Convert(sourceValue);
         }
     }
 }

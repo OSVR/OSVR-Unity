@@ -18,6 +18,7 @@
 /// limitations under the License.
 /// </copyright>
 
+using System;
 using UnityEngine;
 
 namespace OSVR
@@ -46,9 +47,24 @@ namespace OSVR
                 return new Quaternion(-(float)quat.x, -(float)quat.y, (float)quat.z, (float)quat.w);
             }
 
+            public static Matrix4x4 ConvertPoseToMatrix(OSVR.ClientKit.Pose3 pose)
+            {
+                return Matrix4x4.TRS(Math.ConvertPosition(pose.translation), Math.ConvertOrientation(pose.rotation), Vector3.zero);
+            }
+
+            [Obsolete("Use Math.ConvertPoseToMatrix instead.")]
             public static Matrix4x4 ConvertPose(OSVR.ClientKit.Pose3 pose)
             {
                 return Matrix4x4.TRS(Math.ConvertPosition(pose.translation), Math.ConvertOrientation(pose.rotation), Vector3.zero);
+            }
+
+            public static OSVR.Unity.Pose3 Convert(OSVR.ClientKit.Pose3 pose)
+            {
+                return new OSVR.Unity.Pose3
+                {
+                    Rotation = OSVR.Unity.Math.ConvertOrientation(pose.rotation),
+                    Position = OSVR.Unity.Math.ConvertPosition(pose.translation),
+                };
             }
 
             //Convert OSVR.ClientKit.Viewport to Rect
