@@ -306,7 +306,9 @@ namespace OSVR
                     if(_useRenderManager && _checkDisplayStartup)
                     {
                         // Issue a RenderEvent, which copies Unity RenderTextures to RenderManager buffers
+#if UNITY_5_2
                         GL.IssuePluginEvent(_renderManager.GetRenderEventFunction(), OsvrRenderManager.RENDER_EVENT);
+#endif
                     }            
                 }
             }
