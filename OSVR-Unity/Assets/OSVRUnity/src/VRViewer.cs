@@ -17,10 +17,6 @@
 /// See the License for the specific language governing permissions and
 /// limitations under the License.
 /// </copyright>
-/// <summary>
-/// Author: Bob Berkebile
-/// Email: bob@bullyentertainment.com || bobb@pixelplacement.com
-/// </summary>
 
 using UnityEngine;
 using System.Collections;
@@ -88,43 +84,36 @@ namespace OSVR
             //Update the pose of each eye, then update and render each eye's surfaces
             public void UpdateEyes()
             {
-                if (DisplayController._useRenderManager)
+                if (DisplayController.UseRenderManager)
                 {
                     //Update RenderInfo
-                    //DisplayController.RenderManager.GetRenderInfo();
-                    //Debug.Log("Unity GL.IssuePluginEvent(UpdateRenderInfo): " + Time.frameCount);
-                    GL.IssuePluginEvent(DisplayController.RenderManager.GetRenderEventFunction(), 2);
+                    GL.IssuePluginEvent(DisplayController.RenderManager.GetRenderEventFunction(), OsvrRenderManager.UPDATE_RENDERINFO_EVENT);
+                }
+                else
+                {
+                    DisplayController.UpdateClient();
                 }
                     
                 for (uint eyeIndex = 0; eyeIndex < EyeCount; eyeIndex++)
-                {
-                   
+                {                   
                     //update the eye pose
                     VREye eye = Eyes[eyeIndex];
-                    if (DisplayController._useRenderManager)
-                    {                      
+                    if (DisplayController.UseRenderManager)
+                    { 
+                        //get eye pose from RenderManager                     
                         eye.UpdateEyePose(DisplayController.RenderManager.GetRenderManagerEyePose((byte)eyeIndex));
                     }
                     else
                     {
+                        //get eye pose from DisplayConfig
                         eye.UpdateEyePose(_displayController.DisplayConfig.GetViewerEyePose(ViewerIndex, (byte)eyeIndex));
                     }
                         
 
-                   //update the eye's surfaces, includes a call to Render the surface
+                    // update the eye's surfaces, includes call to Render
                     eye.UpdateSurfaces();                   
                 }
-            } 
-            
-            public void ClearEyes()
-            {
-                for (uint eyeIndex = 0; eyeIndex < EyeCount; eyeIndex++)
-                {
-                    //update the eye pose
-                    VREye eye = Eyes[eyeIndex];
-                    eye.ClearSurfaces();
-                }
-            }              
+            }                  
         }
     }
 }

@@ -24,7 +24,6 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 using System.Collections;
-using System.Text.RegularExpressions;
 using System;
 
 namespace OSVR
@@ -57,11 +56,11 @@ namespace OSVR
             private bool _checkDisplayStartup = false;
             private Camera _camera;
             private bool _disabledCamera = true;
-            private OsvrRenderManager _renderManager;
-            private bool startRendering = false;
 
-            //for testing
-            public bool _useRenderManager = true;
+            //variables for controlling use of osvrUnityRenderingPlugin.dll which enables DirectMode
+            private OsvrRenderManager _renderManager;
+            private bool _useRenderManager = false;
+            public bool UseRenderManager { get { return _useRenderManager; } }
 
             public Camera Camera
             {
@@ -95,35 +94,18 @@ namespace OSVR
                 SetupApplicationSettings();
                 SetupRenderManager();
             }
-            void Start()
-            {
-                //attempt to setup the display here, but it might take a few frames before we have data
-               // SetupDisplay();
-            }
 
             void OnEnable()
             {
                 StartCoroutine("EndOfFrame");
             }
 
-
             void OnDisable()
             {
-                ClearViewers();
                 StopCoroutine("EndOfFrame");
-                if (_useRenderManager)
+                if (_useRenderManager && RenderManager != null)
                 {
                     RenderManager.ExitRenderManager();
-                }
-            }
-
-            void ClearViewers()
-            {
-                //for each viewer, update each eye, which will update each surface
-                for (uint viewerIndex = 0; viewerIndex < _viewerCount; viewerIndex++)
-                {
-                    VRViewer viewer = Viewers[viewerIndex];
-                    viewer.ClearEyes();
                 }
             }
 
@@ -135,14 +117,21 @@ namespace OSVR
                 //Set the framerate
                 //@todo get this value from OSVR, not a const value
                 //Performance note: Developers should try setting Time.fixedTimestep to 1/Application.targetFrameRate
-               // Application.targetFrameRate = TARGET_FRAME_RATE;
+                //Application.targetFrameRate = TARGET_FRAME_RATE;
             }
 
+            // Setup RenderManager for DirectMode or non-DirectMode rendering.
+            // Checks to make sure Unity version and Graphics API are supported, 
+            // and that a RenderManager config file is being used.
             void SetupRenderManager()
             {
-                if (_useRenderManager && SupportsRenderManager())
+                //check if we are configured to use RenderManager or not
+                string renderManagerPath = _clientKit.context.getStringParameter("/renderManagerConfig");
+                _useRenderManager = !(renderManagerPath == null || renderManagerPath.Equals(""));               
+
+                if (_useRenderManager)
                 {
-                    //Initialize the RenderManager
+                    //found a RenderManager config
                     _renderManager = GameObject.FindObjectOfType<OsvrRenderManager>();
                     if (_renderManager == null)
                     {
@@ -150,16 +139,33 @@ namespace OSVR
                         _renderManager = gameObject.AddComponent<OsvrRenderManager>();
                     }
 
-                    _renderManager.InitRenderManager();
+                    //check to make sure Unity version and Graphics API are supported
+                    bool supportsRenderManager = _renderManager.IsRenderManagerSupported();
+                    _useRenderManager = supportsRenderManager;
+                    if(!_useRenderManager)
+                    {
+                        Debug.LogError("RenderManager config found but RenderManager is not supported.");
+                        Destroy(_renderManager);
+                    }
+                    else
+                    {
+                        // attempt to create a RenderManager in the plugin                                              
+                        int result = _renderManager.InitRenderManager();
+                        if (result != 0)
+                        {
+                            Debug.LogError("Failed to create RenderManager.");
+                            _useRenderManager = false;
+                        }
+                    }                    
                 }
                 else
                 {
-                    Debug.LogError("RenderManager not supported.");
+                    Debug.Log("RenderManager config not detected. Using normal Unity rendering path.");
                 }
             }
 
-            //Get a DisplayConfig object from the server via ClientKit.
-            //Setup stereo rendering with DisplayConfig data.
+            // Get a DisplayConfig object from the server via ClientKit.
+            // Setup stereo rendering with DisplayConfig data.
             void SetupDisplay()
             {
                 //get the DisplayConfig object from ClientKit
@@ -188,13 +194,13 @@ namespace OSVR
             }
 
 
-            //Creates a head and eyes as configured in clientKit
-            //Viewers and Eyes are siblings, children of DisplayController
-            //Each eye has one child Surface which has a camera
+            // Creates a head and eyes as configured in clientKit
+            // Viewers and Eyes are siblings, children of DisplayController
+            // Each eye has one child Surface which has a camera
             private void CreateHeadAndEyes()
             {
                 /* ASSUME ONE VIEWER */
-                //Create VRViewers, only one in this implementation
+                // Create VRViewers, only one in this implementation
                 _viewerCount = (uint)_displayConfig.GetNumViewers();
                 if(_viewerCount != NUM_VIEWERS)
                 {
@@ -202,11 +208,11 @@ namespace OSVR
                     return;
                 }               
                 _viewers = new VRViewer[_viewerCount];
-                //loop through viewers because at some point we could support multiple viewers
-                //but this implementation currently supports exactly one
+                // loop through viewers because at some point we could support multiple viewers
+                // but this implementation currently supports exactly one
                 for (uint viewerIndex = 0; viewerIndex < _viewerCount; viewerIndex++)
                 {
-                    //create a VRViewer
+                    // create a VRViewer
                     GameObject vrViewer = new GameObject("VRViewer" + viewerIndex);
                     vrViewer.AddComponent<AudioListener>(); //add an audio listener
                     VRViewer vrViewerComponent = vrViewer.AddComponent<VRViewer>();
@@ -216,15 +222,15 @@ namespace OSVR
                     vrViewer.transform.localPosition = Vector3.zero;
                     _viewers[viewerIndex] = vrViewerComponent;
 
-                    //create Viewer's VREyes
+                    // create Viewer's VREyes
                     uint eyeCount = (uint)_displayConfig.GetNumEyesForViewer(viewerIndex); //get the number of eyes for this viewer
                     vrViewerComponent.CreateEyes(eyeCount);
                 }            
             }
             void Update()
             {
-                //sometimes it takes a few frames to get a DisplayConfig from ClientKit
-                //keep trying until we have initialized
+                // sometimes it takes a few frames to get a DisplayConfig from ClientKit
+                // keep trying until we have initialized
                 if(!_displayConfigInitialized)
                 {
                     SetupDisplay();
@@ -232,16 +238,16 @@ namespace OSVR
             }
 
             //helper method for updating the client context
-            /*public void UpdateClient()
+            public void UpdateClient()
             {
                 _clientKit.context.update();
-            }*/
+            }
 
-            //Culling determines which objects are visible to the camera. OnPreCull is called just before this process.
-            //This gets called because we have a camera component, but we disable the camera here so it doesn't render.
-            //We have the "dummy" camera so existing Unity game code can refer to a MainCamera object.
-            //We update our viewer and eye transforms here because it is as late as possible before rendering happens.
-            //OnPreRender is not called because we disable the camera here.
+            // Culling determines which objects are visible to the camera. OnPreCull is called just before this process.
+            // This gets called because we have a camera component, but we disable the camera here so it doesn't render.
+            // We have the "dummy" camera so existing Unity game code can refer to a MainCamera object.
+            // We update our viewer and eye transforms here because it is as late as possible before rendering happens.
+            // OnPreRender is not called because we disable the camera here.
             void OnPreCull()
             {
                 // Disable dummy camera during rendering
@@ -258,36 +264,34 @@ namespace OSVR
                 _disabledCamera = true;              
             }
 
+            // The main rendering loop, should be called late in the pipeline, i.e. from OnPreCull
+            // Set our viewer and eye poses and render to each surface.
             void DoRendering()
-            {
-                
-                //for each viewer, update each eye, which will update each surface
+            {                
+                // for each viewer, update each eye, which will update each surface
                 for (uint viewerIndex = 0; viewerIndex < _viewerCount; viewerIndex++)
                 {
                     VRViewer viewer = Viewers[viewerIndex];
 
-                    //update poses once DisplayConfig is ready
+                    // update poses once DisplayConfig is ready
                     if (_checkDisplayStartup)
                     {
-                        if (!startRendering)
-                        {
-                            startRendering = true;
-                        }
-
-                        //update the viewer's head pose
+                        // update the viewer's head pose
+                        // @todo Get viewer pose from RenderManager if UseRenderManager = true
+                        // currently getting viewer pose from DisplayConfig always
                         viewer.UpdateViewerHeadPose(DisplayConfig.GetViewerPose(viewerIndex));
 
-                        //each viewer update its eyes
+                        // each viewer updates its eye poses, viewports, projection matrices
                         viewer.UpdateEyes();
                     }
                     else
                     {
-                        //Debug.Log("No Display " + Time.time);
                         _checkDisplayStartup = DisplayConfig.CheckDisplayStartup();
                     }
                 }
             }
-            //This couroutine is called every frame.
+
+            // This couroutine is called every frame.
             IEnumerator EndOfFrame()
             {
                 while (true)
@@ -299,60 +303,12 @@ namespace OSVR
                         _disabledCamera = false;
                     }
                     yield return new WaitForEndOfFrame();
-                    if(_useRenderManager && _checkDisplayStartup && startRendering)
+                    if(_useRenderManager && _checkDisplayStartup)
                     {
-                       // Debug.Log("Unity GL.IssuePluginEvent(Render) at EndOfFrame: " + Time.frameCount);
-                        GL.IssuePluginEvent(_renderManager.GetRenderEventFunction(), 0);
-                    }
-               
+                        // Issue a RenderEvent, which copies Unity RenderTextures to RenderManager buffers
+                        GL.IssuePluginEvent(_renderManager.GetRenderEventFunction(), OsvrRenderManager.RENDER_EVENT);
+                    }            
                 }
-            }
-
-            //Is the RenderManager supported? Requires D3D11 or OpenGL, currently.
-            private bool SupportsRenderManager()
-            {
-                bool support = true;
-#if UNITY_ANDROID
-                Debug.Log("RenderManager not yet supported on Android.");
-                support = false;
-#endif
-                if (!SystemInfo.graphicsDeviceVersion.Contains("OpenGL") && !SystemInfo.graphicsDeviceVersion.Contains("Direct3D 11"))
-                {
-                    Debug.Log("RenderManager not supported on " +
-                        SystemInfo.graphicsDeviceVersion + ". Only OpenGL and Direct3D 11 are currently supported.");
-                    support = false;
-                }
-
-                if (!SystemInfo.supportsRenderTextures)
-                {
-                    Debug.Log("RenderManager not supported. RenderTexture (Unity Pro feature) is unavailable.");
-                    support = false;
-                }
-                if (!SupportsUnityRenderEvent())
-                {
-                    Debug.Log("RenderManager not supported. Unity 4.5+ is needed for UnityRenderEvent.");
-                    support = false;
-                }
-                return support;
-            }
-
-            //Unity 4.5+ is needed for UnityRenderEvent.
-            private bool SupportsUnityRenderEvent()
-            {
-                bool support = true;
-                try
-                {
-                    string version = new Regex(@"(\d+\.\d+)\..*").Replace(Application.unityVersion, "$1");
-                    if (new Version(version) < new Version("4.5"))
-                    {
-                        support = false;
-                    }
-                }
-                catch
-                {
-                    Debug.LogWarning("Unable to determine Unity version from: " + Application.unityVersion);
-                }
-                return support;
             }
         }
     }

@@ -1,46 +1,40 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using System;
+
 namespace OSVR
 {
     namespace Unity
     {
         public class OsvrRenderManager : MonoBehaviour
         {
-
+            public const int RENDER_EVENT = 0;
+            public const int SHUTDOWN_EVENT = 1;
+            public const int UPDATE_RENDERINFO_EVENT = 2;
             private const string PluginName = "osvrUnityRenderingPlugin";
 
-            // The block of code below is a neat trick to allow for calling into the debug console from C++
+            // Allow for calling into the debug console from C++
             [DllImport(PluginName)]
             private static extern void LinkDebug([MarshalAs(UnmanagedType.FunctionPtr)]IntPtr debugCal);
-
             [UnmanagedFunctionPointer(CallingConvention.StdCall)]
             private delegate void DebugLog(string log);
-
             private static readonly DebugLog debugLog = DebugWrapper;
             private static readonly IntPtr functionPointer = Marshal.GetFunctionPointerForDelegate(debugLog);
-
             private static void DebugWrapper(string log) { Debug.Log(log); }
 
-            [DllImport(PluginName, CallingConvention = CallingConvention.StdCall)]
-            private static extern int GetEventID();
-
-            [DllImport(PluginName, CallingConvention = CallingConvention.StdCall)]
-            private static extern void SetUnityStreamingAssetsPath([MarshalAs(UnmanagedType.LPStr)] string path);
-
+            //get the render event function that we'll call every frame via GL.IssuePluginEvent
             [DllImport(PluginName, CallingConvention = CallingConvention.StdCall)]
             private static extern IntPtr GetRenderEventFunc();
 
+            //Pass a pointer to a texture (RenderTexture.GetNativeTexturePtr()) to the plugin
             [DllImport(PluginName, CallingConvention = CallingConvention.Cdecl)]
             private static extern void SetColorBufferFromUnity(System.IntPtr texturePtr, int eye);
 
-            //@todo the IntPtr should be a SafeClientContextHandle
+            //Create a RenderManager object in the plugin, passing in a ClientContext
             [DllImport(PluginName, CallingConvention = CallingConvention.Cdecl)]
             private static extern Byte CreateRenderManagerFromUnity(OSVR.ClientKit.SafeClientContextHandle /*OSVR_ClientContext*/ ctx);
-
-            [DllImport(PluginName, CallingConvention = CallingConvention.StdCall)]
-            private static extern void UpdateRenderInfo();
 
             [StructLayout(LayoutKind.Sequential)]
             public struct OSVR_ViewportDescription
@@ -77,11 +71,11 @@ namespace OSVR
 
             private OSVR.ClientKit.ClientContext _renderManagerClientContext;
 
-            public void InitRenderManager()
+            public int InitRenderManager()
             {
-                LinkDebug(functionPointer); // Hook our c++ plugin into Unitys console log.
+                //LinkDebug(functionPointer); // Hook our c++ plugin into Unity's console log.
                 _renderManagerClientContext = new OSVR.ClientKit.ClientContext("com.sensics.rendermanagercontext", 0);
-                CreateRenderManager(_renderManagerClientContext);
+                return CreateRenderManager(_renderManagerClientContext);
             }
 
             public OSVR.ClientKit.Pose3 GetRenderManagerEyePose(int eye)
@@ -106,6 +100,8 @@ namespace OSVR
                 return PerspectiveOffCenter((float)pm.left, (float)pm.right, (float)pm.bottom, (float)pm.top, (float)pm.nearClip, (float)pm.farClip);
                 
             }
+
+            //Returns a Unity Matrix4x4 from the provided boundaries
             //from http://docs.unity3d.com/ScriptReference/Camera-projectionMatrix.html
             static Matrix4x4 PerspectiveOffCenter(float left, float right, float bottom, float top, float near, float far)
             {
@@ -148,22 +144,13 @@ namespace OSVR
                 SetColorBufferFromUnity(colorBuffer, eye);
             }
 
-            //Get a rendering event ID from the Unity Rendering Plugin
-            public int GetRenderEventID()
-            {
-                return GetEventID();
-            }
-
+            //Get a pointer to the plugin's rendering function
             public IntPtr GetRenderEventFunction()
             {
                 return GetRenderEventFunc();
             }
 
-            public void GetRenderInfo()
-            {
-                Debug.Log("Update Render Info, frame: " + Time.frameCount);
-                UpdateRenderInfo();
-            }
+            //Shutdown RenderManager and Dispose of the ClientContext we created for it
             public void ExitRenderManager()
             {
                 ShutdownRenderManager();
@@ -172,6 +159,55 @@ namespace OSVR
                     _renderManagerClientContext.Dispose();
                     _renderManagerClientContext = null;
                 }
+            }
+
+            //helper functions to determine is RenderManager is supported
+            //Is the RenderManager supported? Requires D3D11 or OpenGL, currently.
+            public bool IsRenderManagerSupported()
+            {
+                bool support = true;
+#if UNITY_ANDROID
+                Debug.Log("RenderManager not yet supported on Android.");
+                support = false;
+#endif
+                if (!SystemInfo.graphicsDeviceVersion.Contains("OpenGL") && !SystemInfo.graphicsDeviceVersion.Contains("Direct3D 11"))
+                {
+                    Debug.LogError("RenderManager not supported on " +
+                        SystemInfo.graphicsDeviceVersion + ". Only Direct3D11 is currently supported.");
+                    support = false;
+                }
+
+                if (!SystemInfo.supportsRenderTextures)
+                {
+                    Debug.LogError("RenderManager not supported. RenderTexture (Unity Pro feature) is unavailable.");
+                    support = false;
+                }
+                if (!IsUnityVersionSupported())
+                {
+                    Debug.LogError("RenderManager not supported. Unity 5.2+ is required for RenderManager support.");
+                    support = false;
+                }
+                return support;
+            }
+
+            //Unity 5.2+ is required as the plugin uses the native plugin interface introduced in Unity 5.2
+            public bool IsUnityVersionSupported()
+            {
+                bool support = true;
+                try
+                {
+                    string version = new Regex(@"(\d+\.\d+)\..*").Replace(Application.unityVersion, "$1");
+                    if (new Version(version) < new Version("5.2"))
+                    {
+                        support = false;
+                    }
+                }
+                catch
+                {
+                    Debug.LogWarning("Unable to determine Unity version from: " + Application.unityVersion);
+                    support = false;
+                }
+                return support;
             }
         }
     }
