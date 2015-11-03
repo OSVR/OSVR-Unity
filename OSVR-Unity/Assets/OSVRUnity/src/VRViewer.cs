@@ -33,8 +33,8 @@ namespace OSVR
         {   
             #region Public Variables         
             public DisplayController DisplayController { get { return _displayController; } set { _displayController = value; } }
-            public VREye[] Eyes { get { return _eyes; } }
-            public uint EyeCount { get { return _eyeCount; } }
+            public VREye[] Eyes { get { return _eyes; } set { _eyes = value; } }
+            public uint EyeCount { get { return _eyeCount; } set { _eyeCount = value; } }
             public uint ViewerIndex { get { return _viewerIndex; } set { _viewerIndex = value; } }
             [HideInInspector]
             public Transform cachedTransform;
