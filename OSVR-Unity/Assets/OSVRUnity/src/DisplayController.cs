@@ -167,7 +167,7 @@ namespace OSVR
                     }
                 }
 
-                //Screen.SetResolution(totalSurfacePixelWidth, surfacePixelHeight, false);
+                Screen.SetResolution(totalSurfacePixelWidth, surfacePixelHeight, false);
             }
 
 
