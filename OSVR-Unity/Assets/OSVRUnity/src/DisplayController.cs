@@ -48,10 +48,8 @@ namespace OSVR
 
             private ClientKit _clientKit;
             private OSVR.ClientKit.DisplayConfig _displayConfig;
-            private OSVR.ClientKit.DisplayDimensions _displayDimensions;
             private VRViewer[] _viewers; 
             private uint _viewerCount;
-            private uint _displayInputCount;
             private bool _displayConfigInitialized = false;
             private bool _checkDisplayStartup = false;
             private Camera _camera;
@@ -74,10 +72,8 @@ namespace OSVR
                 get { return _displayConfig; }
                 set { _displayConfig = value; }
             }
-            public OSVR.ClientKit.DisplayDimensions DisplayDimensions { get { return _displayDimensions; } }
             public VRViewer[] Viewers { get { return _viewers; } }           
             public uint ViewerCount { get { return _viewerCount; } }
-            public uint DisplayInputCount { get { return _displayInputCount; } }
 
             void Awake()
             {
@@ -141,19 +137,37 @@ namespace OSVR
                     return;
                 }
 
-                //get display dimensions
-                _displayDimensions = DisplayConfig.GetDisplayDimensions(0);
-
-                //Corresponds to video_inputs field in display descriptor.
-                _displayInputCount = _displayConfig.GetNumDisplayInputs();
-                if(_displayInputCount > 1)
-                {
-                    //set a double-wide window if we have multiple video inputs. Fullscreen = false.
-                    Screen.SetResolution(DisplayDimensions.Width * 2, DisplayDimensions.Height, false);
-                }
+                //Set Unity player resolution
+                SetResolution();
 
                 //create scene objects 
                 CreateHeadAndEyes();              
+            }
+
+            //Set Resolution of the Unity game window based on total surface width
+            private void SetResolution()
+            {
+                int totalSurfacePixelWidth = 0; //add up the width of each eye
+                int surfacePixelHeight = 0; //don't add up heights
+
+                for (uint i = 0; i < _viewerCount; i++) //for each viewer
+                {
+
+                    int numEyes = DisplayConfig.GetNumEyesForViewer(i);
+                    for (uint j = 0; j < numEyes; j++) //for each eye
+                    {
+                        uint numSurfaces = DisplayConfig.GetNumSurfacesForViewerEye(i, (byte)j);
+                        for (uint k = 0; k < numSurfaces; k++) //for each surface
+                        {
+                            int surfaceIndex = DisplayConfig.GetViewerEyeSurfaceDisplayInputIndex(i, (byte)j, k);
+                            OSVR.ClientKit.DisplayDimensions surfaceDisplayDimensions = DisplayConfig.GetDisplayDimensions((byte)surfaceIndex);
+                            totalSurfacePixelWidth += surfaceDisplayDimensions.Width; //add up the width of each eye
+                            surfacePixelHeight = surfaceDisplayDimensions.Height; //store the height -- this shouldn't change
+                        }
+                    }
+                }
+
+                //Screen.SetResolution(totalSurfacePixelWidth, surfacePixelHeight, false);
             }
 
 
