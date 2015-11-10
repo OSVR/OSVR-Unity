@@ -238,6 +238,10 @@ namespace OSVR
                     else
                     {
                         _checkDisplayStartup = DisplayConfig.CheckDisplayStartup();
+                        if(!_checkDisplayStartup)
+                        {
+                            Debug.LogError("Display Startup failed. Check HMD connection.");
+                        }
                     }
                 }       
 
