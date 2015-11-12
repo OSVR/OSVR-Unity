@@ -66,7 +66,7 @@ namespace OSVR
                     VREye eye = eyeGameObject.AddComponent<VREye>(); //add the VReye component
                     eye.Viewer = this; //ASSUME THERE IS ONLY ONE VIEWER
                     eye.EyeIndex = eyeIndex; //set the eye's index
-                    eyeGameObject.transform.parent = _displayController.transform; //child of DisplayController
+                    eyeGameObject.transform.parent = DisplayController.transform; //child of DisplayController
                     eyeGameObject.transform.localPosition = Vector3.zero;
                     _eyes[eyeIndex] = eye;
                     uint eyeSurfaceCount = DisplayController.DisplayConfig.GetNumSurfacesForViewerEye(ViewerIndex, (byte)eyeIndex);
