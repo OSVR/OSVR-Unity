@@ -92,7 +92,7 @@ namespace OSVR
                 }
                 _camera = GetComponent<Camera>(); //get the "dummy" camera
                 SetupApplicationSettings();
-                SetupRenderManager();
+               
             }
 
             void OnEnable()
@@ -127,8 +127,7 @@ namespace OSVR
             {
                 //check if we are configured to use RenderManager or not
                 string renderManagerPath = _clientKit.context.getStringParameter("/renderManagerConfig");
-                _useRenderManager = !(renderManagerPath == null || renderManagerPath.Equals(""));               
-
+                _useRenderManager = !(renderManagerPath == null || renderManagerPath.Equals(""));
                 if (_useRenderManager)
                 {
                     //found a RenderManager config
@@ -179,8 +178,8 @@ namespace OSVR
                 {
                     return;
                 }
-                _displayConfigInitialized = true;               
-
+                _displayConfigInitialized = true;
+                SetupRenderManager();
                 //get the number of viewers, bail if there isn't exactly one viewer for now
                 _viewerCount = _displayConfig.GetNumViewers();
                 if(_viewerCount != 1)
