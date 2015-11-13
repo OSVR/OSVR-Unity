@@ -23,6 +23,7 @@
 /// </summary>
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace OSVR
 {
@@ -60,7 +61,7 @@ namespace OSVR
 
             //distortion mesh
             public bool useDistortionMesh = true;
-            private bool loadStaticMesh = true;
+            private bool loadStaticMesh = false;
             private Mesh _distortionMesh;
             private Material _distortionMaterial;
             private RenderTexture _distortionRenderTexture;
@@ -126,6 +127,7 @@ namespace OSVR
                 Application.targetFrameRate = TARGET_FRAME_RATE;
             }
 
+            public bool usePolynomialDistortionMesh;
             //Get a DisplayConfig object from the server via ClientKit.
             //Setup stereo rendering with DisplayConfig data.
             void SetupDisplay()
@@ -164,9 +166,25 @@ namespace OSVR
                     }
                     else
                     {
-                        //create a mesh
-                        _distortionMesh = DistortionMesh.CreateFullScreenMesh(Camera.orthographicSize,
-                            (float)Screen.width / (float)Screen.height, DISTORTION_MESH_QUADS_WIDTH, DISTORTION_MESH_QUADS_HEIGHT);
+                        if(usePolynomialDistortionMesh)
+                        {
+                            DistortionMeshParameters distortionParameters = new DistortionMeshParameters();
+                            distortionParameters.m_desiredTriangles = 800;
+                            distortionParameters.m_distortionCOP = new Vector2(0.5f, 0.5f); //can we get this one already?
+                            distortionParameters.m_distortionD = new Vector2(1f, 1f);
+                            distortionParameters.m_distortionPolynomialRed = new List<float>() { -0.0014431943254749858f, 1.2638362259133675f, -4.5868543587645778f, 22.246191847146271f, -33.785967129101159f, 23.778059072708075f };
+                            distortionParameters.m_distortionPolynomialGreen = new List<float>() { -0.0014431943254749858f, 1.2638362259133675f, -4.5868543587645778f, 22.246191847146271f, -33.785967129101159f, 23.778059072708075f };
+                            distortionParameters.m_distortionPolynomialBlue = new List<float>() { -0.0014431943254749858f, 1.2638362259133675f, -4.5868543587645778f, 22.246191847146271f, -33.785967129101159f, 23.778059072708075f };
+                            _distortionMesh = DistortionMesh.CreatePolynomialDistortionMesh(DistortionMesh.ComputeDistortionMeshVertices(DistortionMesh.DistortionMeshType.SQUARE, distortionParameters, 
+                                _camera.orthographicSize, (float)Screen.width / (float)Screen.width), distortionParameters.m_desiredTriangles / 2);
+                        }
+                        else
+                        {
+                            //create a mesh
+                            _distortionMesh = DistortionMesh.CreateFullScreenMesh(Camera.orthographicSize,
+                                (float)Screen.width / (float)Screen.height, DISTORTION_MESH_QUADS_WIDTH, DISTORTION_MESH_QUADS_HEIGHT);
+                        }
+                        
                     }
                     //Create RenderTexture with dimensions twice the width of one eye, and height of one eye
                     OSVR.ClientKit.Viewport viewport = _displayConfig.GetRelativeViewportForViewerEyeSurface(0, 0, 0);
