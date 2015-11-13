@@ -24,6 +24,9 @@
 /// 
 using UnityEngine;
 using System.Collections;
+using System;
+using System.Collections.Generic;
+
 namespace OSVR
 {
     namespace Unity
@@ -40,6 +43,12 @@ namespace OSVR
             public Camera Camera { get { return _camera; } set { _camera = value; } }
             public uint SurfaceIndex { get { return _surfaceIndex; } set { _surfaceIndex = value; } }
             public VREye Eye { get { return _eye; } set { _eye = value; } }
+            public Mesh _distortionMesh;
+            private RenderTexture _distortionRenderTexture;
+            public RenderTexture DistortionRenderTexture
+            {
+                get { return _distortionRenderTexture; }
+            }
 
             [HideInInspector]
             public K1RadialDistortion DistortionEffect
@@ -61,7 +70,7 @@ namespace OSVR
             //Set the camera's viewport rect
             public void SetViewport(Rect rect)
             {
-                _camera.rect = rect;
+                _camera.rect = new Rect(0,0,1,1);
             }
 
             //Set the camera's view matrix
@@ -123,8 +132,28 @@ namespace OSVR
 
             //Render the camera
             public void Render()
+            {                 
+               _camera.Render();   
+            }
+
+            public void SetupDistortionMesh()
             {
-                _camera.Render();               
+         
+                //create a distortion mesh
+                DistortionMeshParameters distortionParameters = new DistortionMeshParameters();
+                distortionParameters.m_desiredTriangles = 800;
+                distortionParameters.m_distortionCOP = new Vector2(0.5f, 0.5f); //can we get this one already?
+                distortionParameters.m_distortionD = new Vector2(1f, 1f);
+                distortionParameters.m_distortionPolynomialRed = new List<float>() { -0.0014431943254749858f, 1.2638362259133675f, -4.5868543587645778f, 22.246191847146271f, -33.785967129101159f, 23.778059072708075f };
+                distortionParameters.m_distortionPolynomialGreen = new List<float>() { -0.0014431943254749858f, 1.2638362259133675f, -4.5868543587645778f, 22.246191847146271f, -33.785967129101159f, 23.778059072708075f };
+                distortionParameters.m_distortionPolynomialBlue = new List<float>() { -0.0014431943254749858f, 1.2638362259133675f, -4.5868543587645778f, 22.246191847146271f, -33.785967129101159f, 23.778059072708075f };
+
+                _distortionMesh = DistortionMesh.CreatePolynomialDistortionMesh(DistortionMesh.ComputeDistortionMeshVertices(DistortionMesh.DistortionMeshType.SQUARE, distortionParameters,
+                    2f, 1f), distortionParameters.m_desiredTriangles / 2);
+
+                //Distortion Mesh
+                _distortionRenderTexture = new RenderTexture(Screen.width/2, Screen.height, 24);
+                SetRenderTexture(_distortionRenderTexture);
             }
         }
     }

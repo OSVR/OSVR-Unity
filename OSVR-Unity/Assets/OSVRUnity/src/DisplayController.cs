@@ -61,6 +61,7 @@ namespace OSVR
 
             //distortion mesh
             public bool useDistortionMesh = true;
+            public bool usePolynomialDistortionMesh = true;
             private bool loadStaticMesh = false;
             private Mesh _distortionMesh;
             private Material _distortionMaterial;
@@ -127,7 +128,7 @@ namespace OSVR
                 Application.targetFrameRate = TARGET_FRAME_RATE;
             }
 
-            public bool usePolynomialDistortionMesh;
+           
             //Get a DisplayConfig object from the server via ClientKit.
             //Setup stereo rendering with DisplayConfig data.
             void SetupDisplay()
@@ -168,27 +169,21 @@ namespace OSVR
                     {
                         if(usePolynomialDistortionMesh)
                         {
-                            DistortionMeshParameters distortionParameters = new DistortionMeshParameters();
-                            distortionParameters.m_desiredTriangles = 800;
-                            distortionParameters.m_distortionCOP = new Vector2(0.5f, 0.5f); //can we get this one already?
-                            distortionParameters.m_distortionD = new Vector2(1f, 1f);
-                            distortionParameters.m_distortionPolynomialRed = new List<float>() { -0.0014431943254749858f, 1.2638362259133675f, -4.5868543587645778f, 22.246191847146271f, -33.785967129101159f, 23.778059072708075f };
-                            distortionParameters.m_distortionPolynomialGreen = new List<float>() { -0.0014431943254749858f, 1.2638362259133675f, -4.5868543587645778f, 22.246191847146271f, -33.785967129101159f, 23.778059072708075f };
-                            distortionParameters.m_distortionPolynomialBlue = new List<float>() { -0.0014431943254749858f, 1.2638362259133675f, -4.5868543587645778f, 22.246191847146271f, -33.785967129101159f, 23.778059072708075f };
-                            _distortionMesh = DistortionMesh.CreatePolynomialDistortionMesh(DistortionMesh.ComputeDistortionMeshVertices(DistortionMesh.DistortionMeshType.SQUARE, distortionParameters, 
-                                _camera.orthographicSize, (float)Screen.width / (float)Screen.width), distortionParameters.m_desiredTriangles / 2);
+                            //don't create the mesh here, we need to create one mesh for each eye
                         }
                         else
                         {
                             //create a mesh
                             _distortionMesh = DistortionMesh.CreateFullScreenMesh(Camera.orthographicSize,
                                 (float)Screen.width / (float)Screen.height, DISTORTION_MESH_QUADS_WIDTH, DISTORTION_MESH_QUADS_HEIGHT);
+
+                            //Create RenderTexture with dimensions twice the width of one eye, and height of one eye
+                            OSVR.ClientKit.Viewport viewport = _displayConfig.GetRelativeViewportForViewerEyeSurface(0, 0, 0);
+                            _distortionRenderTexture = new RenderTexture(viewport.Width * 2, viewport.Height, 24);
                         }
                         
                     }
-                    //Create RenderTexture with dimensions twice the width of one eye, and height of one eye
-                    OSVR.ClientKit.Viewport viewport = _displayConfig.GetRelativeViewportForViewerEyeSurface(0, 0, 0);
-                    _distortionRenderTexture = new RenderTexture(viewport.Width * 2, viewport.Height, 24);
+                   
                     //create scene objects 
                     CreateHeadAndEyes();
                     //set the culling mask to nothing after Surfaces have been created by copying this camera
@@ -252,6 +247,7 @@ namespace OSVR
                 _clientKit.context.update();
             }
 
+            private VRSurface[] surfaces;
             //Culling determines which objects are visible to the camera. OnPreCull is called just before this process.
             //This gets called because we have a camera component, but we disable the camera here so it doesn't render.
             //We have the "dummy" camera so existing Unity game code can refer to a MainCamera object.
@@ -259,27 +255,27 @@ namespace OSVR
             //OnPreRender is not called because we disable the camera here.
             void OnPreCull()
             {
-                // Disable dummy camera during rendering
-                // Enable after frame ends
-                _camera.enabled = useDistortionMesh;
+                    // Disable dummy camera during rendering
+                    // Enable after frame ends
+                    _camera.enabled = useDistortionMesh;
 
-                //for each viewer, update each eye, which will update each surface
-                for (uint viewerIndex = 0; viewerIndex < _viewerCount; viewerIndex++)
-                {
-                    VRViewer viewer = Viewers[viewerIndex];
-
-                    //update the client
-                    UpdateClient();
-
-                    //update poses once DisplayConfig is ready
-                    if (_checkDisplayStartup)
+                    //for each viewer, update each eye, which will update each surface
+                    for (uint viewerIndex = 0; viewerIndex < _viewerCount; viewerIndex++)
                     {
-                    //update the viewer's head pose
+                        VRViewer viewer = Viewers[viewerIndex];
+
+                        //update the client
+                        UpdateClient();
+
+                        //update poses once DisplayConfig is ready
+                        if (_checkDisplayStartup)
+                        {
+                        //update the viewer's head pose
                         viewer.UpdateViewerHeadPose(DisplayConfig.GetViewerPose(viewerIndex));
 
-                    //each viewer update its eyes
-                    viewer.UpdateEyes();
-                }       
+                        //each viewer update its eyes
+                        viewer.UpdateEyes();
+                    }       
                     else
                     {
                         _checkDisplayStartup = DisplayConfig.CheckDisplayStartup();
@@ -290,6 +286,8 @@ namespace OSVR
                 _disabledCamera = true;
             }
 
+            public float leftXOffset = -0.5f;
+            public float rightXOffset = 0.5f;
             //This couroutine is called every frame.
             IEnumerator EndOfFrame()
             {
@@ -302,11 +300,23 @@ namespace OSVR
                         _disabledCamera = false;
                     }
                     yield return new WaitForEndOfFrame();
-                    if (useDistortionMesh && _distortionMesh != null && _distortionMaterial != null)
-                    {                       
+                    if(surfaces == null)
+                    {
+                        surfaces = FindObjectsOfType<VRSurface>();
+                    }
+
+                    if (useDistortionMesh && surfaces[0]._distortionMesh != null)
+                    {          
+                        if(_distortionMaterial == null)
+                        {
+                            _distortionMaterial = Resources.Load<Material>("RGBDistortionMesh");
+                        }
                         _distortionMaterial.SetPass(0);
-                        _distortionMaterial.mainTexture = _distortionRenderTexture;
-                        Graphics.DrawMeshNow(_distortionMesh, this.transform.position + new Vector3(0, 0, 1), this.transform.rotation);
+                        _distortionMaterial.mainTexture = surfaces[0].DistortionRenderTexture;
+                        Graphics.DrawMeshNow(surfaces[0]._distortionMesh, this.transform.position + new Vector3(leftXOffset, 0, 1), this.transform.rotation);
+                        _distortionMaterial.SetPass(0);
+                        _distortionMaterial.mainTexture = surfaces[1].DistortionRenderTexture;
+                        Graphics.DrawMeshNow(surfaces[1]._distortionMesh, this.transform.position + new Vector3(rightXOffset, 0, 1), this.transform.rotation);
                     }
                     //@todo any post-frame activity goes here. 
                     //Send a timestamp?

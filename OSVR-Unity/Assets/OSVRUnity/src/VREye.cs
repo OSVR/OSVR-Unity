@@ -25,6 +25,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Reflection;
+using System.Collections.Generic;
 
 namespace OSVR
 {
@@ -38,8 +39,8 @@ namespace OSVR
             private VRViewer _viewer; //the viewer associated with this eye
             private VRSurface[] _surfaces; //the surfaces associated with this eye
             private uint _surfaceCount;
-            private uint _eyeIndex;
-            
+            private uint _eyeIndex;            
+
             #endregion
             #region Public Variables  
             public uint EyeIndex
@@ -138,10 +139,9 @@ namespace OSVR
                     Surfaces[surfaceIndex] = surface;
 
                     //distortion
-                    if (Viewer.DisplayController.useDistortionMesh)
+                    if (Viewer.DisplayController.useDistortionMesh && Viewer.DisplayController.usePolynomialDistortionMesh)
                     {
-                        //Distortion Mesh
-                        surface.SetRenderTexture(Viewer.DisplayController.DistortionRenderTexture);
+                        surface.SetupDistortionMesh();
                     }
                     else
                     {

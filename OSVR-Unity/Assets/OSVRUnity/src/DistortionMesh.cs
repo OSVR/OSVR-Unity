@@ -44,7 +44,7 @@ public struct Triangle
 
 public class DistortionMesh : MonoBehaviour {
 
-    private const float RENDER_OVERFILL_FACTOR = 2.0f; //@todo get from core
+    private const float RENDER_OVERFILL_FACTOR = 1.0f; //@todo get from core
 
     /// Describes the type of mesh to be constructed for distortion
     /// correction.
@@ -87,32 +87,31 @@ public class DistortionMesh : MonoBehaviour {
                     int quadsPerSide = (int)Mathf.Sqrt(distortionParameters.m_desiredTriangles / 2);
                     if (quadsPerSide < 1) { quadsPerSide = 1; }
 
-                    float worldUnitHeight = 2 * orthoSize;
-                    float worldUnitWidth = worldUnitHeight * aspect;
-                    float scaleX = worldUnitWidth / (float)quadsPerSide;
-                    float scaleY = worldUnitHeight / (float)quadsPerSide;
+                   // float worldUnitHeight = 2 * orthoSize;
+                    //float worldUnitWidth = worldUnitHeight * aspect;
+                    //float scaleX = worldUnitWidth / (float)quadsPerSide;
+                   // float scaleY = worldUnitHeight / (float)quadsPerSide;
 
                     // Figure out how large each quad will be.  Recall that we're covering
                     // a range of 2 (from -1 to 1) in each dimension, so the quads will all
                     // be square in texture space.
-                      float quadSide = 2.0f / quadsPerSide;
+                    float quadSide = 2.0f / quadsPerSide;
                     float quadTexSide = 1.0f / quadsPerSide;
-                    //float quadSide = scaleX;
 
                     // Generate a pair of triangles for each quad, wound counter-clockwise,
                     // with appropriate spatial location and texture coordinates.
                     // Compute distorted texture coordinates and use those for each vertex.
                     for (int x = 0; x < quadsPerSide; x++)
                     {
-                        float xLow = -worldUnitWidth + x * quadSide ;
-                        float xHigh = worldUnitWidth + (x + worldUnitWidth) * quadSide;
+                        float xLow = -1 + x * quadSide;
+                        float xHigh = -1 + (x + 1) * quadSide;
                         float xTexLow = x * quadTexSide;
                         float xTexHigh = (x + 1) * quadTexSide;
-
+                    
                         for (int y = 0; y < quadsPerSide; y++)
                         {
-                            float yLow = -worldUnitWidth + y * quadSide;
-                            float yHigh = worldUnitWidth + (y + worldUnitWidth) * quadSide;
+                            float yLow = -1 + y * quadSide;
+                            float yHigh = -1 + (y + 1) * quadSide;
                             float yTexLow = y * quadTexSide;
                             float yTexHigh = (y + 1) * quadTexSide;
 
@@ -256,6 +255,7 @@ public class DistortionMesh : MonoBehaviour {
 
     public static Mesh CreatePolynomialDistortionMesh(List<DistortionMeshVertex> computedVertices, int quadsPerSide)
     {
+
         Mesh mesh = new Mesh();
         Vector3[] vertices = new Vector3[computedVertices.Count];
         //3 sets of UVs for RGB distortion
@@ -310,6 +310,62 @@ public class DistortionMesh : MonoBehaviour {
         int numVertices = width * height;
         int numTriangles = widthInQuads * heightInQuads * 6;
         
+        Vector3[] vertices = new Vector3[numVertices];
+        //3 sets of UVs for RGB distortion
+        Vector2[] uvRed = new Vector2[numVertices];
+        Vector2[] uvGreen = new Vector2[numVertices];
+        Vector2[] uvBlue = new Vector2[numVertices];
+        int[] triangles = new int[numTriangles];
+        int i = 0;
+        float uvX = 1.0f / widthInQuads;
+        float uvY = 1.0f / heightInQuads;
+        float scaleX = worldUnitWidth / widthInQuads;
+        float scaleY = worldUnitHeight / heightInQuads;
+        for (float y = 0.0f; y < height; y++)
+        {
+            for (float x = 0.0f; x < width; x++)
+            {
+                vertices[i] = new Vector3(x * scaleX - worldUnitWidth / 2f, y * scaleY - worldUnitHeight / 2f);
+                uvRed[i] = new Vector2(x * uvX, y * uvY);
+                uvGreen[i] = new Vector2(x * uvX, y * uvY);
+                uvBlue[i] = new Vector2(x * uvX, y * uvY);
+                i++;
+            }
+        }
+        i = 0;
+        for (int y = 0; y < heightInQuads; y++)
+        {
+            for (int x = 0; x < widthInQuads; x++)
+            {
+                triangles[i] = (y * width) + x;
+                triangles[i + 1] = ((y + 1) * width) + x;
+                triangles[i + 2] = (y * width) + x + 1;
+
+                triangles[i + 3] = ((y + 1) * width) + x;
+                triangles[i + 4] = ((y + 1) * width) + x + 1;
+                triangles[i + 5] = (y * width) + x + 1;
+                i += 6;
+            }
+        }
+        mesh.vertices = vertices;
+        mesh.uv = uvRed;
+        mesh.uv2 = uvGreen;
+        mesh.uv3 = uvBlue;
+        mesh.triangles = triangles;
+        mesh.RecalculateNormals();
+        return mesh;
+    }
+
+    public static Mesh CreateFullScreenMeshPoly(float orthoSize, float aspect, int widthInQuads, int heightInQuads)
+    {
+        Mesh mesh = new Mesh();
+        float worldUnitHeight = 2 * orthoSize;
+        float worldUnitWidth = worldUnitHeight * aspect;
+        int width = widthInQuads + 1;
+        int height = heightInQuads + 1;
+        int numVertices = width * height;
+        int numTriangles = widthInQuads * heightInQuads * 6;
+
         Vector3[] vertices = new Vector3[numVertices];
         //3 sets of UVs for RGB distortion
         Vector2[] uvRed = new Vector2[numVertices];
