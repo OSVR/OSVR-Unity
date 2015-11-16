@@ -125,10 +125,6 @@ public class DistortionMesh : MonoBehaviour {
                             Vector2 texHL = new Vector2(xTexHigh, yTexLow );
                             Vector2 texHH = new Vector2(xTexHigh, yTexHigh );
 
-                            Debug.Log("Pos LL is " + posLL);
-                            Debug.Log("Pos LH is " + posLH);
-                            Debug.Log("Pos HL is " + posHL);
-                            Debug.Log("Pos HH is " + posHH);
                             // First triangle
                             vertices.Add(new DistortionMeshVertex(posLL,
                               DistortionCorrectTextureCoordinate(texLL, distortionParameters, 0),
@@ -280,8 +276,10 @@ public class DistortionMesh : MonoBehaviour {
         mesh.uv2 = uvGreen;
         mesh.uv3 = uvBlue;
         mesh.triangles = triangles;
-        mesh.RecalculateNormals();
+        
         FlipMesh(mesh);
+        mesh.RecalculateNormals();
+        // AssetDatabase.CreateAsset(mesh, "Assets/polyMesh.asset");
         return mesh;
     }
 
@@ -356,7 +354,7 @@ public class DistortionMesh : MonoBehaviour {
         return mesh;
     }
 
-    public static Mesh CreateFullScreenMeshPoly(float orthoSize, float aspect, int widthInQuads, int heightInQuads)
+    public static Mesh CreateFullScreenMeshPoly(float orthoSize, float aspect, int widthInQuads, int heightInQuads, DistortionMeshParameters parameters)
     {
         Mesh mesh = new Mesh();
         float worldUnitHeight = 2 * orthoSize;
@@ -382,9 +380,12 @@ public class DistortionMesh : MonoBehaviour {
             for (float x = 0.0f; x < width; x++)
             {
                 vertices[i] = new Vector3(x * scaleX - worldUnitWidth / 2f, y * scaleY - worldUnitHeight / 2f);
-                uvRed[i] = new Vector2(x * uvX, y * uvY);
-                uvGreen[i] = new Vector2(x * uvX, y * uvY);
-                uvBlue[i] = new Vector2(x * uvX, y * uvY);
+                // uvRed[i] = new Vector2(x * uvX, y * uvY);
+                // uvGreen[i] = new Vector2(x * uvX, y * uvY);
+                // uvBlue[i] = new Vector2(x * uvX, y * uvY);
+                uvRed[i] = DistortionCorrectTextureCoordinate(new Vector2(x * uvX, y * uvY), parameters, 0);
+                uvGreen[i] = DistortionCorrectTextureCoordinate(new Vector2(x * uvX, y * uvY), parameters, 1);
+                uvBlue[i] = DistortionCorrectTextureCoordinate(new Vector2(x * uvX, y * uvY), parameters, 2);
                 i++;
             }
         }

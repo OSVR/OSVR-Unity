@@ -125,7 +125,7 @@ namespace OSVR
                 //Set the framerate
                 //@todo get this value from OSVR, not a const value
                 //Performance note: Developers should try setting Time.fixedTimestep to 1/Application.targetFrameRate
-                Application.targetFrameRate = TARGET_FRAME_RATE;
+                //Application.targetFrameRate = TARGET_FRAME_RATE;
             }
 
            
@@ -173,6 +173,7 @@ namespace OSVR
                         }
                         else
                         {
+
                             //create a mesh
                             _distortionMesh = DistortionMesh.CreateFullScreenMesh(Camera.orthographicSize,
                                 (float)Screen.width / (float)Screen.height, DISTORTION_MESH_QUADS_WIDTH, DISTORTION_MESH_QUADS_HEIGHT);
@@ -270,20 +271,20 @@ namespace OSVR
                         //update poses once DisplayConfig is ready
                         if (_checkDisplayStartup)
                         {
-                        //update the viewer's head pose
-                        viewer.UpdateViewerHeadPose(DisplayConfig.GetViewerPose(viewerIndex));
+                            //update the viewer's head pose
+                            viewer.UpdateViewerHeadPose(DisplayConfig.GetViewerPose(viewerIndex));
 
-                        //each viewer update its eyes
-                        viewer.UpdateEyes();
+                            //each viewer update its eyes
+                            viewer.UpdateEyes();
+                        }       
+                        else
+                        {
+                            _checkDisplayStartup = DisplayConfig.CheckDisplayStartup();
+                        }
                     }       
-                    else
-                    {
-                        _checkDisplayStartup = DisplayConfig.CheckDisplayStartup();
-                    }
-                }       
 
-                // Flag that we disabled the camera
-                _disabledCamera = true;
+                    // Flag that we disabled the camera
+                    _disabledCamera = true;
             }
 
             public float leftXOffset = -0.5f;
@@ -300,23 +301,37 @@ namespace OSVR
                         _disabledCamera = false;
                     }
                     yield return new WaitForEndOfFrame();
-                    if(surfaces == null)
+                    if (usePolynomialDistortionMesh)
                     {
-                        surfaces = FindObjectsOfType<VRSurface>();
-                    }
+                        if (surfaces == null)
+                        {
+                            surfaces = FindObjectsOfType<VRSurface>();
+                        }
 
-                    if (useDistortionMesh && surfaces[0]._distortionMesh != null)
-                    {          
-                        if(_distortionMaterial == null)
+                        if (useDistortionMesh && surfaces[0]._distortionMesh != null)
+                        {
+                            if (_distortionMaterial == null)
+                            {
+                                _distortionMaterial = Resources.Load<Material>("RGBDistortionMesh");
+                            }
+                            _distortionMaterial.SetPass(0);
+                            _distortionMaterial.mainTexture = surfaces[0].DistortionRenderTexture;
+                            Graphics.DrawMeshNow(surfaces[0]._distortionMesh, this.transform.position + new Vector3(leftXOffset, 0, 100), this.transform.rotation);
+                            _distortionMaterial.SetPass(0);
+                            _distortionMaterial.mainTexture = surfaces[1].DistortionRenderTexture;
+                            Graphics.DrawMeshNow(surfaces[1]._distortionMesh, this.transform.position + new Vector3(rightXOffset, 0, 100), this.transform.rotation);
+                        }
+                    }
+                    else if(useDistortionMesh)
+                    {
+                        
+                        if (_distortionMaterial == null)
                         {
                             _distortionMaterial = Resources.Load<Material>("RGBDistortionMesh");
                         }
                         _distortionMaterial.SetPass(0);
-                        _distortionMaterial.mainTexture = surfaces[0].DistortionRenderTexture;
-                        Graphics.DrawMeshNow(surfaces[0]._distortionMesh, this.transform.position + new Vector3(leftXOffset, 0, 1), this.transform.rotation);
-                        _distortionMaterial.SetPass(0);
-                        _distortionMaterial.mainTexture = surfaces[1].DistortionRenderTexture;
-                        Graphics.DrawMeshNow(surfaces[1]._distortionMesh, this.transform.position + new Vector3(rightXOffset, 0, 1), this.transform.rotation);
+                        _distortionMaterial.mainTexture = DistortionRenderTexture;
+                        Graphics.DrawMeshNow(_distortionMesh, this.transform.position + new Vector3(0, 0, 1), this.transform.rotation);
                     }
                     //@todo any post-frame activity goes here. 
                     //Send a timestamp?

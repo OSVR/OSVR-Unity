@@ -70,6 +70,7 @@ namespace OSVR
             //Set the camera's viewport rect
             public void SetViewport(Rect rect)
             {
+                _camera.rect = rect;
                 _camera.rect = new Rect(0,0,1,1);
             }
 
@@ -103,6 +104,7 @@ namespace OSVR
             //Set the camera's RenderTexture
             public void SetRenderTexture(RenderTexture renderTexture)
             {
+                //renderTexture.wrapMode = TextureWrapMode.Repeat;
                 _camera.targetTexture = renderTexture;
             }
 

@@ -143,6 +143,10 @@ namespace OSVR
                     {
                         surface.SetupDistortionMesh();
                     }
+                    else if(Viewer.DisplayController.useDistortionMesh)
+                    {
+                        surface.SetRenderTexture(Viewer.DisplayController.DistortionRenderTexture);
+                    }
                     else
                     {
                         //Radial Distortion
