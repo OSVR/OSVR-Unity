@@ -270,8 +270,8 @@ public class DistortionMesh : MonoBehaviour {
         {
             vertices[j] = computedVertices[j].Position;
             uvRed[j] = computedVertices[j].TexRed;
-            uvGreen[j] = computedVertices[j].TexRed;
-            uvBlue[j] = computedVertices[j].TexRed;
+            uvGreen[j] = computedVertices[j].TexGreen;
+            uvBlue[j] = computedVertices[j].TexBlue;
             triangles[j] = j;
         }
 
