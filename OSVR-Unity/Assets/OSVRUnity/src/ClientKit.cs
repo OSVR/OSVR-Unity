@@ -82,6 +82,12 @@ namespace OSVR
                     Debug.Log("[OSVR] Starting with app ID: " + AppID);
                     _contextObject = new OSVR.ClientKit.ClientContext(AppID, 0);
                 }
+
+                //check if the server is running
+                if (!_contextObject.CheckStatus())
+                {
+                    Debug.LogError("OSVR Server not detected. Start OSVR Server and restart the application.");
+                }
             }
 
             void Awake()
