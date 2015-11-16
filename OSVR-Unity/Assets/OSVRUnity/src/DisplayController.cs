@@ -59,7 +59,7 @@ namespace OSVR
 
             //variables for controlling use of osvrUnityRenderingPlugin.dll which enables DirectMode
             private OsvrRenderManager _renderManager;
-            private bool _useRenderManager = false;
+            private bool _useRenderManager = false; //requires Unity 5.2+ and RenderManager configured osvr server
             public bool UseRenderManager { get { return _useRenderManager; } }
 
             public Camera Camera
@@ -134,7 +134,7 @@ namespace OSVR
                     _renderManager = GameObject.FindObjectOfType<OsvrRenderManager>();
                     if (_renderManager == null)
                     {
-                        //add a RenderManager component if we're not on mobile
+                        //add a RenderManager component
                         _renderManager = gameObject.AddComponent<OsvrRenderManager>();
                     }
 
@@ -179,7 +179,9 @@ namespace OSVR
                     return;
                 }
                 _displayConfigInitialized = true;
+
                 SetupRenderManager();
+
                 //get the number of viewers, bail if there isn't exactly one viewer for now
                 _viewerCount = _displayConfig.GetNumViewers();
                 if(_viewerCount != 1)

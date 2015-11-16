@@ -132,6 +132,7 @@ namespace OSVR
             }
 
             //set the render texture that this camera will render into
+            //pass the native hardware pointer to the UnityRenderingPlugin for use in RenderManager
             public void SetRenderTexture(RenderTexture rt)
             {
                 RenderToTexture = rt;

@@ -28,6 +28,15 @@ namespace OSVR
 {
     namespace Unity
     {
+        //*This class is a wrapper for the OSVR-Unity Rendering Plugin osvrUnityRenderingPlugin.dll,
+        // which brings in functionality from the OSVR RenderManager project. RenderManager features inculde:
+        // - DirectMode -- compatible with nVidia cards with a driver that has been modified to white-list the display that you are using.
+        // - TimeWarp
+        // - Distortion Correction
+        //
+        // osvrUnityRenderingPlugin.dll, osvrRenderManager.dll, SDL2.dll, and glew32.dll must be in the Plugins/x86 or x64 folders.
+        // Requires Unity 5.2+
+        //*/
         public class OsvrRenderManager : MonoBehaviour
         {
             public const int RENDER_EVENT = 0;
@@ -90,19 +99,29 @@ namespace OSVR
             private static extern void ShutdownRenderManager();
 
             private OSVR.ClientKit.ClientContext _renderManagerClientContext;
+            private bool _linkDebug = false; //causes crash on exit if true, only enable for debugging
 
+            //Initialize use of RenderManager via CreateRenderManager call
             public int InitRenderManager()
             {
-                //LinkDebug(functionPointer); // Hook our c++ plugin into Unity's console log.
+                if (_linkDebug)
+                {
+                    //this will cause a crash when exiting the Unity editor or an application
+                    //only use for debugging purposes, do not leave on for release.
+                    LinkDebug(functionPointer); // Hook our c++ plugin into Unity's console log.
+                }
+                //create a client context for RenderManager. This context should not be updated from Unity.
                 _renderManagerClientContext = new OSVR.ClientKit.ClientContext("com.sensics.rendermanagercontext", 0);
                 return CreateRenderManager(_renderManagerClientContext);
             }
 
+            //Get the pose of a given eye from RenderManager
             public OSVR.ClientKit.Pose3 GetRenderManagerEyePose(int eye)
             {
                 return GetEyePose(eye);
             }
 
+            //Get the viewport of a given eye from RenderManager
             public OSVR.ClientKit.Viewport GetEyeViewport(int eye)
             {
                 OSVR.ClientKit.Viewport v = new OSVR.ClientKit.Viewport();
@@ -114,6 +133,7 @@ namespace OSVR
                 return v;
             }
 
+            //Get the projection matrix of a given eye from RenderManager
             public Matrix4x4 GetEyeProjectionMatrix(int eye)
             {
                 OSVR_ProjectionMatrix pm = GetProjectionMatrix(eye);

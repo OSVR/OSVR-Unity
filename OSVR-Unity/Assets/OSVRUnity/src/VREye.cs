@@ -104,13 +104,8 @@ namespace OSVR
                         viewport = Viewer.DisplayController.RenderManager.GetEyeViewport((int)EyeIndex);
                         surface.SetViewportRect(Math.ConvertViewportRenderManager(viewport));
 
-                        //projection matrix
+                        //get projection matrix from RenderManager and set surface projection matrix
                         surface.SetProjectionMatrix(Viewer.DisplayController.RenderManager.GetEyeProjectionMatrix((int)EyeIndex));
-                        /*projMatrix = Viewer.DisplayController.DisplayConfig.GetProjectionMatrixForViewerEyeSurfacef(
-                         Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex,
-                         surface.Camera.nearClipPlane, surface.Camera.farClipPlane, OSVR.ClientKit.MatrixConventionsFlags.ColMajor);
-
-                        surface.SetProjectionMatrix(Math.ConvertMatrix(projMatrix));*/
                     }
                     else
                     {
