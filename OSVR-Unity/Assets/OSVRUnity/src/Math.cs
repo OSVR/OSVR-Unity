@@ -52,29 +52,37 @@ namespace OSVR
             }
 
             //Convert OSVR.ClientKit.Viewport to Rect
-            public static Rect ConvertViewport(OSVR.ClientKit.Viewport viewport)
+            public static Rect ConvertViewport(OSVR.ClientKit.Viewport viewport, OSVR.ClientKit.DisplayDimensions surfaceDisplayDimensions, int numDisplayInputs, int eyeIndex, int totalWidth)
             {
-                //Unity expects normalized coordinates, not pixel coordinates
-                return new Rect(viewport.Left / (2f*viewport.Width), viewport.Bottom / viewport.Height, viewport.Width/(viewport.Width*2f), 1);
-            }
-
-            public static Rect ConvertViewport(OSVR.ClientKit.Viewport viewport, uint eyeIndex, uint numDisplayInputs)
-            {
-                if(numDisplayInputs == 1)
+                if (numDisplayInputs == 1)
                 {
-                    return ConvertViewport(viewport);
+                    //Unity expects normalized coordinates, not pixel coordinates
+                    return new Rect((float)viewport.Left / (float)surfaceDisplayDimensions.Width,
+                        (float)viewport.Bottom / (float)surfaceDisplayDimensions.Height,
+                        (float)viewport.Width / (float)surfaceDisplayDimensions.Width,
+                        (float)viewport.Height / (float)surfaceDisplayDimensions.Height);
                 }
                 else
                 {
                     if(eyeIndex == 0)
                     {
-                        return new Rect(0f, 0f, 1f, 1f);
+                        //Unity expects normalized coordinates, not pixel coordinates
+                        return new Rect((float)viewport.Left / (float)totalWidth,
+                            (float)viewport.Bottom / (float)surfaceDisplayDimensions.Height,
+                            (float)viewport.Width / (float)totalWidth,
+                            (float)viewport.Height / (float)surfaceDisplayDimensions.Height);
                     }
                     else
                     {
-                        return new Rect(0.5f, 0f, 1f, 1f);
+                        //Unity expects normalized coordinates, not pixel coordinates
+                        return new Rect(0.5f + (float)viewport.Left / (float)totalWidth,
+                            (float)viewport.Bottom / (float)surfaceDisplayDimensions.Height,
+                            (float)viewport.Width / (float)totalWidth,
+                            (float)viewport.Height / (float)surfaceDisplayDimensions.Height);
                     }
+                    
                 }
+                              
             }
 
             //Convert OSVR.ClientKit.Matrix44f to Matrix4x4
