@@ -52,37 +52,30 @@ namespace OSVR
             }
 
             //Convert OSVR.ClientKit.Viewport to Rect
-            public static Rect ConvertViewport(OSVR.ClientKit.Viewport viewport, OSVR.ClientKit.DisplayDimensions surfaceDisplayDimensions, int numDisplayInputs, int eyeIndex, int totalWidth)
+            public static Rect ConvertViewport(OSVR.ClientKit.Viewport viewport, OSVR.ClientKit.DisplayDimensions surfaceDisplayDimensions, int numDisplayInputs, int eyeIndex, int totalDisplayWidth)
             {
-                if (numDisplayInputs == 1)
-                {
-                    //Unity expects normalized coordinates, not pixel coordinates
+                //Unity expects normalized coordinates, not pixel coordinates
+                 if (numDisplayInputs == 1)
+                 {
                     return new Rect((float)viewport.Left / (float)surfaceDisplayDimensions.Width,
+                            (float)viewport.Bottom / (float)surfaceDisplayDimensions.Height,
+                            (float)viewport.Width / (float)surfaceDisplayDimensions.Width,
+                            (float)viewport.Height / (float)surfaceDisplayDimensions.Height);
+                }
+                else if(numDisplayInputs == 2)
+                {
+                    //with two inputs in fullscreen mode, viewports expect to fill the screen
+                    //Unity can only output to one window, so we offset the right eye by half the total width of the displays
+                    return new Rect(eyeIndex == 0 ? 0 : 0.5f + (float)viewport.Left / (float)totalDisplayWidth,
                         (float)viewport.Bottom / (float)surfaceDisplayDimensions.Height,
-                        (float)viewport.Width / (float)surfaceDisplayDimensions.Width,
+                        (float)viewport.Width / (float)totalDisplayWidth,
                         (float)viewport.Height / (float)surfaceDisplayDimensions.Height);
                 }
                 else
                 {
-                    if(eyeIndex == 0)
-                    {
-                        //Unity expects normalized coordinates, not pixel coordinates
-                        return new Rect((float)viewport.Left / (float)totalWidth,
-                            (float)viewport.Bottom / (float)surfaceDisplayDimensions.Height,
-                            (float)viewport.Width / (float)totalWidth,
-                            (float)viewport.Height / (float)surfaceDisplayDimensions.Height);
-                    }
-                    else
-                    {
-                        //Unity expects normalized coordinates, not pixel coordinates
-                        return new Rect(0.5f + (float)viewport.Left / (float)totalWidth,
-                            (float)viewport.Bottom / (float)surfaceDisplayDimensions.Height,
-                            (float)viewport.Width / (float)totalWidth,
-                            (float)viewport.Height / (float)surfaceDisplayDimensions.Height);
-                    }
-                    
+                    Debug.LogError("More than two video inputs is not supported. Using default viewport.");
+                    return new Rect(0, 0, 0.5f, 1f);
                 }
-                              
             }
 
             //Convert OSVR.ClientKit.Matrix44f to Matrix4x4
