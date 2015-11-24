@@ -182,11 +182,11 @@ namespace OSVR
                 for (int i = 0; i < DisplayConfig.GetNumDisplayInputs(); i++)
                 {
                     OSVR.ClientKit.DisplayDimensions surfaceDisplayDimensions = DisplayConfig.GetDisplayDimensions((byte)i);
+
                     TotalDisplayWidth += (uint)surfaceDisplayDimensions.Width; //add up the width of each eye
                     TotalDisplayHeight = (uint)surfaceDisplayDimensions.Height; //store the height -- this shouldn't change
                 }
-                Debug.Log("Total Display Width is " + TotalDisplayWidth);
-                Debug.Log("Total Display Height is " + TotalDisplayHeight);
+
                 Screen.SetResolution((int)TotalDisplayWidth, (int)TotalDisplayHeight, false);
             }
 
