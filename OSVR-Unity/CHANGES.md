@@ -4,6 +4,21 @@ This is an abbreviated changelog for the OSVR Unity Plugin.
 
 Use git for a full changelog.
 ##Recent Changes
+### RenderManager update
+> 25-November-2015 (commit 4ca38e) v0.6.104-g4cae38e
+
+- Added support for RenderManager in Unity 5.2+. RenderManager features include nVidia Direct Mode, Timewarp, and Distortion correction. Works on 700 series or newer nVidia cards with latest (359.0) or slightly older drivers. The following DLLs are also required for RenderManager (these aren't yet included in the Unity package):
+ - osvrUnityRenderingPlugin.dll, from OSVR-Unity-Rendering
+ - osvrRenderManager.dll, from RenderManager installer
+ - glew32.dll, from RenderManager installer
+ - SDL2.dll, from RenderManager installer
+ These are all included in the OSVR-Unity-Palace demo.
+ 
+ - Support for displays with two video inputs, such as the Sensics dSight. If the server is configured to use a display with two video inputs, Unity builds will open in a double-wide window rather than fullscreen mode.
+ 
+ - VRFirstPersonController prefab enables simple navigation. The new example scene VRFirstPerson.unity demonstrates its use.
+ 
+
 ### ClientKit Rendering Parameters update
 > 13-September-2015 (commit 34fd6f1) v0.2.119-g34fd6f1
 
