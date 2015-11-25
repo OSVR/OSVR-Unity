@@ -109,21 +109,24 @@ namespace OSVR
                     }
                     else
                     {
-                       viewport = Viewer.DisplayController.DisplayConfig.GetRelativeViewportForViewerEyeSurface(
-                       Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex);
-                       surface.SetViewportRect(Math.ConvertViewport(viewport));
+                        //get viewport from ClientKit and set surface viewport
+                        viewport = Viewer.DisplayController.DisplayConfig.GetRelativeViewportForViewerEyeSurface(
+                            Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex);
 
-                    int displayInputIndex = Viewer.DisplayController.DisplayConfig.GetViewerEyeSurfaceDisplayInputIndex(Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex);
-                    int numDisplayInputs = Viewer.DisplayController.DisplayConfig.GetNumDisplayInputs();
-                    surface.SetViewport(Math.ConvertViewport(viewport, Viewer.DisplayController.DisplayConfig.GetDisplayDimensions((byte)displayInputIndex), 
-                        numDisplayInputs, (int)_eyeIndex, (int)Viewer.DisplayController.TotalDisplayWidth));
+                        int displayInputIndex = Viewer.DisplayController.DisplayConfig.GetViewerEyeSurfaceDisplayInputIndex(Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex);
+                        int numDisplayInputs = Viewer.DisplayController.DisplayConfig.GetNumDisplayInputs();
+                        surface.SetViewportRect(Math.ConvertViewport(viewport, Viewer.DisplayController.DisplayConfig.GetDisplayDimensions((byte)displayInputIndex),
+                            numDisplayInputs, (int)_eyeIndex, (int)Viewer.DisplayController.TotalDisplayWidth));
 
                         //get projection matrix from ClientKit and set surface projection matrix
                         projMatrix = Viewer.DisplayController.DisplayConfig.GetProjectionMatrixForViewerEyeSurfacef(
-                        Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex,
-                        surface.Camera.nearClipPlane, surface.Camera.farClipPlane, OSVR.ClientKit.MatrixConventionsFlags.ColMajor);
+                            Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex,
+                            surface.Camera.nearClipPlane, surface.Camera.farClipPlane, OSVR.ClientKit.MatrixConventionsFlags.ColMajor);
 
                         surface.SetProjectionMatrix(Math.ConvertMatrix(projMatrix));
+
+                        //render the surface
+                        surface.Render();
                     }                           
 
                     if(Viewer.DisplayController.UseRenderManager)
