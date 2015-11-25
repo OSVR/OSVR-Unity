@@ -113,6 +113,11 @@ namespace OSVR
                        Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex);
                        surface.SetViewportRect(Math.ConvertViewport(viewport));
 
+                    int displayInputIndex = Viewer.DisplayController.DisplayConfig.GetViewerEyeSurfaceDisplayInputIndex(Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex);
+                    int numDisplayInputs = Viewer.DisplayController.DisplayConfig.GetNumDisplayInputs();
+                    surface.SetViewport(Math.ConvertViewport(viewport, Viewer.DisplayController.DisplayConfig.GetDisplayDimensions((byte)displayInputIndex), 
+                        numDisplayInputs, (int)_eyeIndex, (int)Viewer.DisplayController.TotalDisplayWidth));
+
                         //get projection matrix from ClientKit and set surface projection matrix
                         projMatrix = Viewer.DisplayController.DisplayConfig.GetProjectionMatrixForViewerEyeSurfacef(
                         Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex,
