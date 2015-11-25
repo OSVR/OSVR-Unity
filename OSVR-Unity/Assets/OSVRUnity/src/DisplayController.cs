@@ -178,8 +178,9 @@ namespace OSVR
                 TotalDisplayWidth = 0; //add up the width of each eye
                 TotalDisplayHeight = 0; //don't add up heights
 
+                int numDisplayInputs = DisplayConfig.GetNumDisplayInputs();
                 //for each display
-                for (int i = 0; i < DisplayConfig.GetNumDisplayInputs(); i++)
+                for (int i = 0; i < numDisplayInputs;  i++)
                 {
                     OSVR.ClientKit.DisplayDimensions surfaceDisplayDimensions = DisplayConfig.GetDisplayDimensions((byte)i);
 
@@ -187,7 +188,8 @@ namespace OSVR
                     TotalDisplayHeight = (uint)surfaceDisplayDimensions.Height; //store the height -- this shouldn't change
                 }
 
-                Screen.SetResolution((int)TotalDisplayWidth, (int)TotalDisplayHeight, false);
+                //Set the resolution. Don't force fullscreen if we have multiple display inputs
+                Screen.SetResolution((int)TotalDisplayWidth, (int)TotalDisplayHeight, numDisplayInputs < 2);
             }
 
 
