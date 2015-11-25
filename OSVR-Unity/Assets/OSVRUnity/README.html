@@ -1,0 +1,54 @@
+<h1>OSVR-Unity README</h1>
+
+<blockquote><p><em>This is an Alpha Release, and probably not entirely idiomatic for Unity. Check back for updates often.</em></p></blockquote>
+
+<h2>Documentation</h2>
+
+<p>For links to details, documentation, and support, visit the repository on github: https://github.com/OSVR/OSVR-Unity#readme</p>
+
+<h2>Known Issues</h2>
+
+<p>This list only includes Unity-specific issues that have a substantial impact on the development experience. For a full list of issues, see the <a href="https://github.com/sensics/OSVR-Unity/issues">GitHub issue tracker</a></p>
+
+<ul>
+<li>Unity 4 Free version will not use distortion as this is a Pro-only feature. You will get a warning that you can ignore and continue to use OSVR without distortion. OSVR plugins will still work with Unity 4 Free.</li>
+</ul>
+
+
+<h2>Basic Principles and Files</h2>
+
+<p>On a machine where you're running an OSVR-Unity application, you need to run an OSVR server, part of the OSVR-Core builds. For convenience, a 32-bit OSVR Server install is bundled in the OSVR-Unity snapshot archives. <a href="mailto:support@osvr.org">Contact us</a> if you need help.</p>
+
+<p>The <code>OSVR-Unity.unitypackage</code> package should contain the x86 and x86_64 binary plugins, the compiled Managed-OSVR wrapper, the OSVRUnity scripts (in the <code>Assets</code> directory), and a directory of prefabs. Import this package into your project.</p>
+
+<p>There is also a few sample/demo applications included, ranging from fairly sparse environments also used for development of the code/prefabs, to a high-detail demo.</p>
+
+<h3>ClientKit object</h3>
+
+<p>You need exactly one instance of <code>OSVR.Unity.ClientKit</code> in your project: get one using the <code>ClientKit</code> prefab. You need to set the app ID: use a reversed DNS name as seen elsewhere (Java, Android, etc). This just uniquely identifies your application to the OSVR software. If you fail to do this, you'll see an error in the Unity console.</p>
+
+<h3>Tracking</h3>
+
+<p>For trackers (Pose, Position, Orientation), there are prefabs of nodes that update their transform accordingly. You'll need to set the path you want to use. Please see the C/C++ documentation for client apps to find valid interface paths. (Note that the OSVR-Unity package handles normalization of the coordinate system to the Unity standard: ignore the one seen in the C++ documentation.)</p>
+
+<h3>Manually handling callbacks</h3>
+
+<p>This involves two pieces:</p>
+
+<ul>
+<li>Adding an <code>OSVR.Unity.InterfaceGameObject</code> script component, in which you can specify the path. There is a prefab for this.</li>
+<li>Adding your own script component (which should inherit from <code>OSVR.Unity.InterfaceBase</code> instead of <code>MonoBehaviour</code> for simplest usage) that uses the <code>InterfaceGameObject</code> to register a callback.</li>
+</ul>
+
+
+<p>Examples for buttons and analog triggers are included in the <code>minigame</code> scene.</p>
+
+<p>Paths for these callbacks that provide useful information can be found in the main OSVR-Core documentation on the "Writing a client application" page.</p>
+
+<h3>Other interaction</h3>
+
+<p>Any other interaction with the OSVR framework should go directly through the Managed-OSVR (.NET) wrapper without any Unity-specific adaptations. See that source for examples of button and analog callbacks, as well as display parameter access (ideally used to set up the display properly). In terms of API, the Managed-OSVR API is effectively a direct translation of the C++ wrappers of OSVR <code>ClientKit</code>, so please see the main OSVR-Core client documentation for more information.</p>
+
+<h3>Execution</h3>
+
+<p>A standalone player built for Windows may end up needing the <code>-adapter N</code> argument, where <code>N</code> is a Direct3D display adapter, to put the rendered output on the HMD display.</p>

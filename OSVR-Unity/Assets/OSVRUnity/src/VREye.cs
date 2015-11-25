@@ -25,6 +25,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Reflection;
+using System;
 
 namespace OSVR
 {
@@ -39,6 +40,7 @@ namespace OSVR
             private VRSurface[] _surfaces; //the surfaces associated with this eye
             private uint _surfaceCount;
             private uint _eyeIndex;
+            
             
             #endregion
             #region Public Variables  
@@ -81,7 +83,7 @@ namespace OSVR
             public void UpdateEyePose(OSVR.ClientKit.Pose3 eyePose)
             { 
                 cachedTransform.localPosition = Math.ConvertPosition(eyePose.translation);
-                cachedTransform.localRotation = Math.ConvertOrientation(eyePose.rotation);
+                cachedTransform.localRotation = Viewer.DisplayController.UseRenderManager ? Math.ConvertOrientationFromRenderManager(eyePose.rotation) : Math.ConvertOrientation(eyePose.rotation);
             }
 
             //For each Surface, update viewing parameters and render the surface
@@ -93,26 +95,63 @@ namespace OSVR
                     //get the eye's surface
                     VRSurface surface = Surfaces[surfaceIndex];
 
+                    OSVR.ClientKit.Viewport viewport;
+                    OSVR.ClientKit.Matrix44f projMatrix;
+
                     //get viewport from ClientKit and set surface viewport
-                    OSVR.ClientKit.Viewport viewport = Viewer.DisplayController.DisplayConfig.GetRelativeViewportForViewerEyeSurface(
-                        Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex);
+                    if (Viewer.DisplayController.UseRenderManager)
+                    {
+                        viewport = Viewer.DisplayController.RenderManager.GetEyeViewport((int)EyeIndex);
+                        surface.SetViewportRect(Math.ConvertViewportRenderManager(viewport));
 
-                    int displayInputIndex = Viewer.DisplayController.DisplayConfig.GetViewerEyeSurfaceDisplayInputIndex(Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex);
-                    int numDisplayInputs = Viewer.DisplayController.DisplayConfig.GetNumDisplayInputs();
-                    surface.SetViewport(Math.ConvertViewport(viewport, Viewer.DisplayController.DisplayConfig.GetDisplayDimensions((byte)displayInputIndex), 
-                        numDisplayInputs, (int)_eyeIndex, (int)Viewer.DisplayController.TotalDisplayWidth));
+                        //get projection matrix from RenderManager and set surface projection matrix
+                        surface.SetProjectionMatrix(Viewer.DisplayController.RenderManager.GetEyeProjectionMatrix((int)EyeIndex));
+                    }
+                    else
+                    {
+                        //get viewport from ClientKit and set surface viewport
+                        viewport = Viewer.DisplayController.DisplayConfig.GetRelativeViewportForViewerEyeSurface(
+                            Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex);
 
-                    //get projection matrix from ClientKit and set surface projection matrix
-                    OSVR.ClientKit.Matrix44f projMatrix = Viewer.DisplayController.DisplayConfig.GetProjectionMatrixForViewerEyeSurfacef(
-                        Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex,
-                        surface.Camera.nearClipPlane, surface.Camera.farClipPlane, OSVR.ClientKit.MatrixConventionsFlags.ColMajor);
+                        int displayInputIndex = Viewer.DisplayController.DisplayConfig.GetViewerEyeSurfaceDisplayInputIndex(Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex);
+                        int numDisplayInputs = Viewer.DisplayController.DisplayConfig.GetNumDisplayInputs();
+                        surface.SetViewportRect(Math.ConvertViewport(viewport, Viewer.DisplayController.DisplayConfig.GetDisplayDimensions((byte)displayInputIndex),
+                            numDisplayInputs, (int)_eyeIndex, (int)Viewer.DisplayController.TotalDisplayWidth));
 
-                    surface.SetProjectionMatrix(Math.ConvertMatrix(projMatrix));
+                        //get projection matrix from ClientKit and set surface projection matrix
+                        projMatrix = Viewer.DisplayController.DisplayConfig.GetProjectionMatrixForViewerEyeSurfacef(
+                            Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex,
+                            surface.Camera.nearClipPlane, surface.Camera.farClipPlane, OSVR.ClientKit.MatrixConventionsFlags.ColMajor);
 
-                    //render the surface
-                    surface.Render();
+                        surface.SetProjectionMatrix(Math.ConvertMatrix(projMatrix));
+
+                        //render the surface
+                        surface.Render();
+                    }                           
+
+                    if(Viewer.DisplayController.UseRenderManager)
+                    {
+                        surface.Render();
+                        surface.SetActiveRenderTexture();
+                    }
+                    else
+                    {
+                        surface.Render();
+                    }
                 }
             }
+
+            public void ClearSurfaces()
+            {
+                //for each surface
+                for (uint surfaceIndex = 0; surfaceIndex < SurfaceCount; surfaceIndex++)
+                {
+                    //get the eye's surface
+                    VRSurface surface = Surfaces[surfaceIndex];
+                    surface.ClearRenderTarget();
+                }
+            }
+
 
             //Create this Eye's VRSurfaces. 
             //Each VRSurface has a camera component which controls rendering for the VREye
@@ -135,7 +174,7 @@ namespace OSVR
                     surface.Eye = this;
                     surface.Camera = surfaceGameObject.GetComponent<Camera>(); //VRSurface has camera component by default
                     CopyCamera(Viewer.DisplayController.Camera, surface.Camera); //copy camera properties from the "dummy" camera to surface camera
-                    surface.Camera.enabled = false; //disabled so we can control rendering manually
+                    surface.Camera.enabled = !Viewer.DisplayController.UseRenderManager; //disabled so we can control rendering manually
                     surfaceGameObject.transform.parent = this.transform; //surface is child of Eye
                     surfaceGameObject.transform.localPosition = Vector3.zero;
                     Surfaces[surfaceIndex] = surface;
@@ -152,7 +191,21 @@ namespace OSVR
                         Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex);
 
                         surface.SetDistortion(distortionParameters);
-                    }                 
+                    }    
+                    
+                    //render manager
+                    if(Viewer.DisplayController.UseRenderManager)
+                    {
+                        if(surface.GetRenderTexture() == null)
+                        {
+                            //Set the surfaces viewport from RenderManager
+                            surface.SetViewport(Viewer.DisplayController.RenderManager.GetEyeViewport((int)EyeIndex));
+
+                            //create a RenderTexture for this eye's camera to render into
+                            RenderTexture renderTexture = new RenderTexture(surface.Viewport.Width, surface.Viewport.Height, 24, RenderTextureFormat.Default);
+                            surface.SetRenderTexture(renderTexture);
+                        }
+                    }             
                 }
             }
 
@@ -162,7 +215,7 @@ namespace OSVR
             {
                 //Copy the camera properties.
                 destCamera.CopyFrom(srcCamera);
-
+                destCamera.depth = 0;
                 //@todo Copy other components attached to the DisplayController?
             }           
         }
