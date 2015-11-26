@@ -9,7 +9,7 @@ Use git for a full changelog.
 
 - Added support for RenderManager in Unity 5.2+. RenderManager features include nVidia Direct Mode, Timewarp, and Distortion correction. Works on 700 series or newer nVidia cards with latest (359.0) or slightly older drivers. The following DLLs are also required for RenderManager (these aren't yet included in the Unity package):
  - osvrUnityRenderingPlugin.dll, built from [OSVR-Unity-Rendering](https://github.com/OSVR/OSVR-Unity-Rendering)
- - osvrRenderManager.dll, from RenderManager installer
+ - osvrRenderManager.dll, from [RenderManager installer](http://resource.osvr.com/public_download/RenderManager/osvrRenderManager_0_6_23_unsigned.msi)
  - glew32.dll, from RenderManager installer
  - SDL2.dll, from RenderManager installer
  These are all included in the OSVR-Unity-Palace demo.
