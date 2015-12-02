@@ -64,6 +64,9 @@ namespace OSVR
             private bool _useRenderManager = false; //requires Unity 5.2+ and RenderManager configured osvr server
             public bool UseRenderManager { get { return _useRenderManager; } }
 
+            //should we add an AudioListener to the VRViewer GameObject?
+            public bool addAudioListener = true;
+
             public Camera Camera
             {
                 get
@@ -267,7 +270,10 @@ namespace OSVR
                 {
                     // create a VRViewer
                     GameObject vrViewer = new GameObject("VRViewer" + viewerIndex);
-                    vrViewer.AddComponent<AudioListener>(); //add an audio listener
+                    if(addAudioListener)
+                    {
+                        vrViewer.AddComponent<AudioListener>(); //add an audio listener
+                    }                 
                     VRViewer vrViewerComponent = vrViewer.AddComponent<VRViewer>();
                     vrViewerComponent.DisplayController = this; //pass DisplayController to Viewers  
                     vrViewerComponent.ViewerIndex = viewerIndex; //set the viewer's index                         
