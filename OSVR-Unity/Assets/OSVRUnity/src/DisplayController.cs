@@ -365,7 +365,10 @@ namespace OSVR
                         // Issue a RenderEvent, which copies Unity RenderTextures to RenderManager buffers
 #if UNITY_5_2 || UNITY_5_3
                         GL.IssuePluginEvent(_renderManager.GetRenderEventFunction(), OsvrRenderManager.RENDER_EVENT);
+#else
+                    Debug.LogError("GL.IssuePluginEvent failed. This version of Unity is not supported by RenderManager.");
 #endif
+                }
                     }            
                 }
             }

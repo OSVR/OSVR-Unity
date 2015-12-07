@@ -89,6 +89,8 @@ namespace OSVR
                     //Update RenderInfo
 #if UNITY_5_2 || UNITY_5_3
                     GL.IssuePluginEvent(DisplayController.RenderManager.GetRenderEventFunction(), OsvrRenderManager.UPDATE_RENDERINFO_EVENT);
+#else
+                    Debug.LogError("GL.IssuePluginEvent failed. This version of Unity is not supported by RenderManager.");
 #endif
                 }
                 else
