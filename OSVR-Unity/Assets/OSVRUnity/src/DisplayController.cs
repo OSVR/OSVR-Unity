@@ -44,13 +44,13 @@ namespace OSVR
         [RequireComponent(typeof(Camera))] //requires a "dummy" camera
         public class DisplayController : MonoBehaviour
         {
-            
+
             public const uint NUM_VIEWERS = 1;
             private const int TARGET_FRAME_RATE = 60; //@todo get from OSVR
 
             private ClientKit _clientKit;
             private OSVR.ClientKit.DisplayConfig _displayConfig;
-            private VRViewer[] _viewers; 
+            private VRViewer[] _viewers;
             private uint _viewerCount;
             private bool _displayConfigInitialized = false;
             private bool _checkDisplayStartup = false;
@@ -81,7 +81,7 @@ namespace OSVR
                 get { return _displayConfig; }
                 set { _displayConfig = value; }
             }
-            public VRViewer[] Viewers { get { return _viewers; } }           
+            public VRViewer[] Viewers { get { return _viewers; } }
             public uint ViewerCount { get { return _viewerCount; } }
             public OsvrRenderManager RenderManager { get { return _renderManager; } }
 
@@ -114,13 +114,13 @@ namespace OSVR
             void Awake()
             {
                 _clientKit = FindObjectOfType<ClientKit>();
-                if(_clientKit == null)
+                if (_clientKit == null)
                 {
                     Debug.LogError("DisplayController requires a ClientKit object in the scene.");
                 }
                 _camera = GetComponent<Camera>(); //get the "dummy" camera
                 SetupApplicationSettings();
-               
+
             }
 
             void OnEnable()
@@ -169,7 +169,7 @@ namespace OSVR
                     //check to make sure Unity version and Graphics API are supported
                     bool supportsRenderManager = _renderManager.IsRenderManagerSupported();
                     _useRenderManager = supportsRenderManager;
-                    if(!_useRenderManager)
+                    if (!_useRenderManager)
                     {
                         Debug.LogError("RenderManager config found but RenderManager is not supported.");
                         Destroy(_renderManager);
@@ -183,7 +183,7 @@ namespace OSVR
                             Debug.LogError("Failed to create RenderManager.");
                             _useRenderManager = false;
                         }
-                    }                    
+                    }
                 }
                 else
                 {
@@ -196,7 +196,7 @@ namespace OSVR
             void SetupDisplay()
             {
                 //get the DisplayConfig object from ClientKit
-                if(_clientKit.context == null)
+                if (_clientKit.context == null)
                 {
                     Debug.LogError("ClientContext is null. Can't setup display.");
                     return;
@@ -212,7 +212,7 @@ namespace OSVR
 
                 //get the number of viewers, bail if there isn't exactly one viewer for now
                 _viewerCount = _displayConfig.GetNumViewers();
-                if(_viewerCount != 1)
+                if (_viewerCount != 1)
                 {
                     Debug.LogError(_viewerCount + " viewers found, but this implementation requires exactly one viewer.");
                     return;
@@ -223,7 +223,7 @@ namespace OSVR
 
                 //create scene objects 
                 CreateHeadAndEyes();
-                Camera.cullingMask = 0;              
+                Camera.cullingMask = 0;
             }
 
             //Set Resolution of the Unity game window based on total surface width
@@ -234,7 +234,7 @@ namespace OSVR
 
                 int numDisplayInputs = DisplayConfig.GetNumDisplayInputs();
                 //for each display
-                for (int i = 0; i < numDisplayInputs;  i++)
+                for (int i = 0; i < numDisplayInputs; i++)
                 {
                     OSVR.ClientKit.DisplayDimensions surfaceDisplayDimensions = DisplayConfig.GetDisplayDimensions((byte)i);
 
@@ -255,11 +255,11 @@ namespace OSVR
                 /* ASSUME ONE VIEWER */
                 // Create VRViewers, only one in this implementation
                 _viewerCount = (uint)_displayConfig.GetNumViewers();
-                if(_viewerCount != NUM_VIEWERS)
+                if (_viewerCount != NUM_VIEWERS)
                 {
                     Debug.LogError(_viewerCount + " viewers detected. This implementation supports exactly one viewer.");
                     return;
-                }               
+                }
                 _viewers = new VRViewer[_viewerCount];
                 // loop through viewers because at some point we could support multiple viewers
                 // but this implementation currently supports exactly one
@@ -278,13 +278,13 @@ namespace OSVR
                     // create Viewer's VREyes
                     uint eyeCount = (uint)_displayConfig.GetNumEyesForViewer(viewerIndex); //get the number of eyes for this viewer
                     vrViewerComponent.CreateEyes(eyeCount);
-                }            
+                }
             }
             void Update()
             {
                 // sometimes it takes a few frames to get a DisplayConfig from ClientKit
                 // keep trying until we have initialized
-                if(!_displayConfigInitialized)
+                if (!_displayConfigInitialized)
                 {
                     SetupDisplay();
                 }
@@ -314,13 +314,13 @@ namespace OSVR
                 }
 
                 // Flag that we disabled the camera
-                _disabledCamera = true;              
+                _disabledCamera = true;
             }
 
             // The main rendering loop, should be called late in the pipeline, i.e. from OnPreCull
             // Set our viewer and eye poses and render to each surface.
             void DoRendering()
-            {                
+            {
                 // for each viewer, update each eye, which will update each surface
                 for (uint viewerIndex = 0; viewerIndex < _viewerCount; viewerIndex++)
                 {
@@ -340,7 +340,7 @@ namespace OSVR
                     else
                     {
                         _checkDisplayStartup = DisplayConfig.CheckDisplayStartup();
-                        if(!_checkDisplayStartup)
+                        if (!_checkDisplayStartup)
                         {
                             Debug.LogError("Display Startup failed. Check HMD connection.");
                         }
@@ -360,16 +360,16 @@ namespace OSVR
                         _disabledCamera = false;
                     }
                     yield return new WaitForEndOfFrame();
-                    if(_useRenderManager && _checkDisplayStartup)
+                    if (_useRenderManager && _checkDisplayStartup)
                     {
                         // Issue a RenderEvent, which copies Unity RenderTextures to RenderManager buffers
 #if UNITY_5_2 || UNITY_5_3
                         GL.IssuePluginEvent(_renderManager.GetRenderEventFunction(), OsvrRenderManager.RENDER_EVENT);
 #else
-                    Debug.LogError("GL.IssuePluginEvent failed. This version of Unity is not supported by RenderManager.");
+                        Debug.LogError("GL.IssuePluginEvent failed. This version of Unity is not supported by RenderManager.");
 #endif
-                }
-                    }            
+                    }
+
                 }
             }
         }
