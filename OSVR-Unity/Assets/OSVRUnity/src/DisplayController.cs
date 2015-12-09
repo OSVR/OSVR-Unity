@@ -59,10 +59,26 @@ namespace OSVR
             private uint _totalDisplayWidth;
             private uint _totalSurfaceHeight;
 
+            //preview window
+            public bool showDirectModePreview = true;
+            private RenderTexture directModePreviewRenderTexture;
+
             //variables for controlling use of osvrUnityRenderingPlugin.dll which enables DirectMode
             private OsvrRenderManager _renderManager;
             private bool _useRenderManager = false; //requires Unity 5.2+ and RenderManager configured osvr server
             public bool UseRenderManager { get { return _useRenderManager; } }
+            public RenderTexture DirectModePreviewRenderTexture
+            {
+                get
+                {
+                    return directModePreviewRenderTexture;
+                }
+
+                set
+                {
+                    directModePreviewRenderTexture = value;
+                }
+            }
 
             public Camera Camera
             {
@@ -244,7 +260,7 @@ namespace OSVR
 
                 //Set the resolution. Don't force fullscreen if we have multiple display inputs
                 //@todo figure out why this causes problems with direct mode, perhaps overfill factor?
-                if(numDisplayInputs > 1)
+                if(numDisplayInputs > 1 && !UseRenderManager)
                 {
                     Screen.SetResolution((int)TotalDisplayWidth, (int)TotalDisplayHeight, false);
                 }                             
@@ -277,7 +293,7 @@ namespace OSVR
                     vrViewerComponent.ViewerIndex = viewerIndex; //set the viewer's index                         
                     vrViewer.transform.parent = this.transform; //child of DisplayController
                     vrViewer.transform.localPosition = Vector3.zero;
-                    _viewers[viewerIndex] = vrViewerComponent;
+                    _viewers[viewerIndex] = vrViewerComponent;          
 
                     // create Viewer's VREyes
                     uint eyeCount = (uint)_displayConfig.GetNumEyesForViewer(viewerIndex); //get the number of eyes for this viewer
@@ -291,7 +307,16 @@ namespace OSVR
                 if (!_displayConfigInitialized)
                 {
                     SetupDisplay();
+                    SetupPreviewWindow();
                 }
+            }
+
+            private void SetupPreviewWindow()
+            {
+                if(UseRenderManager && showDirectModePreview)
+                {
+                    DirectModePreviewRenderTexture = new RenderTexture(Screen.width, Screen.height, 16, RenderTextureFormat.Default);
+                }              
             }
 
             //helper method for updating the client context
@@ -340,6 +365,9 @@ namespace OSVR
 
                         // each viewer updates its eye poses, viewports, projection matrices
                         viewer.UpdateEyes();
+
+                        UpdatePreviewWindow();
+                        
                     }
                     else
                     {
@@ -350,6 +378,32 @@ namespace OSVR
                         }
                     }
                 }
+            }
+
+            public Material previewMat;
+            private void UpdatePreviewWindow()
+            {
+                /*if (UseRenderManager && showDirectModePreview)
+                {
+                    if(DirectModePreviewRenderTexture == null)
+                    {
+                        DirectModePreviewRenderTexture = new RenderTexture(Screen.width, Screen.height, 16);
+                    }
+                    foreach(VRViewer v in Viewers)
+                    {
+                        foreach(VREye e in v.Eyes)
+                        {
+                            foreach(VRSurface s in e.Surfaces)
+                            {
+                                Graphics.DrawTexture(new Rect(0,0, Screen.width, Screen.height), s.RenderToTexture);
+                            }
+                        }
+                    }
+                }*/
+                //RenderTexture.active = DirectModePreviewRenderTexture;
+                // GL.Clear(true, true, Color.black);
+ 
+               // Graphics.Blit(DirectModePreviewRenderTexture, null as RenderTexture);
             }
 
             // This couroutine is called every frame.

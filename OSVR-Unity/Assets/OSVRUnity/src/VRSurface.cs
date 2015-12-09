@@ -156,6 +156,10 @@ namespace OSVR
             {
                 Camera.targetTexture = RenderToTexture;
                 Camera.Render();
+                if (Eye.EyeIndex == 0)
+                    Graphics.BlitMultiTap(Camera.targetTexture, null as RenderTexture, Eye.Viewer.DisplayController.previewMat, new Vector3(Camera.targetTexture.width/2, 0, 0));
+                //else
+                   // Graphics.BlitMultiTap(Camera.targetTexture, Eye.Viewer.DisplayController.DirectModePreviewRenderTexture, Eye.Viewer.DisplayController.previewMat, new Vector3(Eye.Viewer.DisplayController.DirectModePreviewRenderTexture.width/2, 0, 0));
             }
 
             public void ClearRenderTarget()
