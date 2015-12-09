@@ -243,8 +243,9 @@ namespace OSVR
                 }
 
                 //Set the resolution. Don't force fullscreen if we have multiple display inputs
+                //We only need to do this if we aren't using RenderManager, because it adjusts the window size for us
                 //@todo figure out why this causes problems with direct mode, perhaps overfill factor?
-                if(numDisplayInputs > 1)
+                if(numDisplayInputs > 1 && !UseRenderManager)
                 {
                     Screen.SetResolution((int)TotalDisplayWidth, (int)TotalDisplayHeight, false);
                 }                             
