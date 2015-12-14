@@ -67,8 +67,13 @@ namespace OSVR
 
             void Init()
             {
+                _camera = GetComponent<Camera>();
                 //cache:
                 cachedTransform = transform;
+                if (DisplayController == null)
+                {
+                    DisplayController = FindObjectOfType<DisplayController>();
+                }
             }
 
             void OnEnable()
