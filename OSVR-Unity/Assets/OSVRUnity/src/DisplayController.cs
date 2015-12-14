@@ -235,25 +235,66 @@ namespace OSVR
                     return;
                 }
                 _viewers = new VRViewer[_viewerCount];
+
+                uint viewerIndex = 0;
+
+                //Check if there are already VRViewers in the scene.
+                //If so, create eyes for them.
+                VRViewer[] viewersInScene = FindObjectsOfType<VRViewer>();
+                if (viewersInScene != null && viewersInScene.Length > 0)
+                {
+                    for (viewerIndex = 0; viewerIndex < viewersInScene.Length; viewerIndex++)
+                    {
+                        VRViewer viewer = viewersInScene[viewerIndex];
+                        // get the VRViewer gameobject
+                        GameObject vrViewer = viewer.gameObject;
+                        vrViewer.name = "VRViewer" + viewerIndex; //change its name to VRViewer0
+                        //@todo optionally add components                      
+                        if (vrViewer.GetComponent<AudioListener>() == null)
+                        {
+                            vrViewer.AddComponent<AudioListener>(); //add an audio listener
+                        }
+                        viewer.DisplayController = this; //pass DisplayController to Viewers  
+                        viewer.ViewerIndex = viewerIndex; //set the viewer's index                         
+                        vrViewer.transform.parent = this.transform; //child of DisplayController
+                        vrViewer.transform.localPosition = Vector3.zero;
+                        _viewers[viewerIndex] = viewer;
+                        if (viewerIndex == 0)
+                        {
+                            vrViewer.tag = "MainCamera"; //set the MainCamera tag for the first Viewer
+                        }
+
+                        // create Viewer's VREyes
+                        uint eyeCount = (uint)_displayConfig.GetNumEyesForViewer(viewerIndex); //get the number of eyes for this viewer
+                        viewer.CreateEyes(eyeCount);
+                    }
+                }
+
                 // loop through viewers because at some point we could support multiple viewers
                 // but this implementation currently supports exactly one
-                for (uint viewerIndex = 0; viewerIndex < _viewerCount; viewerIndex++)
+                for (; viewerIndex < _viewerCount; viewerIndex++)
                 {
                     // create a VRViewer
                     GameObject vrViewer = new GameObject("VRViewer" + viewerIndex);
-                    vrViewer.AddComponent<AudioListener>(); //add an audio listener
+                    if (vrViewer.GetComponent<AudioListener>() == null)
+                    {
+                        vrViewer.AddComponent<AudioListener>(); //add an audio listener
+                    }
+
                     VRViewer vrViewerComponent = vrViewer.AddComponent<VRViewer>();
                     vrViewerComponent.DisplayController = this; //pass DisplayController to Viewers  
                     vrViewerComponent.ViewerIndex = viewerIndex; //set the viewer's index                         
                     vrViewer.transform.parent = this.transform; //child of DisplayController
                     vrViewer.transform.localPosition = Vector3.zero;
                     _viewers[viewerIndex] = vrViewerComponent;
+                    vrViewer.tag = "MainCamera";
 
                     // create Viewer's VREyes
                     uint eyeCount = (uint)_displayConfig.GetNumEyesForViewer(viewerIndex); //get the number of eyes for this viewer
                     vrViewerComponent.CreateEyes(eyeCount);
                 }
             }
+
             void Update()
             {
                 // sometimes it takes a few frames to get a DisplayConfig from ClientKit
