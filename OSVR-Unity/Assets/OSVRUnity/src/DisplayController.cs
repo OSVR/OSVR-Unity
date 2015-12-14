@@ -68,6 +68,7 @@ namespace OSVR
             public VRViewer[] Viewers { get { return _viewers; } }
             public uint ViewerCount { get { return _viewerCount; } }
             public OsvrRenderManager RenderManager { get { return _renderManager; } }
+            public bool showDirectModePreview = true; //should the monitor show what the user sees in the HMD?
 
             public uint TotalDisplayWidth
             {
