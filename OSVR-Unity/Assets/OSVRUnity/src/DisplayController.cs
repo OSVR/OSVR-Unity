@@ -41,7 +41,6 @@ namespace OSVR
         //
         // In this implementation, we are assuming that there is exactly one viewer and one surface per eye.
         //*/
-        [RequireComponent(typeof(Camera))] //requires a "dummy" camera
         public class DisplayController : MonoBehaviour
         {
 
@@ -53,9 +52,6 @@ namespace OSVR
             private VRViewer[] _viewers;
             private uint _viewerCount;
             private bool _displayConfigInitialized = false;
-            private bool _checkDisplayStartup = false;
-            private Camera _camera;
-            private bool _disabledCamera = true;
             private uint _totalDisplayWidth;
             private uint _totalSurfaceHeight;
 
@@ -64,18 +60,6 @@ namespace OSVR
             private bool _useRenderManager = false; //requires Unity 5.2+ and RenderManager configured osvr server
             public bool UseRenderManager { get { return _useRenderManager; } }
 
-            public Camera Camera
-            {
-                get
-                {
-                    if (_camera == null)
-                    {
-                        _camera = GetComponent<Camera>();
-                    }
-                    return _camera;
-                }
-                set { _camera = value; }
-            }
             public OSVR.ClientKit.DisplayConfig DisplayConfig
             {
                 get { return _displayConfig; }
