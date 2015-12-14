@@ -24,7 +24,8 @@ using System.Collections;
 namespace OSVR
 {
     namespace Unity
-    {       
+    {
+        [RequireComponent(typeof(Camera))]  
         public class VRViewer : MonoBehaviour
         {   
             #region Public Variables         
@@ -34,6 +35,18 @@ namespace OSVR
             public uint ViewerIndex { get { return _viewerIndex; } set { _viewerIndex = value; } }
             [HideInInspector]
             public Transform cachedTransform;
+            public Camera Camera
+            {
+                get
+                {
+                    if (_camera == null)
+                    {
+                        _camera = GetComponent<Camera>();
+                    }
+                    return _camera;
+                }
+                set { _camera = value; }
+            }
             #endregion
 
             #region Private Variables
@@ -41,6 +54,9 @@ namespace OSVR
             private VREye[] _eyes;
             private uint _eyeCount;
             private uint _viewerIndex;
+            private Camera _camera;
+            private bool _disabledCamera = true;
+            
 
             #endregion
 
@@ -53,6 +69,20 @@ namespace OSVR
             {
                 //cache:
                 cachedTransform = transform;
+            }
+
+            void OnEnable()
+            {
+                StartCoroutine("EndOfFrame");
+            }
+
+            void OnDisable()
+            {
+                StopCoroutine("EndOfFrame");
+                if (DisplayController.UseRenderManager && DisplayController.RenderManager != null)
+                {
+                    DisplayController.ExitRenderManager();
+                }
             }
 
             //Creates the Eyes of this Viewer
@@ -72,7 +102,13 @@ namespace OSVR
                     uint eyeSurfaceCount = DisplayController.DisplayConfig.GetNumSurfacesForViewerEye(ViewerIndex, (byte)eyeIndex);
                     eye.CreateSurfaces(eyeSurfaceCount);
                 }
-            }  
+            }
+
+            //Get an updated tracker position + orientation
+            public OSVR.ClientKit.Pose3 GetViewerPose(uint viewerIndex)
+            {
+                return DisplayController.DisplayConfig.GetViewerPose(viewerIndex);
+            }
 
             //Updates the position and rotation of the head
             public void UpdateViewerHeadPose(OSVR.ClientKit.Pose3 headPose)
@@ -117,7 +153,92 @@ namespace OSVR
                     // update the eye's surfaces, includes call to Render
                     eye.UpdateSurfaces();                   
                 }
-            }                  
+            }
+
+            //helper method for updating the client context
+            public void UpdateClient()
+            {
+                DisplayController.UpdateClient();
+            }
+
+            // Culling determines which objects are visible to the camera. OnPreCull is called just before this process.
+            // This gets called because we have a camera component, but we disable the camera here so it doesn't render.
+            // We have the "dummy" camera so existing Unity game code can refer to a MainCamera object.
+            // We update our viewer and eye transforms here because it is as late as possible before rendering happens.
+            // OnPreRender is not called because we disable the camera here.
+            void OnPreCull()
+            {
+                
+                if(!DisplayController.CheckDisplayStartup())
+                {
+                    //leave this preview camera enabled if there is no display config
+                    _camera.enabled = true;
+                }
+                else
+                {
+                    // To save Render time, disable this camera here and re-enable after the frame
+                    // OR, in DirectMode, leave it on for "mirror" mode, although this is an expensive operation
+                    // The long-term solution is to provide a DirectMode preview window in RenderManager
+                    //@todo enable directmode preview in RenderManager
+                    _camera.enabled = DisplayController.UseRenderManager && DisplayController.showDirectModePreview;
+                }
+
+                DoRendering();
+
+                // Flag that we disabled the camera
+                _disabledCamera = true;
+            }
+
+            // The main rendering loop, should be called late in the pipeline, i.e. from OnPreCull
+            // Set our viewer and eye poses and render to each surface.
+            void DoRendering()
+            {
+                // update poses once DisplayConfig is ready
+                if (DisplayController.CheckDisplayStartup())
+                {
+                    // update the viewer's head pose
+                    // @todo Get viewer pose from RenderManager if UseRenderManager = true
+                    // currently getting viewer pose from DisplayConfig always
+                    UpdateViewerHeadPose(GetViewerPose(ViewerIndex));
+
+                    // each viewer updates its eye poses, viewports, projection matrices
+                    UpdateEyes();
+
+                }
+                else
+                {
+                    if (!DisplayController.CheckDisplayStartup())
+                    {
+                        //@todo do something other than not show anything
+                        Debug.LogError("Display Startup failed. Check HMD connection.");
+                    }
+                }
+            }
+
+            // This couroutine is called every frame.
+            IEnumerator EndOfFrame()
+            {
+                while (true)
+                {
+                    //if we disabled the dummy camera, enable it here
+                    if (_disabledCamera)
+                    {
+                        Camera.enabled = true;
+                        _disabledCamera = false;
+                    }
+                    yield return new WaitForEndOfFrame();
+                    if (DisplayController.UseRenderManager && DisplayController.CheckDisplayStartup())
+                    {
+                        // Issue a RenderEvent, which copies Unity RenderTextures to RenderManager buffers
+#if UNITY_5_2 || UNITY_5_3
+                        GL.IssuePluginEvent(DisplayController.RenderManager.GetRenderEventFunction(), OsvrRenderManager.RENDER_EVENT);
+#else
+                        Debug.LogError("GL.IssuePluginEvent failed. This version of Unity is not supported by RenderManager.");
+#endif
+                    }
+
+                }
+            }             
         }
     }
 }
