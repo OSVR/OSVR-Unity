@@ -223,7 +223,19 @@ namespace OSVR
 
                 //create scene objects 
                 CreateHeadAndEyes();
+                SetRenderParams();
                 Camera.cullingMask = 0;
+            }
+
+            //Set RenderManager rendering parameters: near and far clip plane distance and IPD
+            private void SetRenderParams()
+            {
+                if (UseRenderManager && RenderManager != null)
+                {
+                    RenderManager.SetNearClippingPlaneDistance(Camera.main.nearClipPlane);
+                    RenderManager.SetFarClippingPlaneDistance(Camera.main.farClipPlane);
+                    //@todo set IPD as well
+                }
             }
 
             //Set Resolution of the Unity game window based on total surface width
