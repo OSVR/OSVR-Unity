@@ -194,7 +194,6 @@ namespace OSVR
                 //create scene objects 
                 CreateHeadAndEyes();
                 SetRenderParams();
-                Camera.cullingMask = 0;
             }
 
             //Set RenderManager rendering parameters: near and far clip plane distance and IPD
@@ -204,7 +203,7 @@ namespace OSVR
                 {
                     RenderManager.SetNearClippingPlaneDistance(Camera.main.nearClipPlane);
                     RenderManager.SetFarClippingPlaneDistance(Camera.main.farClipPlane);
-                    //@todo set IPD as well
+                    //could set IPD as well
                 }
             }
 
