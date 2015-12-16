@@ -193,6 +193,18 @@ namespace OSVR
 
                 //create scene objects 
                 CreateHeadAndEyes();
+                SetRenderParams();
+            }
+
+            //Set RenderManager rendering parameters: near and far clip plane distance and IPD
+            private void SetRenderParams()
+            {
+                if (UseRenderManager && RenderManager != null)
+                {
+                    RenderManager.SetNearClippingPlaneDistance(Camera.main.nearClipPlane);
+                    RenderManager.SetFarClippingPlaneDistance(Camera.main.farClipPlane);
+                    //could set IPD as well
+                }
             }
 
             //Set Resolution of the Unity game window based on total surface width
@@ -278,7 +290,7 @@ namespace OSVR
                     GameObject vrViewer = new GameObject("VRViewer" + viewerIndex);
                     if (vrViewer.GetComponent<AudioListener>() == null)
                     {
-                        vrViewer.AddComponent<AudioListener>(); //add an audio listener
+                    vrViewer.AddComponent<AudioListener>(); //add an audio listener
                     }
 
                     VRViewer vrViewerComponent = vrViewer.AddComponent<VRViewer>();
@@ -314,16 +326,16 @@ namespace OSVR
             public bool CheckDisplayStartup()
             {
                 return _displayConfigInitialized && DisplayConfig.CheckDisplayStartup();
-            }
+                }
 
             public void ExitRenderManager()
             {
                 if(UseRenderManager && RenderManager != null)
                 {
                     RenderManager.ExitRenderManager();
-                }             
-            }         
-        }
-    }
-}
+                    }
+                        }
+                    }
+                }
+            }
 

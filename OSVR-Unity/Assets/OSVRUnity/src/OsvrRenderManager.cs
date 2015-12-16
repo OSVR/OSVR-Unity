@@ -61,6 +61,15 @@ namespace OSVR
             [DllImport(PluginName, CallingConvention = CallingConvention.Cdecl)]
             private static extern void SetColorBufferFromUnity(System.IntPtr texturePtr, int eye);
 
+            [DllImport(PluginName, CallingConvention = CallingConvention.Cdecl)]
+            private static extern void SetNearClipDistance(double nearClipPlaneDistance);
+
+            [DllImport(PluginName, CallingConvention = CallingConvention.Cdecl)]
+            private static extern void SetFarClipDistance(double farClipPlaneDistance);
+
+            [DllImport(PluginName, CallingConvention = CallingConvention.Cdecl)]
+            private static extern void SetIPD(double ipdMeters);
+
             //Create a RenderManager object in the plugin, passing in a ClientContext
             [DllImport(PluginName, CallingConvention = CallingConvention.Cdecl)]
             private static extern Byte CreateRenderManagerFromUnity(OSVR.ClientKit.SafeClientContextHandle /*OSVR_ClientContext*/ ctx);
@@ -113,6 +122,21 @@ namespace OSVR
                 //create a client context for RenderManager. This context should not be updated from Unity.
                 _renderManagerClientContext = new OSVR.ClientKit.ClientContext("com.sensics.rendermanagercontext", 0);
                 return CreateRenderManager(_renderManagerClientContext);
+            }
+
+            public void SetNearClippingPlaneDistance(float near)
+            {
+                SetNearClipDistance((double)near);
+            }
+
+            public void SetFarClippingPlaneDistance(float far)
+            {
+                SetFarClipDistance((double)far);
+            }
+
+            public void SetIPDMeters(float ipd)
+            {
+                SetIPD((double)ipd);
             }
 
             //Get the pose of a given eye from RenderManager
