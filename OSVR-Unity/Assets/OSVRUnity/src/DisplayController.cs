@@ -58,7 +58,7 @@ namespace OSVR
             //variables for controlling use of osvrUnityRenderingPlugin.dll which enables DirectMode
             private OsvrRenderManager _renderManager;
             private bool _useRenderManager = false; //requires Unity 5.2+ and RenderManager configured osvr server
-            public bool UseRenderManager { get { return _useRenderManager; } }
+            public bool UseRenderManager { get { return _useRenderManager; } set { _useRenderManager = value; } }
 
             public OSVR.ClientKit.DisplayConfig DisplayConfig
             {
