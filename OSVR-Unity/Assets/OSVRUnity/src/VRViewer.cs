@@ -144,7 +144,10 @@ namespace OSVR
                 {                   
                     //update the eye pose
                     VREye eye = Eyes[eyeIndex];
-                    if (DisplayController.UseRenderManager)
+                    //get eye pose from DisplayConfig
+                    //@todo fix bug with poses coming from RenderManager
+                    eye.UpdateEyePose(_displayController.DisplayConfig.GetViewerEyePose(ViewerIndex, (byte)eyeIndex));
+                    /*if (DisplayController.UseRenderManager)
                     { 
                         //get eye pose from RenderManager                     
                         eye.UpdateEyePose(DisplayController.RenderManager.GetRenderManagerEyePose((byte)eyeIndex));
@@ -153,7 +156,7 @@ namespace OSVR
                     {
                         //get eye pose from DisplayConfig
                         eye.UpdateEyePose(_displayController.DisplayConfig.GetViewerEyePose(ViewerIndex, (byte)eyeIndex));
-                    }
+                    }*/
                         
 
                     // update the eye's surfaces, includes call to Render
