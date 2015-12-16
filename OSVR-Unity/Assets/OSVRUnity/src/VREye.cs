@@ -83,7 +83,9 @@ namespace OSVR
             public void UpdateEyePose(OSVR.ClientKit.Pose3 eyePose)
             { 
                 cachedTransform.localPosition = Math.ConvertPosition(eyePose.translation);
-                cachedTransform.localRotation = Viewer.DisplayController.UseRenderManager ? Math.ConvertOrientationFromRenderManager(eyePose.rotation) : Math.ConvertOrientation(eyePose.rotation);
+                //cachedTransform.localRotation = Viewer.DisplayController.UseRenderManager ? Math.ConvertOrientationFromRenderManager(eyePose.rotation) : Math.ConvertOrientation(eyePose.rotation);
+                //@todo use DisplayConfig path until RenderManager EyePose bug is fixed
+                cachedTransform.localRotation = Math.ConvertOrientation(eyePose.rotation);
             }
 
             //For each Surface, update viewing parameters and render the surface
