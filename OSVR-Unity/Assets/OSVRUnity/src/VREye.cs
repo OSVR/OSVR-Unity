@@ -108,6 +108,9 @@ namespace OSVR
 
                         //get projection matrix from RenderManager and set surface projection matrix
                         surface.SetProjectionMatrix(Viewer.DisplayController.RenderManager.GetEyeProjectionMatrix((int)EyeIndex));
+                   
+                        surface.Render();
+                        surface.SetActiveRenderTexture();
                     }
                     else
                     {
@@ -131,15 +134,6 @@ namespace OSVR
                         surface.Render();
                     }                           
 
-                    if(Viewer.DisplayController.UseRenderManager)
-                    {
-                        surface.Render();
-                        surface.SetActiveRenderTexture();
-                    }
-                    else
-                    {
-                        surface.Render();
-                    }
                 }
             }
 
