@@ -165,11 +165,20 @@ namespace OSVR
                 //but this implementation currently supports exactly one
                 for (uint surfaceIndex = 0; surfaceIndex < surfaceCount; surfaceIndex++)
                 {
-                    GameObject surfaceGameObject = new GameObject("Surface");
+                    Viewer.DisplayController.enabled = false; // Disable so it doesn't get ran when we instantiate below
+                    GameObject surfaceGameObject = Instantiate(Viewer.DisplayController.gameObject);
+                    surfaceGameObject.name = "Surface";
+                    Destroy(surfaceGameObject.GetComponent<DisplayController>());
+                    Viewer.DisplayController.enabled = true;
+                    // Remove unneeded children from instantiated GameObject
+                    foreach (Transform child in surfaceGameObject.transform)
+                    {
+                        GameObject.Destroy(child.gameObject);
+                    }
+
                     VRSurface surface = surfaceGameObject.AddComponent<VRSurface>();
                     surface.Eye = this;
                     surface.Camera = surfaceGameObject.GetComponent<Camera>(); //VRSurface has camera component by default
-                    CopyCamera(Viewer.Camera, surface.Camera); //copy camera properties from the "dummy" camera to surface camera
                     surface.Camera.enabled = false; //disabled so we can control rendering manually
                     surfaceGameObject.transform.parent = this.transform; //surface is child of Eye
                     surfaceGameObject.transform.localPosition = Vector3.zero;
@@ -203,17 +212,7 @@ namespace OSVR
                         }
                     }             
                 }
-            }
-
-            //helper method that copies camera properties from one camera to another
-            //copies from srcCamera to destCamera
-            private void CopyCamera(Camera srcCamera, Camera destCamera)
-            {
-                //Copy the camera properties.
-                destCamera.CopyFrom(srcCamera);
-                destCamera.depth = 0;
-                //@todo Copy other components attached to the DisplayController?
-            }           
+            } 
         }
     }
 }
