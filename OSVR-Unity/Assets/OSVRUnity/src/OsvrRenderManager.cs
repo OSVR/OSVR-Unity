@@ -142,7 +142,11 @@ namespace OSVR
             //Get the pose of a given eye from RenderManager
             public OSVR.ClientKit.Pose3 GetRenderManagerEyePose(int eye)
             {
-                return GetEyePose(eye);
+                OSVR.ClientKit.Pose3 pose = GetEyePose(eye);
+                pose.translation.x = -pose.translation.x;
+                pose.translation.y = -pose.translation.y;
+                pose.translation.z = -pose.translation.z;
+                return pose;
             }
 
             //Get the viewport of a given eye from RenderManager
