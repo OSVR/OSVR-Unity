@@ -45,11 +45,6 @@ namespace OSVR
                 /// Wikipedia may say quaternions are not handed, but these needed modification.
                 return new Quaternion(-(float)quat.x, -(float)quat.y, (float)quat.z, (float)quat.w);
             }
-            public static Quaternion ConvertOrientationFromRenderManager(OSVR.ClientKit.Quaternion quat)
-            {
-                /// Wikipedia may say quaternions are not handed, but these needed modification.
-                return new Quaternion((float)quat.x, (float)quat.y, -(float)quat.z, (float)quat.w);
-            }
 
             public static Matrix4x4 ConvertPose(OSVR.ClientKit.Pose3 pose)
             {
