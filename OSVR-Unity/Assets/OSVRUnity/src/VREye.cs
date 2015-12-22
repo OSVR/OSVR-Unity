@@ -81,9 +81,25 @@ namespace OSVR
             // Updates the position and rotation of the eye
             // Optionally, update the viewer associated with this eye
             public void UpdateEyePose(OSVR.ClientKit.Pose3 eyePose)
-            { 
-                cachedTransform.localPosition = Math.ConvertPosition(eyePose.translation);
-                cachedTransform.localRotation = Viewer.DisplayController.UseRenderManager ? Math.ConvertOrientationFromRenderManager(eyePose.rotation) : Math.ConvertOrientation(eyePose.rotation);
+            {
+                // Convert from OSVR space into Unity space.
+                Vector3 pos = Math.ConvertPosition(eyePose.translation);
+                Quaternion rot = Math.ConvertOrientation(eyePose.rotation);
+
+                // RenderManager produces the eyeFromSpace matrix, but
+                // Unity wants the inverse of that.
+                if (Viewer.DisplayController.UseRenderManager)
+                {
+                    // Invert the transformation
+                    cachedTransform.localRotation = Quaternion.Inverse(rot);
+                    Vector3 invPos = -pos;
+                    cachedTransform.localPosition = Quaternion.Inverse(rot) * invPos;
+                }
+                else
+                {
+                    cachedTransform.localPosition = pos;
+                    cachedTransform.localRotation = rot;
+                }
             }
 
             //For each Surface, update viewing parameters and render the surface
