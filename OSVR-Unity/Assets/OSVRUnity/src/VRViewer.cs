@@ -103,6 +103,7 @@ namespace OSVR
                     eye.EyeIndex = eyeIndex; //set the eye's index
                     eyeGameObject.transform.parent = DisplayController.transform; //child of DisplayController
                     eyeGameObject.transform.localPosition = Vector3.zero;
+                    eyeGameObject.transform.rotation = this.transform.rotation;
                     _eyes[eyeIndex] = eye;
                     uint eyeSurfaceCount = DisplayController.DisplayConfig.GetNumSurfacesForViewerEye(ViewerIndex, (byte)eyeIndex);
                     eye.CreateSurfaces(eyeSurfaceCount);
