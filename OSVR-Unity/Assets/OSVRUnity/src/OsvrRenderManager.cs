@@ -108,6 +108,7 @@ namespace OSVR
             private static extern void ShutdownRenderManager();
 
             private OSVR.ClientKit.ClientContext _renderManagerClientContext;
+            private ClientKit _clientKit;
             private bool _linkDebug = false; //causes crash on exit if true, only enable for debugging
 
             //Initialize use of RenderManager via CreateRenderManager call
@@ -119,6 +120,7 @@ namespace OSVR
                     //only use for debugging purposes, do not leave on for release.
                     LinkDebug(functionPointer); // Hook our c++ plugin into Unity's console log.
                 }
+                _clientKit = FindObjectOfType<ClientKit>();
                 //create a client context for RenderManager. This context should not be updated from Unity.
                 _renderManagerClientContext = new OSVR.ClientKit.ClientContext("com.sensics.rendermanagercontext", 0);
                 return CreateRenderManager(_renderManagerClientContext);
@@ -137,6 +139,24 @@ namespace OSVR
             public void SetIPDMeters(float ipd)
             {
                 SetIPD((double)ipd);
+            }
+
+            //"Recenter" based on current head orientation
+            public void SetRoomRotationUsingHead()
+            {
+#if UNITY_5_2 || UNITY_5_3
+                _clientKit.context.SetRoomRotationUsingHead();
+                GL.IssuePluginEvent(GetRenderEventFunc(), 3);
+#endif
+            }
+
+            //Clear the room-to-world transform, undo a call to SetRoomRotationUsingHead
+            public void ClearRoomToWorldTransform()
+            {
+#if UNITY_5_2 || UNITY_5_3
+                _clientKit.context.ClearRoomToWorldTransform();
+                GL.IssuePluginEvent(GetRenderEventFunc(), 4);
+#endif
             }
 
             //Get the pose of a given eye from RenderManager
