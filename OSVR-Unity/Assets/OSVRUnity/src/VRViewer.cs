@@ -215,13 +215,7 @@ namespace OSVR
             IEnumerator EndOfFrame()
             {
                 while (true)
-                {
-                    //if we disabled the dummy camera, enable it here
-                    if (_disabledCamera)
-                    {
-                        Camera.enabled = true;
-                        _disabledCamera = false;
-                    }
+                {                  
                     yield return new WaitForEndOfFrame();
                     if (DisplayController.UseRenderManager && DisplayController.CheckDisplayStartup())
                     {
@@ -237,6 +231,12 @@ namespace OSVR
                         Debug.LogError("GL.IssuePluginEvent failed. This version of Unity cannot support RenderManager.");
                         DisplayController.UseRenderManager = false;
 #endif
+                    }
+                    //if we disabled the dummy camera, enable it here
+                    if (_disabledCamera)
+                    {
+                        Camera.enabled = true;
+                        _disabledCamera = false;
                     }
 
                 }
