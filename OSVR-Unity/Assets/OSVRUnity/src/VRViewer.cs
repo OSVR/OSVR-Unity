@@ -176,20 +176,8 @@ namespace OSVR
             // OnPreRender is not called because we disable the camera here.
             void OnPreCull()
             {
-                
-                if(!DisplayController.CheckDisplayStartup())
-                {
-                    //leave this preview camera enabled if there is no display config
-                    _camera.enabled = true;
-                }
-                else
-                {
-                    // To save Render time, disable this camera here and re-enable after the frame
-                    // OR, in DirectMode, leave it on for "mirror" mode, although this is an expensive operation
-                    // The long-term solution is to provide a DirectMode preview window in RenderManager
-                    //@todo enable directmode preview in RenderManager
-                    _camera.enabled = DisplayController.UseRenderManager && DisplayController.showDirectModePreview;
-                }
+                //leave the preview camera enabled if there is no display config
+                _camera.enabled = !DisplayController.CheckDisplayStartup();
 
                 DoRendering();
 
@@ -239,7 +227,12 @@ namespace OSVR
                     {
                         // Issue a RenderEvent, which copies Unity RenderTextures to RenderManager buffers
 #if UNITY_5_2 || UNITY_5_3
-                        GL.IssuePluginEvent(DisplayController.RenderManager.GetRenderEventFunction(), OsvrRenderManager.RENDER_EVENT);
+                        GL.Clear(false, true, Camera.backgroundColor);
+                        GL.IssuePluginEvent(DisplayController.RenderManager.GetRenderEventFunction(), OsvrRenderManager.RENDER_EVENT); 
+                        if(DisplayController.showDirectModePreview)
+                        {
+                            Camera.Render();
+                        }                      
 #else
                         Debug.LogError("GL.IssuePluginEvent failed. This version of Unity cannot support RenderManager.");
                         DisplayController.UseRenderManager = false;
