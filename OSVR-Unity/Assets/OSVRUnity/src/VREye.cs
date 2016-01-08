@@ -193,6 +193,7 @@ namespace OSVR
                         surfaceGameObject.name = "VRSurface" + surfaceIndex;
                         surface.Eye = this;
                         surface.Camera = surfaceGameObject.GetComponent<Camera>(); //VRSurface has camera component by default
+                        //don't copy from the main camera if the VRSurface already existed before runtime
                         //CopyCamera(Viewer.Camera, surface.Camera); //copy camera properties from the "dummy" camera to surface camera
                         surface.Camera.enabled = false; //disabled so we can control rendering manually
                         surface.SurfaceIndex = surfaceIndex; //set the surface index
