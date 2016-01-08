@@ -40,7 +40,9 @@ namespace OSVR
             private uint _surfaceIndex; //index in the eye's VRSurface array
             private VREye _eye; //the eye that this surface controls rendering for
             private OSVR.ClientKit.Viewport _viewport;
+            [HideInInspector]
             public Texture2D PluginTexture;
+            [HideInInspector]
             public RenderTexture RenderToTexture;
             private Color[] m_Pixels;
             private GCHandle m_PixelsHandle;
