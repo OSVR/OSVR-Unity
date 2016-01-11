@@ -33,6 +33,10 @@ This contains the source project used to generate `.unitypackage` files, since t
 - `unity-generate.lua` - Generates some very repetitive code wrapping the raw C-style pinvoke callbacks in something more .NET-idiomatic. It can be run with any reasonably recent version of a Lua interpreter, and its output should be placed into `OSVR-Unity/Assets/OSVRUnity/src/InterfaceCallbacks.cs` in the designated area (see comments in that file)
 - `third-party/discount-2.1.6-win32` - This contains binaries of a liberally-licensed Markdown-compatible file formatter, used by CI (specifically `prep-package.cmd`) to generate HTML documentation from the markdown files in OSVR-Unity.
 
+## Demonstration video
+
+Video showing how to integrate OSVR into Unity project can be seen here: <https://youtu.be/TtLn6XpEisw>
+
 ## License
 
 This project: Licensed under the Apache License, Version 2.0.
