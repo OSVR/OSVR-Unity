@@ -19,49 +19,62 @@ When using OSVR, you need to run OSVR server. Download the latest OSVR-Core bina
 Note that the Unity Asset Store version may be slightly behind the Github version, but that currently, the Unity Asset Store version contains additional DLLs for RenderManager that are not contained in the OSVR-Unity.unitypackage distributed on Github (these DLLs are available in the OSVR-Unity examples project, however).
 
 Let’s examine the /bin directory of an extracted OSVR-Core binary snahpshot:
-(picture)
 
-osvr_server.exe will launch the OSVR Server. By default, it uses osvr_server_config.json as a configuration file. Since the configuration file is crucial to enabling functionality in OSVR, we will explore it in more detail later.
+![OSVR-Core snapshot bin](https://github.com/OSVR/OSVR-Unity/blob/gettingStartedDocs/images/osvr_snapshot_bin.png?raw=true)
 
-First, launch osvr_server.exe, if you see this message:
-(picture)
+**osvr_server.exe** will launch the OSVR Server. By default, it uses **osvr_server_config.json** as a configuration file. Since the configuration file is crucial to enabling functionality in OSVR, we will explore it in more detail later.
+
+First, launch **osvr_server.exe**, if you see this message:
+
+![osvr_server no hmd](https://github.com/OSVR/OSVR-Unity/blob/gettingStartedDocs/images/osvr_server_nohmd.png?raw=true)
+
 
 Then no hardware has been discovered. This document will assume you’re using an HDK. If you need help with HDK setup, please visit the HDK Unboxing and Starting Guide: https://github.com/OSVR/OSVR-General/wiki/HDK-Unboxing-and-Getting-Started
 
 This message shows that the server has found an HDK:
-(picture)
+
+![osvr_server found HDK](https://github.com/OSVR/OSVR-Unity/blob/gettingStartedDocs/images/osvr_server_foundhdk.png?raw=true)
 
 ## Tracker View
 
 The Tracker View utility (avaialable from http://osvr.github.io/using/) is helpful for quickly checking if tracking is working as expected. It shows the position and orientation of tracked objects. Here we see the orientation of the HDK without positional tracking. Z (blue) points towards the back of the head, Y (green) up, and X (red) to the right.
-(picture)
+
+![Tracker View no positional](https://github.com/OSVR/OSVR-Unity/blob/gettingStartedDocs/images/tracker_view_nopos.png?raw=true)
 
 ## Getting Started with OSVR-Unity
 Let’s examine the OSVR-Unity plugin. 
-- Download the latest Unity snapshot build from http://osvr.github.io/build-with/.
-- Create a new Unity 5.3 project.
-- Import OSVR-Unity.unitypackage into the project.
-- Open VRFirstPerson.unity scene.
+* Download the latest Unity snapshot build from http://osvr.github.io/build-with/.
+* Create a new Unity 5.3 project.
+* Import OSVR-Unity.unitypackage into the project.
+* Open VRFirstPerson.unity scene.
 
 This scene demonstrates a first-person controller VR setup. Let’s examine some of the objects in the scene hierarchy:
 
 ### ClientKit
 The ClientKit object communicates with OSVR Server and must be in every scene. It requires an app ID, which can be any string identifier.
-(picture)
+
+![OSVR-Unity ClientKit](https://github.com/OSVR/OSVR-Unity/blob/gettingStartedDocs/images/osvr_unity_clientkit.png?raw=true)
 
 ### VRDisplayTracked
 This prefab contains a DisplayController component, which constructs our tracked camera rig at runtime.
-(picture)
+
+![OSVR-Unity VRDisplayTracked](https://github.com/OSVR/OSVR-Unity/blob/gettingStartedDocs/images/osvr_unity_vrdisplaytracked.png?raw=true)
 
 Press Play. The stereo camera rig is created at runtime and updates its orientation as the HDK moves around. With my HDK connected as an extended display, I can click-and-drag the Game View to the HDK display and select Maximize on Play to view the game in VR.
-(picture)
+
+
+![OSVR-Unity SBS](https://github.com/OSVR/OSVR-Unity/blob/gettingStartedDocs/images/osvr_unity_sbs.png?raw=true)
 
 ### Recenter
-(picture)
-The SetRoomRotationUsingHead script “recenters” the room when a key is pressed (“R” by default in this sample), so that your head is facing the forward direction. There is another key (“U” by default in this sample) for undoing that rotation.
+
+![OSVR-Unity Recenter](https://github.com/OSVR/OSVR-Unity/blob/gettingStartedDocs/images/osvr_unity_recenter.png?raw=true)
+
+The **SetRoomRotationUsingHead** script “recenters” the room when a key is pressed (“R” by default in this sample), so that your head is facing the forward direction. There is another key (“U” by default in this sample) for undoing that rotation.
 
 ### VRFirstPersonController
-(picture)
+
+![OSVR-Unity FPS Controller](https://github.com/OSVR/OSVR-Unity/blob/gettingStartedDocs/images/osvr_unity_fpc.png?raw=true)
+
 This prefab provides very similar controls to the Unity first-person controller scripts. Mouse-look can be controlled with the “M” key, by default.
 
 That covers the basics! There are examples of tracked controllers, eyetrackers, and locomotion in other example scenes (see TrackerView.unity). If you want to enable features like positional tracking and Direct Mode rendering, that all happens in the server configuration file.
@@ -69,24 +82,32 @@ That covers the basics! There are examples of tracked controllers, eyetrackers, 
 ## OSVR Server Configuration - Adding Positional Tracking and RenderManager 
 Want to enable positional tracking? Enable DirectMode rendering support? Use a device plugin? All of this requires some setup in your server configuration file. Many sample configuration files are provided in the sample-configs directory of the Core Snapshot. Some devices, such as the Hacker Development Kit (HDK) and Razer Hydra can be auto-detected and will work with a default (empty) config file.
 
-osvr_server.exe can be run from the command line with an optional parameter for the server config file. If no parameter is specified, osvr_server_config.json will be used instead. Since the HDK is detected automatically, we don’t need to edit osvr_server_config.json in order to obtain tracking data from the HDK. If we want to enable positional tracking, however, we’ll need to edit the config file.
+**osvr_server.exe** can be run from the command line with an optional parameter for the server config file. If no parameter is specified, **osvr_server_config.json** will be used instead. Since the HDK is detected automatically, we don’t need to edit **osvr_server_config.json** in order to obtain tracking data from the HDK. If we want to enable positional tracking, however, we’ll need to edit the config file.
 
-Copy the contents of osvr_server_config.HDK13DirectMode.sample.json into osvr_server_config.json.
-(picture)
+Copy the contents of **osvr_server_config.HDK13DirectMode.sample.json** into **osvr_server_config.json**.
 
-Let’s examine our new osvr_server_config.json:
-(picutre)
+![OSVR Snapshot sample-configs](https://github.com/OSVR/OSVR-Unity/blob/gettingStartedDocs/images/osvr_snapshot_sampleconfigs.png?raw=true)
+
+Let’s examine our new **osvr_server_config.json**:
+
+![osvr_server_config](https://github.com/OSVR/OSVR-Unity/blob/gettingStartedDocs/images/osvr_server_config_pos_rm.png?raw=true)
+
 These two lines determine which HMD display to use, and which RenderManager config file to use. If you didn’t want positional tracking, these are the only two lines you need to enable RenderManager with the HDK 1.3.
-(picture)
+
+![osvr_server_config snippet](https://github.com/OSVR/OSVR-Unity/blob/gettingStartedDocs/images/osvr_server_config_pos_rm_snippet.png?raw=true)
+
 The rest of the file deals with video-based tracking and sensor fusion. There are options for showing a camera debug view (impacts game performance if this is running in the background), enabling or disabling the LEDs located on the back of the head-strap, changing head circumference, and selecting a calibration file.
-(picture)
+
+![osvr_server_config positional](https://github.com/OSVR/OSVR-Unity/blob/gettingStartedDocs/images/osvr_server_config_pos.png?raw=true)
 
 ## Positional Tracking - Calibration
 You’ll want to calibrate the camera before using positional tracking, and every time the camera moves. For a full guide on calibration, visit: https://github.com/OSVR/OSVR-Core/wiki/Video-Based-Tracking-Calibration
 
 ### Tracker View - Positional Tracking
 Let’s run the server and check Tracker View again to see if we’re getting positional tracking.
-(picture)
+
+![Tracker View Positional](https://github.com/OSVR/OSVR-Unity/blob/gettingStartedDocs/images/tracker_view_pos.png?raw=true)
+
 Yes! The gizmo is no longer fixed at the origin, and moves around with the HMD. 
 
 ## RenderManager
@@ -95,10 +116,10 @@ For a more information about RenderManager, including an overview of configurati
 
 ### Enabling RenderManager in Unity
 The following additional DLLs are required in Assets/Plugins/x86_64:
-- glew32.dll
-- SDL2.dll
-- osvrUnityRenderingPlugin.dll -- built from https://github.com/OSVR/OSVR-Unity-Rendering
-- osvrRenderManager.dll
+* glew32.dll
+* SDL2.dll
+* osvrUnityRenderingPlugin.dll -- built from https://github.com/OSVR/OSVR-Unity-Rendering
+* osvrRenderManager.dll
 
 The easiest way to obtain working binaries is to copy them over from one of the example projects Assets/Plugins/x86_64 folders:
 https://github.com/OSVR/Unity-VR-Samples/tree/master/Assets/Plugins/x86_64
@@ -110,12 +131,14 @@ Going back to our original Unity project, if we update our Plugins folder with t
 
 ### Direct Mode Preview
 You can see the game view mirrors the HDK display because the “Show Direct Mode Preview” option is checked on the VRDisplaytTracked prefab. It is a rather suboptimal implementation of mirror mode, and will soon be replaced by an equivalent RenderManager feature.
-(picutre)
+
+![OSVR-Unity Direct Mode Preview](https://github.com/OSVR/OSVR-Unity/blob/gettingStartedDocs/images/osvr_unity_directmode_preview.png?raw=true)
 
 ### Optimizing RenderManager in Unity
 There are a number of configuration options available when using RenderManager. We’ve found that settings may vary per application, so developers should experiment until an acceptable balance of visual quality and fast rendering is achieved. Generally, the configuration below is a good starting point. See the RenderManager document for more information: 
 (link)
-(picture)
+
+![OSVR-Unity RenderManager Config](https://github.com/OSVR/OSVR-Unity/blob/gettingStartedDocs/images/osvr_rendermanager_config.png?raw=true)
 
 ### Troubleshooting RenderManager in Unity
 If you see a “failed to load RenderManager” message print to the Unity debug console or output log, try running the RenderManager example programs from a command line to see the output.
@@ -123,22 +146,30 @@ If you see a “failed to load RenderManager” message print to the Unity debug
 If you get an error that says something like “Could not open display (are you whitelisted?)” Try running the whitelist_OSVR.reg file for HDK 1.3, whitelist_OSVRPre.reg for HDK 1.2 or earlier, or whitelist_Vuzix.reg for Vuzix devices, then restart the computer.
 
 If you see this error, then the server isn’t configured for RenderManager.
-(picture)
+
+![No RenderManager Config](https://github.com/OSVR/OSVR-Unity/blob/gettingStartedDocs/images/osvr_server_norendermanager.png?raw=true)
+
 If the example programs work in direct mode, but Unity still fails to load RenderManager, make sure all DLLs are up to date. It is best to close Unity, replace the DLLs in Windows Explorer, and re-open Unity so that the new libraries are loaded.
 
 ## Quality Settings
 Quality settings will differ per machine/graphics card capabilities. Make sure V Sync Count is set to Don’t Sync. Otherwise, we generally recommend that using as much antialiasing as can be afforded without negatively affecting performance. Disable shadows unless your game mechanics demand it. Use Lightmapping instead of real-time lights. Use occlusion culling.
-(picture)
+
+![OSVR-Unity Quality Settings](https://github.com/OSVR/OSVR-Unity/blob/gettingStartedDocs/images/osvr_unity_quality.png?raw=true)
 
 ## Player Settings
 Generally, use Static and Dynamic batching to reduce draw calls. Note that the “Virtual Reality Supported” checkbox does not need to be checked, since Unity currently only supports Oculus and GearVR with this feature. Leaving it checked should not impact OSVR performance, but you will see a “[VRDevice] Initialization of device oculus failed” message that can be ignored.
-(picture)
+
+![OSVR-Unity Player Settings](https://github.com/OSVR/OSVR-Unity/blob/gettingStartedDocs/images/osvr_unity_player.png?raw=true)
 
 ## Building for Android
 Building an OSVR Android app requires libraries from https://github.com/OSVR/OSVR-Android-SDK.
 
 Copy the .so files to the Assets/Plugins/libs/armeabi-v7a folder:
-(picture)
+
+![OSVR-Unity Android Libs](https://github.com/OSVR/OSVR-Unity/blob/gettingStartedDocs/images/osvr_unity_androidlibs.png?raw=true)
+
 Make sure your project is set to build for Android:
-(picture)
-In this case, OSVR server is built into the app and should run automatically at startup.
+
+![OSVR-Unity Android Build](https://github.com/OSVR/OSVR-Unity/blob/gettingStartedDocs/images/osvr_unity_androidbuild.png?raw=true)
+
+Please visit this page for running the OSVR Android Server Launcher app: https://github.com/OSVR/OSVR-AndroidServerLauncher
