@@ -1,4 +1,6 @@
 # OSVR-Unity
+
+[![Join the chat at https://gitter.im/OSVR/OSVR-Unity](https://badges.gitter.im/OSVR/OSVR-Unity.svg)](https://gitter.im/OSVR/OSVR-Unity?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 > Maintained at <https://github.com/OSVR/OSVR-Unity>
 >
 > For details, see <http://osvr.github.io>
