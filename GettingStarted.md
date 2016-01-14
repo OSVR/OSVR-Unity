@@ -111,8 +111,7 @@ Let’s run the server and check Tracker View again to see if we’re getting po
 Yes! The gizmo is no longer fixed at the origin, and moves around with the HMD. 
 
 ## RenderManager
-For a more information about RenderManager, including an overview of configuration options, visit: 
-(link)
+For a more information about RenderManager, including an overview of configuration options, visit: https://github.com/OSVR/OSVR-Unity-Rendering/blob/master/README.md
 
 ### Enabling RenderManager in Unity
 The following additional DLLs are required in Assets/Plugins/x86_64:
@@ -135,8 +134,7 @@ You can see the game view mirrors the HDK display because the “Show Direct Mod
 ![OSVR-Unity Direct Mode Preview](https://github.com/OSVR/OSVR-Unity/blob/gettingStartedDocs/images/osvr_unity_directmode_preview.png?raw=true)
 
 ### Optimizing RenderManager in Unity
-There are a number of configuration options available when using RenderManager. We’ve found that settings may vary per application, so developers should experiment until an acceptable balance of visual quality and fast rendering is achieved. Generally, the configuration below is a good starting point. See the RenderManager document for more information: 
-(link)
+There are a number of configuration options available when using RenderManager. We’ve found that settings may vary per application, so developers should experiment until an acceptable balance of visual quality and fast rendering is achieved. Generally, the configuration below is a good starting point. See the RenderManager document for more information: https://github.com/OSVR/OSVR-Unity-Rendering/blob/master/README.md
 
 ![OSVR-Unity RenderManager Config](https://github.com/OSVR/OSVR-Unity/blob/gettingStartedDocs/images/osvr_rendermanager_config.png?raw=true)
 
