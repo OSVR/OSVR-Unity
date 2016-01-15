@@ -13,7 +13,7 @@ The Unity integration is based on the [Managed-OSVR][] .NET binding for OSVR, wh
 [Managed-OSVR]: https://github.com/OSVR/Managed-OSVR
 
 ## OSVR Unity Integration
-[Step-by-step getting started guide](OSVR-Unity/blob/master/GettingStarted.md)
+[Step-by-step getting started guide](https://github.com/OSVR/OSVR-Unity/blob/master/GettingStarted.md)
 
 The development "project" for Unity is in the `OSVR-Unity` directory. We are currently maintaining support for 4.6.1 as well as 5.x in the same tree, so be aware of that if you're using a newer version that you don't break the older version. (You can parallel-install different versions of Unity, you just need to specify a different install directory). This is the project used to generate the `.unitypackage` file (there is an editor script that does it for the CI's sake).
 
