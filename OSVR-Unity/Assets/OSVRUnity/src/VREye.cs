@@ -35,6 +35,10 @@ namespace OSVR
         {
             public const int NUM_SURFACES = 1;
 
+            //create an event for notifying when Surfaces are created
+            public delegate void VRSurfaceCreated(VRSurface surface);
+            public static event VRSurfaceCreated OnVRSurfaceCreated;
+
             #region Private Variables           
             private VRViewer _viewer; //the viewer associated with this eye
             private VRSurface[] _surfaces; //the surfaces associated with this eye
@@ -215,7 +219,13 @@ namespace OSVR
                             RenderTexture renderTexture = new RenderTexture(surface.Viewport.Width, surface.Viewport.Height, 24, RenderTextureFormat.Default);
                             surface.SetRenderTexture(renderTexture);
                         }
-                    }             
+                    }
+
+                    //Fire the VRSurfaceCreated event
+                    if (OnVRSurfaceCreated != null)
+                    {
+                        OnVRSurfaceCreated(surface);
+                    }                        
                 }
             }
 
