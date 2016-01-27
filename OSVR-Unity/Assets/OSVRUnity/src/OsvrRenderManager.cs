@@ -144,7 +144,7 @@ namespace OSVR
             //"Recenter" based on current head orientation
             public void SetRoomRotationUsingHead()
             {
-#if UNITY_5_2 || UNITY_5_3
+#if UNITY_5_2 || UNITY_5_3 || UNITY_5_4
                 _clientKit.context.SetRoomRotationUsingHead();
                 GL.IssuePluginEvent(GetRenderEventFunc(), 3);
 #endif
@@ -153,7 +153,7 @@ namespace OSVR
             //Clear the room-to-world transform, undo a call to SetRoomRotationUsingHead
             public void ClearRoomToWorldTransform()
             {
-#if UNITY_5_2 || UNITY_5_3
+#if UNITY_5_2 || UNITY_5_3 || UNITY_5_4
                 _clientKit.context.ClearRoomToWorldTransform();
                 GL.IssuePluginEvent(GetRenderEventFunc(), 4);
 #endif
