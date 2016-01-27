@@ -175,16 +175,69 @@ namespace OSVR
                         "this implementation requires exactly one surface per eye.");
                     return;
                 }
+
+                uint surfaceIndex = 0;
+                uint foundSurfaces = 0;
+
+                //Check if there are already VRSurfaces in the hierarchy.
+                //If so, use them instead of creating a new gameobjects
+                VRSurface[] eyeSurfaces = GetComponentsInChildren<VRSurface>();
+                foundSurfaces = (uint)eyeSurfaces.Length;
+                if (eyeSurfaces != null && foundSurfaces > 0)
+                {
+                    for (surfaceIndex = 0; surfaceIndex < eyeSurfaces.Length; surfaceIndex++)
+                    {
+                        VRSurface surface = eyeSurfaces[surfaceIndex];
+                        // get the VRSurface gameobject
+                        GameObject surfaceGameObject = surface.gameObject;
+                        surfaceGameObject.name = "VRSurface" + surfaceIndex;
+                        surface.Eye = this;
+                        surface.Camera = surfaceGameObject.GetComponent<Camera>(); //VRSurface has camera component by default
+                        //don't copy from the main camera if the VRSurface already existed before runtime
+                        //CopyCamera(Viewer.Camera, surface.Camera); //copy camera properties from the "dummy" camera to surface camera
+                        surface.Camera.enabled = false; //disabled so we can control rendering manually
+                        surface.SurfaceIndex = surfaceIndex; //set the surface index
+                        surfaceGameObject.transform.localPosition = Vector3.zero;
+                        surfaceGameObject.transform.rotation = this.transform.rotation;
+                        Surfaces[surfaceIndex] = surface;
+
+                        //distortion
+                        bool useDistortion = Viewer.DisplayController.DisplayConfig.DoesViewerEyeSurfaceWantDistortion(Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex);
+                        if (useDistortion)
+                        {
+                            //@todo figure out which type of distortion to use
+                            //right now, there is only one option, SurfaceRadialDistortion
+                            //get distortion parameters
+                            OSVR.ClientKit.RadialDistortionParameters distortionParameters =
+                            Viewer.DisplayController.DisplayConfig.GetViewerEyeSurfaceRadialDistortion(
+                            Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex);                    
+                            surface.SetDistortion(distortionParameters);
+                        }
+
+                        //render manager
+                        if (Viewer.DisplayController.UseRenderManager)
+                        {
+                            surface.SetViewport(Viewer.DisplayController.RenderManager.GetEyeViewport((int)EyeIndex));
+
+                            //create a RenderTexture for this eye's camera to render into
+                            RenderTexture renderTexture = new RenderTexture(surface.Viewport.Width, surface.Viewport.Height, 24, RenderTextureFormat.Default);
+                            surface.SetRenderTexture(renderTexture);
+                        }
+                    }
+                }
+
+
                 //loop through surfaces because at some point we could support eyes with multiple surfaces
                 //but this implementation currently supports exactly one
-                for (uint surfaceIndex = 0; surfaceIndex < surfaceCount; surfaceIndex++)
+                for (; surfaceIndex < surfaceCount; surfaceIndex++)
                 {
-                    GameObject surfaceGameObject = new GameObject("Surface");
+                    GameObject surfaceGameObject = new GameObject("VRSurface" + surfaceIndex);
                     VRSurface surface = surfaceGameObject.AddComponent<VRSurface>();
                     surface.Eye = this;
                     surface.Camera = surfaceGameObject.GetComponent<Camera>(); //VRSurface has camera component by default
                     CopyCamera(Viewer.Camera, surface.Camera); //copy camera properties from the "dummy" camera to surface camera
                     surface.Camera.enabled = false; //disabled so we can control rendering manually
+                    surface.SurfaceIndex = surfaceIndex; //set the surface index
                     surfaceGameObject.transform.parent = this.transform; //surface is child of Eye
                     surfaceGameObject.transform.localPosition = Vector3.zero;
                     Surfaces[surfaceIndex] = surface;
@@ -206,15 +259,12 @@ namespace OSVR
                     //render manager
                     if(Viewer.DisplayController.UseRenderManager)
                     {
-                        if(surface.GetRenderTexture() == null)
-                        {
-                            //Set the surfaces viewport from RenderManager
-                            surface.SetViewport(Viewer.DisplayController.RenderManager.GetEyeViewport((int)EyeIndex));
+                        //Set the surfaces viewport from RenderManager
+                        surface.SetViewport(Viewer.DisplayController.RenderManager.GetEyeViewport((int)EyeIndex));
 
-                            //create a RenderTexture for this eye's camera to render into
-                            RenderTexture renderTexture = new RenderTexture(surface.Viewport.Width, surface.Viewport.Height, 24, RenderTextureFormat.Default);
-                            surface.SetRenderTexture(renderTexture);
-                        }
+                        //create a RenderTexture for this eye's camera to render into
+                        RenderTexture renderTexture = new RenderTexture(surface.Viewport.Width, surface.Viewport.Height, 24, RenderTextureFormat.Default);
+                        surface.SetRenderTexture(renderTexture);                       
                     }             
                 }
             }
