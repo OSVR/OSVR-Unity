@@ -177,7 +177,7 @@ namespace OSVR
                 if (DisplayController.UseRenderManager)
                 {
                     //Update RenderInfo
-#if UNITY_5_2 || UNITY_5_3
+#if UNITY_5_2 || UNITY_5_3 || UNITY_5_4
                     GL.IssuePluginEvent(DisplayController.RenderManager.GetRenderEventFunction(), OsvrRenderManager.UPDATE_RENDERINFO_EVENT);
 #else
                     Debug.LogError("GL.IssuePluginEvent failed. This version of Unity cannot support RenderManager.");
@@ -268,7 +268,7 @@ namespace OSVR
                     if (DisplayController.UseRenderManager && DisplayController.CheckDisplayStartup())
                     {
                         // Issue a RenderEvent, which copies Unity RenderTextures to RenderManager buffers
-#if UNITY_5_2 || UNITY_5_3
+#if UNITY_5_2 || UNITY_5_3 || UNITY_5_4
                         GL.Clear(false, true, Camera.backgroundColor);
                         GL.IssuePluginEvent(DisplayController.RenderManager.GetRenderEventFunction(), OsvrRenderManager.RENDER_EVENT); 
                         if(DisplayController.showDirectModePreview)
