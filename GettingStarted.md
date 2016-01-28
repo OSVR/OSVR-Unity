@@ -139,15 +139,7 @@ There are a number of configuration options available when using RenderManager. 
 ![OSVR-Unity RenderManager Config](https://github.com/OSVR/OSVR-Unity/blob/gettingStartedDocs/images/osvr_rendermanager_config.png?raw=true)
 
 ### Troubleshooting RenderManager in Unity
-If you see a “failed to load RenderManager” message print to the Unity debug console or output log, try running the RenderManager example programs from a command line to see the output.
-
-If you get an error that says something like “Could not open display (are you whitelisted?)” Try running the whitelist_OSVR.reg file for HDK 1.3, whitelist_OSVRPre.reg for HDK 1.2 or earlier, or whitelist_Vuzix.reg for Vuzix devices, then restart the computer.
-
-If you see this error, then the server isn’t configured for RenderManager.
-
-![No RenderManager Config](https://github.com/OSVR/OSVR-Unity/blob/gettingStartedDocs/images/osvr_server_norendermanager.png?raw=true)
-
-If the example programs work in direct mode, but Unity still fails to load RenderManager, make sure all DLLs are up to date. It is best to close Unity, replace the DLLs in Windows Explorer, and re-open Unity so that the new libraries are loaded.
+See [RenderManager Troubleshooting](https://github.com/OSVR/OSVR-Docs/blob/master/Troubleshooting/RenderManager.md).
 
 ## Quality Settings
 Quality settings will differ per machine/graphics card capabilities. Make sure V Sync Count is set to Don’t Sync. Otherwise, we generally recommend that using as much antialiasing as can be afforded without negatively affecting performance. Disable shadows unless your game mechanics demand it. Use Lightmapping instead of real-time lights. Use occlusion culling.
