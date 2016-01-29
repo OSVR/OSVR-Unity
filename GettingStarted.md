@@ -139,7 +139,7 @@ There are a number of configuration options available when using RenderManager. 
 ![OSVR-Unity RenderManager Config](https://github.com/OSVR/OSVR-Unity/blob/gettingStartedDocs/images/osvr_rendermanager_config.png?raw=true)
 
 ### Troubleshooting RenderManager in Unity
-See [RenderManager Troubleshooting](https://github.com/OSVR/OSVR-Docs/blob/master/Troubleshooting/RenderManager.md).
+For troubleshooting RenderManager, visit: https://github.com/OSVR/OSVR-Docs/blob/master/Troubleshooting/RenderManager.md#troubleshooting-rendermanager-in-unity.
 
 ## Quality Settings
 Quality settings will differ per machine/graphics card capabilities. Make sure V Sync Count is set to Don’t Sync. Otherwise, we generally recommend that using as much antialiasing as can be afforded without negatively affecting performance. Disable shadows unless your game mechanics demand it. Use Lightmapping instead of real-time lights. Use occlusion culling.
