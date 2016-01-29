@@ -5,6 +5,11 @@ This is an abbreviated changelog for the OSVR Unity Plugin.
 Use git for a full changelog.
 ##Recent Changes
 ### RenderManager update
+> 28-January-2016 (commit d8a6a2) v0.6.4
+
+- Updated to RenderManager v0.6.36 which includes AMD Direct-to-Display mode. 
+- Change to VRDisplayTracked prefab to better support image effects and custom camera scripts. By default, one VREye and one VRSurface (camera) are included in the prefab. Image effects can be applied to the VRSurface object, which will be duplicated to create additional eyes if necessary.
+
 > 25-November-2015 (commit 4ca38e) v0.6.104-g4cae38e
 
 - Added support for RenderManager in Unity 5.2+. RenderManager features include nVidia Direct Mode, Timewarp, and Distortion correction. Works on 700 series or newer nVidia cards with latest (359.0) or slightly older drivers. The following DLLs are also required for RenderManager (these aren't yet included in the Unity package):
