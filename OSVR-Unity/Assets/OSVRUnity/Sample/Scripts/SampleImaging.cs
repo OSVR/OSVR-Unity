@@ -34,7 +34,6 @@ public class SampleImaging : OSVR.Unity.RequiresImagingInterface
     private Texture2D videoTexture;
 
     private Color32[] imageData;
-    private bool videoChanged;
     private bool firstReport = false;
 
     void Start()
@@ -42,17 +41,11 @@ public class SampleImaging : OSVR.Unity.RequiresImagingInterface
         firstReport = false;
         imagingInterface = GetComponent<OSVR.Unity.ImagingInterface>();
         imagingInterface.Interface.StateChanged += HandleChanged;
-
     }
 
-    public void Update()
+    void OnDestroy()
     {
-        if (videoChanged)
-        {
-            videoTexture.SetPixels32(imageData);           
-            videoTexture.Apply();
-            videoChanged = false;
-        }     
+        imagingInterface.Interface.StateChanged -= HandleChanged;
     }
 
     private void HandleChanged(object sender, TimeValue timestamp, int sensor, ImagingState imageReport)
@@ -61,11 +54,6 @@ public class SampleImaging : OSVR.Unity.RequiresImagingInterface
         {
             firstReport = true;
             initVideoTexture(imageReport.metadata);
-            return;
-        }
-        if (videoChanged)
-        {
-            return;
         }
 
         for (int i = 0; i < imageWidth * imageHeight; i++)
@@ -75,8 +63,9 @@ public class SampleImaging : OSVR.Unity.RequiresImagingInterface
             byte b = Marshal.ReadByte(imageReport.data, i * 3 + 2);
             imageData[i] = new Color32(r, g, b, 255);
         }
-     
-        videoChanged = true;
+
+        videoTexture.SetPixels32(imageData);
+        videoTexture.Apply();    
     }
 
     private void initVideoTexture(ImagingMetadata metadata)
