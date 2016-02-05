@@ -33,9 +33,7 @@ public class SampleImaging : OSVR.Unity.RequiresImagingInterface
 
     private Texture2D videoTexture;
 
-    private byte[] imageBytes;
     private Color32[] imageData;
-    private int[] colors;
     private bool videoChanged;
     private bool firstReport = false;
 
@@ -71,33 +69,13 @@ public class SampleImaging : OSVR.Unity.RequiresImagingInterface
         }
 
         for (int i = 0; i < imageWidth * imageHeight; i++)
-        {
-            /*colors[i] = ((255 & 0xFF) << 24) | // alpha component
-                   Marshal.ReadByte(imageReport.data, i * 3 + 0) & 0xFF << 16 | // blue component
-                   Marshal.ReadByte(imageReport.data, i * 3 + 1) & 0xFF << 8 | // green component
-                   Marshal.ReadByte(imageReport.data, i * 3 + 2) & 0xFF << 0; // red component
-            */
-            byte b = Marshal.ReadByte(imageReport.data, i * 3 + 2);
-            byte g = Marshal.ReadByte(imageReport.data, i * 3 + 1);
+        {                    
             byte r = Marshal.ReadByte(imageReport.data, i * 3 + 0);
+            byte g = Marshal.ReadByte(imageReport.data, i * 3 + 1);
+            byte b = Marshal.ReadByte(imageReport.data, i * 3 + 2);
             imageData[i] = new Color32(r, g, b, 255);
         }
-       /* for (int x = 0; x < imageWidth; x++)
-        {
-            for (int y = 0; y < imageHeight; y++)
-            {
-                //int byteI = x + y * imageWidth;
-                //int colorI = (imageWidth - x - 1) + y * imageWidth;
-                byte b = Marshal.ReadByte(imageReport.data, colorI);
-                byte g = Marshal.ReadByte(imageReport.data, colorI + 1);
-                byte r = Marshal.ReadByte(imageReport.data, colorI + 2);
-
-                imageData[colorI] = new Color32(r, g, b, 255);
-            }
-        }*/
-
-
-        
+     
         videoChanged = true;
     }
 
@@ -105,41 +83,10 @@ public class SampleImaging : OSVR.Unity.RequiresImagingInterface
     {
         imageHeight = (int)metadata.height;
         imageWidth = (int)metadata.width;
-        imageBytes = new byte[imageWidth * imageHeight];
         imageData = new Color32[imageWidth * imageHeight];
         videoTexture = new Texture2D(imageWidth, imageHeight, TextureFormat.BGRA32, false);
-        colors = new int[imageWidth * imageHeight];
         Material mat = GetComponent<MeshRenderer>().material;
         mat.mainTexture = videoTexture;
         //this.transform.localScale = new Vector3(1, (float)(imageHeight / imageWidth), 1) * .5f;
-    }
-
-    public static Texture2D OpenCVImageToUnityTexture(byte[, ,] data, int width, int height, GameObject check)
-    {
-
-        Color32[] imgData = new Color32[width * height];
-
-        int index = 0;
-        byte alpha = 255;
-
-        for (int y = 0; y < width; y++)
-        {
-            for (int x = 0; x < height; x++)
-            {
-                imgData[index] = new Color32((data[x, y, 2]),
-                                               (data[x, y, 1]),
-                                               (data[x, y, 0]),
-                                               alpha);
-                check.SetActive(true);
-                index++;
-            }
-        }
-
-        Texture2D toReturn = new Texture2D(width, height, TextureFormat.RGBA32, false);
-        toReturn.SetPixels32(imgData);
-        toReturn.Apply();
-        toReturn.wrapMode = TextureWrapMode.Clamp;
-
-        return toReturn;
     }
 }
