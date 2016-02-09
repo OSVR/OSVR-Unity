@@ -59,7 +59,7 @@ namespace OSVR
 
             //Pass a pointer to a texture (RenderTexture.GetNativeTexturePtr()) to the plugin
             [DllImport(PluginName, CallingConvention = CallingConvention.Cdecl)]
-            private static extern void SetColorBufferFromUnity(System.IntPtr texturePtr, int eye);
+            private static extern void SetColorBufferFromUnity(System.IntPtr texturePtr, int eye, int frame);
 
             [DllImport(PluginName, CallingConvention = CallingConvention.Cdecl)]
             private static extern void SetNearClipDistance(double nearClipPlaneDistance);
@@ -223,9 +223,9 @@ namespace OSVR
             }
 
             //Pass pointer to eye-camera RenderTexture to the Unity Rendering Plugin
-            public void SetEyeColorBuffer(IntPtr colorBuffer, int eye)
+            public void SetEyeColorBuffer(IntPtr colorBuffer, int eye, int frame)
             {               
-                SetColorBufferFromUnity(colorBuffer, eye);
+                SetColorBufferFromUnity(colorBuffer, eye, frame);
             }
 
             //Get a pointer to the plugin's rendering function
