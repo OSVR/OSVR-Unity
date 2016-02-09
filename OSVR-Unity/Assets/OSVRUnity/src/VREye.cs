@@ -221,7 +221,10 @@ namespace OSVR
 
                             //create a RenderTexture for this eye's camera to render into
                             RenderTexture renderTexture = new RenderTexture(surface.Viewport.Width, surface.Viewport.Height, 24, RenderTextureFormat.Default);
-                            surface.SetRenderTexture(renderTexture);
+                            surface.SetRenderTexture(renderTexture, 0);
+
+                            RenderTexture renderTexture2 = new RenderTexture(surface.Viewport.Width, surface.Viewport.Height, 24, RenderTextureFormat.Default);
+                            surface.SetRenderTexture(renderTexture2, 1);
                         }
                     }
                 }
@@ -264,7 +267,10 @@ namespace OSVR
 
                         //create a RenderTexture for this eye's camera to render into
                         RenderTexture renderTexture = new RenderTexture(surface.Viewport.Width, surface.Viewport.Height, 24, RenderTextureFormat.Default);
-                        surface.SetRenderTexture(renderTexture);                       
+                        surface.SetRenderTexture(renderTexture, 0);
+
+                        RenderTexture renderTexture2 = new RenderTexture(surface.Viewport.Width, surface.Viewport.Height, 24, RenderTextureFormat.Default);
+                        surface.SetRenderTexture(renderTexture2, 1);
                     }             
                 }
             }
