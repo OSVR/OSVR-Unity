@@ -43,7 +43,8 @@ namespace OSVR
             [HideInInspector]
             public Texture2D PluginTexture;
             [HideInInspector]
-            public RenderTexture RenderToTexture;
+            public RenderTexture RenderToTexture1; //first RT 
+            public RenderTexture RenderToTexture2; //second RT
             private Color[] m_Pixels;
             private GCHandle m_PixelsHandle;
             private Shader basicShader;
@@ -52,6 +53,7 @@ namespace OSVR
             public uint SurfaceIndex { get { return _surfaceIndex; } set { _surfaceIndex = value; } }
             public VREye Eye { get { return _eye; } set { _eye = value; } }
             public OSVR.ClientKit.Viewport Viewport { get { return _viewport;} set {_viewport = value;} }
+            private int frameCount = 0;
 
             [HideInInspector]
             public K1RadialDistortion DistortionEffect
@@ -135,14 +137,25 @@ namespace OSVR
 
             //set the render texture that this camera will render into
             //pass the native hardware pointer to the UnityRenderingPlugin for use in RenderManager
-            public void SetRenderTexture(RenderTexture rt)
+            public void SetRenderTexture(RenderTexture rt, int frame)
             {
-                RenderToTexture = rt;
-                Camera.targetTexture = RenderToTexture;
-                RenderTexture.active = RenderToTexture;
+                if(frame == 0)
+                {
+                    RenderToTexture1 = rt;
+                    Camera.targetTexture = RenderToTexture1;
+                    RenderTexture.active = RenderToTexture1;
+
+                    //Set the native texture pointer so we can access this texture from the plugin
+                    Eye.Viewer.DisplayController.RenderManager.SetEyeColorBuffer(RenderToTexture1.GetNativeTexturePtr(), (int)Eye.EyeIndex, frame);
+                }
+                else
+                {
+                    RenderToTexture2 = rt;
+
+                    //Set the native texture pointer so we can access this texture from the plugin
+                    Eye.Viewer.DisplayController.RenderManager.SetEyeColorBuffer(RenderToTexture2.GetNativeTexturePtr(), (int)Eye.EyeIndex, frame);
+                }
                 
-                //Set the native texture pointer so we can access this texture from the plugin
-                Eye.Viewer.DisplayController.RenderManager.SetEyeColorBuffer(RenderToTexture.GetNativeTexturePtr(), (int)Eye.EyeIndex);
             }
             public RenderTexture GetRenderTexture()
             {
@@ -150,14 +163,15 @@ namespace OSVR
             }
             public void SetActiveRenderTexture()
             {
-                RenderTexture.active = RenderToTexture;
+                RenderTexture.active = frameCount % 2 == 0 ? RenderToTexture1 : RenderToTexture2;
             }
 
             //Render the camera
             public void Render()
             {
-                Camera.targetTexture = RenderToTexture;
+                Camera.targetTexture = frameCount % 2 == 0 ? RenderToTexture1 : RenderToTexture2; ;
                 Camera.Render();
+                frameCount++;
             }
 
             public void ClearRenderTarget()
