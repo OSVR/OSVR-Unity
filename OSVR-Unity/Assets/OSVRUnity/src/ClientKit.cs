@@ -48,7 +48,7 @@ namespace OSVR
                         _instance = GameObject.FindObjectOfType<ClientKit>();
                         if (_instance == null)
                         {
-                            Debug.LogError("[OSVR] Error: You need the ClientKit prefab in your game!!");
+                            Debug.LogError("[OSVR-Unity] Error: You need the ClientKit prefab in your game!!");
                         }
                         else
                         {
@@ -77,10 +77,10 @@ namespace OSVR
                 {
                     if (0 == AppID.Length)
                     {
-                        Debug.LogError("OSVR ClientKit instance needs AppID set to a reverse-order DNS name! Using dummy name...");
+                        Debug.LogError("[OSVR-Unity] ClientKit instance needs AppID set to a reverse-order DNS name! Using dummy name...");
                         AppID = "com.osvr.osvr-unity.dummy";
                     }
-                    Debug.Log("[OSVR] Starting with app ID: " + AppID);
+                    Debug.Log("[OSVR-Unity] Starting with app ID: " + AppID);
                     _contextObject = new OSVR.ClientKit.ClientContext(AppID, 0);
                 }
 
@@ -90,12 +90,12 @@ namespace OSVR
                     if(!_osvrServerError)
                     {
                         _osvrServerError = true;
-                        Debug.LogError("OSVR Server not detected. Start OSVR Server and restart the application.");
+                        Debug.LogError("[OSVR-Unity] OSVR Server not detected. Start OSVR Server and restart the application.");
                     }                                    
                 }
                 else if(_osvrServerError)
                 {
-                    Debug.Log("OSVR Server connection established. You can ignore previous errors about the server not being detected.");
+                    Debug.Log("[OSVR-Unity] OSVR Server connection established. You can ignore previous errors about the server not being detected.");
                     _osvrServerError = false;
                 }
             }
@@ -120,13 +120,13 @@ namespace OSVR
             }
             void Start()
             {
-                Debug.Log("[OSVR] In Start()");
+                Debug.Log("[OSVR-Unity] In Start()");
                 EnsureStarted();
             }
 
             void OnEnable()
             {
-                Debug.Log("[OSVR] In OnEnable()");
+                Debug.Log("[OSVR-Unity] In OnEnable()");
                 EnsureStarted();
             }
             
@@ -144,7 +144,7 @@ namespace OSVR
             {
                 if (null != _contextObject)
                 {
-                    Debug.Log("[OSVR] Shutting down OSVR.");
+                    Debug.Log("[OSVR-Unity] Shutting down OSVR.");
                     _contextObject.Dispose();
                     _contextObject = null;
                 }

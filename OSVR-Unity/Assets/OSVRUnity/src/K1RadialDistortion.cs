@@ -62,7 +62,7 @@ namespace OSVR.Unity
 			Supported = DoSetup();
 			if (!Supported)
 			{
-				Debug.Log("Execution will proceed, but without shader-based distortion.");
+                Debug.Log("[OSVR-Unity] Execution will proceed, but without shader-based distortion.");
 			}
 		}
 
@@ -93,7 +93,7 @@ namespace OSVR.Unity
 				if (!ret.DistortionMaterial)
 				{
 					/// weird error case, shouldn't get here.
-					Debug.LogWarning("Couldn't create material in OSVR distortion shader factory - shouldn't be able to happen!");
+                    Debug.LogWarning("[OSVR-Unity] Couldn't create material in OSVR distortion shader factory - shouldn't be able to happen!");
 					ret.enabled = false;
 					return null;
 				}
@@ -110,18 +110,18 @@ namespace OSVR.Unity
 		{
 			if (!IsMinimallyCompatible)
 			{
-				Debug.Log("OSVR distortion shader not compatible with this version of Unity: requires image effects and render textures (4.6 Pro or 5.x)");
+                Debug.Log("[OSVR-Unity] distortion shader not compatible with this version of Unity: requires image effects and render textures (4.6 Pro or 5.x)");
 				return false;
 			}
 			DistortionShader = Shader.Find(ShaderName);
 			if (!DistortionShader)
 			{
-				Debug.Log("Could not find OSVR distortion shader '" + ShaderName + "' - must be in a Resource folder to be part of a build!");
+                Debug.Log("[OSVR-Unity] Could not find OSVR distortion shader '" + ShaderName + "' - must be in a Resource folder to be part of a build!");
 				return false;
 			}
 			if (!DistortionShader.isSupported)
 			{
-				Debug.Log("OSVR distortion shader found and loaded but not supported on this platform.");
+                Debug.Log("[OSVR-Unity] distortion shader found and loaded but not supported on this platform.");
 				DistortionShader = null;
 				return false;
 			}

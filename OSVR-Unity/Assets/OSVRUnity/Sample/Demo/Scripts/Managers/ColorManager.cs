@@ -121,7 +121,7 @@ public class ColorManager : MonoBehaviour
 	{
 		if ( index > colors.Length - 1 || index < 0 )
 		{
-			Debug.LogError( "Color value out of range." );
+            Debug.LogError("[OSVR-Unity-Samples] Color value out of range.");
 			return;
 		}
 
@@ -145,7 +145,7 @@ public class ColorManager : MonoBehaviour
 		{
 			ApplyColor( found.color );
 		}else{
-			Debug.LogError( "Color not found." );
+            Debug.LogError("[OSVR-Unity-Samples] Color not found.");
 		}
 	}
 

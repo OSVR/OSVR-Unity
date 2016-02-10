@@ -227,7 +227,7 @@ namespace OSVR
                 catch (DllNotFoundException e)
                 {
                     result = -1;
-                    Debug.LogError("[OSVR] Could not load osvrUnityRenderingPlugin. The project is missing osvrUnityRenderingPlugin.dll, or one of its dependencies.");
+                    Debug.LogError("[OSVR-Unity] Could not load osvrUnityRenderingPlugin. The project is missing osvrUnityRenderingPlugin.dll, or one of its dependencies.");
                 }
                 return result;
             }
@@ -261,24 +261,24 @@ namespace OSVR
             {
                 bool support = true;
 #if UNITY_ANDROID
-                Debug.Log("[OSVR] RenderManager not yet supported on Android.");
+                Debug.Log("[OSVR-Unity] RenderManager not yet supported on Android.");
                 support = false;
 #endif
                 if (!SystemInfo.graphicsDeviceVersion.Contains("OpenGL") && !SystemInfo.graphicsDeviceVersion.Contains("Direct3D 11"))
                 {
-                    Debug.LogError("[OSVR] RenderManager not supported on " +
+                    Debug.LogError("[OSVR-Unity] RenderManager not supported on " +
                         SystemInfo.graphicsDeviceVersion + ". Only Direct3D11 is currently supported.");
                     support = false;
                 }
 
                 if (!SystemInfo.supportsRenderTextures)
                 {
-                    Debug.LogError("[OSVR] RenderManager not supported. RenderTexture (Unity Pro feature) is unavailable.");
+                    Debug.LogError("[OSVR-Unity] RenderManager not supported. RenderTexture (Unity Pro feature) is unavailable.");
                     support = false;
                 }
                 if (!IsUnityVersionSupported())
                 {
-                    Debug.LogError("[OSVR] RenderManager not supported. Unity 5.2+ is required for RenderManager support.");
+                    Debug.LogError("[OSVR-Unity] RenderManager not supported. Unity 5.2+ is required for RenderManager support.");
                     support = false;
                 }
                 return support;
@@ -298,7 +298,7 @@ namespace OSVR
                 }
                 catch
                 {
-                    Debug.LogWarning("[OSVR] Unable to determine Unity version from: " + Application.unityVersion);
+                    Debug.LogWarning("[OSVR-Unity] Unable to determine Unity version from: " + Application.unityVersion);
                     support = false;
                 }
                 return support;
