@@ -219,7 +219,17 @@ namespace OSVR
             //Call the Unity Rendering Plugin to initialize the RenderManager
             public int CreateRenderManager(OSVR.ClientKit.ClientContext clientContext)
             {
-                return CreateRenderManagerFromUnity(clientContext.ContextHandle);
+                int result;
+                try
+                {
+                    result = CreateRenderManagerFromUnity(clientContext.ContextHandle);
+                }
+                catch (DllNotFoundException e)
+                {
+                    result = -1;
+                    Debug.LogError("Could not load osvrUnityRenderingPlugin. The project is missing osvrUnityRenderingPlugin.dll, or one of its dependencies.");
+                }
+                return result;
             }
 
             //Pass pointer to eye-camera RenderTexture to the Unity Rendering Plugin
