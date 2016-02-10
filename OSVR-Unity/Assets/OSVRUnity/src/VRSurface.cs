@@ -164,14 +164,14 @@ namespace OSVR
             public void SetActiveRenderTexture()
             {
                 RenderTexture.active = frameCount % 2 == 0 ? RenderToTexture1 : RenderToTexture2;
+                frameCount++;
             }
 
             //Render the camera
             public void Render()
             {
-                Camera.targetTexture = frameCount % 2 == 0 ? RenderToTexture1 : RenderToTexture2; ;
-                Camera.Render();
-                frameCount++;
+                Camera.targetTexture = frameCount % 2 == 0 ? RenderToTexture1 : RenderToTexture2;
+                Camera.Render();               
             }
 
             public void ClearRenderTarget()
