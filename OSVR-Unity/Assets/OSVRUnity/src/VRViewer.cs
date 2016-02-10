@@ -174,20 +174,7 @@ namespace OSVR
             //Update the pose of each eye, then update and render each eye's surfaces
             public void UpdateEyes()
             {
-                if (DisplayController.UseRenderManager)
-                {
-                    //Update RenderInfo
-#if UNITY_5_2 || UNITY_5_3 || UNITY_5_4
-                    GL.IssuePluginEvent(DisplayController.RenderManager.GetRenderEventFunction(), OsvrRenderManager.UPDATE_RENDERINFO_EVENT);
-#else
-                    Debug.LogError("GL.IssuePluginEvent failed. This version of Unity cannot support RenderManager.");
-                    DisplayController.UseRenderManager = false;
-#endif
-                }
-                else
-                {
-                    DisplayController.UpdateClient();
-                }
+
                     
                 for (uint eyeIndex = 0; eyeIndex < EyeCount; eyeIndex++)
                 {                   
@@ -231,6 +218,24 @@ namespace OSVR
 
                 // Flag that we disabled the camera
                 _disabledCamera = true;
+            }
+
+            void LateUpdate()
+            {
+                if (DisplayController.UseRenderManager)
+                {
+                    //Update RenderInfo
+#if UNITY_5_2 || UNITY_5_3 || UNITY_5_4
+                  //  GL.IssuePluginEvent(DisplayController.RenderManager.GetRenderEventFunction(), OsvrRenderManager.UPDATE_RENDERINFO_EVENT);
+#else
+                    Debug.LogError("GL.IssuePluginEvent failed. This version of Unity cannot support RenderManager.");
+                    DisplayController.UseRenderManager = false;
+#endif
+                }
+                else
+                {
+                    DisplayController.UpdateClient();
+                }
             }
 
             // The main rendering loop, should be called late in the pipeline, i.e. from OnPreCull
