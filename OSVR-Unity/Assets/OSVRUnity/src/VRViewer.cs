@@ -56,7 +56,7 @@ namespace OSVR
             private uint _viewerIndex;
             private Camera _camera;
             private bool _disabledCamera = true;
-            
+            private bool _hmdConnectionError = false;
 
             #endregion
 
@@ -240,8 +240,13 @@ namespace OSVR
                 // update poses once DisplayConfig is ready
                 if (DisplayController.CheckDisplayStartup())
                 {
+                    if(_hmdConnectionError)
+                    {
+                        _hmdConnectionError = false;
+                        Debug.Log("HMD connection established. You can ignore previous error messages indicating Display Startup failure.");
+                    }
+
                     // update the viewer's head pose
-                    // @todo Get viewer pose from RenderManager if UseRenderManager = true
                     // currently getting viewer pose from DisplayConfig always
                     UpdateViewerHeadPose(GetViewerPose(ViewerIndex));
 
@@ -251,11 +256,14 @@ namespace OSVR
                 }
                 else
                 {
-                    if (!DisplayController.CheckDisplayStartup())
+                    if(!_hmdConnectionError)
                     {
-                        //@todo do something other than not show anything
+                        //report an error message once if the HMD is not connected
+                        //it can take a few frames to connect under normal operation, so inidcate when this error has been resolved
+                        _hmdConnectionError = true;
                         Debug.LogError("Display Startup failed. Check HMD connection.");
                     }
+                    
                 }
             }
 
