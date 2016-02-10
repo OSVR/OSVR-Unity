@@ -103,7 +103,7 @@ namespace OSVR
                 {
                     Debug.LogError("DisplayController requires a ClientKit object in the scene.");
                 }
-                
+
                 SetupApplicationSettings();
             }
 
@@ -226,11 +226,11 @@ namespace OSVR
                 //Set the resolution. Don't force fullscreen if we have multiple display inputs
                 //We only need to do this if we aren't using RenderManager, because it adjusts the window size for us
                 //@todo figure out why this causes problems with direct mode, perhaps overfill factor?
-                if(numDisplayInputs > 1 && !UseRenderManager)
+                if (numDisplayInputs > 1 && !UseRenderManager)
                 {
                     Screen.SetResolution((int)TotalDisplayWidth, (int)TotalDisplayHeight, false);
-                }                             
-                
+                }
+
             }
 
             // Creates a head and eyes as configured in clientKit
@@ -290,7 +290,7 @@ namespace OSVR
                     GameObject vrViewer = new GameObject("VRViewer" + viewerIndex);
                     if (vrViewer.GetComponent<AudioListener>() == null)
                     {
-                    vrViewer.AddComponent<AudioListener>(); //add an audio listener
+                        vrViewer.AddComponent<AudioListener>(); //add an audio listener
                     }
 
                     VRViewer vrViewerComponent = vrViewer.AddComponent<VRViewer>();
@@ -326,16 +326,16 @@ namespace OSVR
             public bool CheckDisplayStartup()
             {
                 return _displayConfigInitialized && DisplayConfig.CheckDisplayStartup();
-                }
+            }
 
             public void ExitRenderManager()
             {
-                if(UseRenderManager && RenderManager != null)
+                if (UseRenderManager && RenderManager != null)
                 {
                     RenderManager.ExitRenderManager();
-                    }
-                        }
-                    }
                 }
             }
+        }
+    }
+}
 
