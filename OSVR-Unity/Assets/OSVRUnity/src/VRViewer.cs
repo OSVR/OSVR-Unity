@@ -180,7 +180,7 @@ namespace OSVR
 #if UNITY_5_2 || UNITY_5_3 || UNITY_5_4
                     GL.IssuePluginEvent(DisplayController.RenderManager.GetRenderEventFunction(), OsvrRenderManager.UPDATE_RENDERINFO_EVENT);
 #else
-                    Debug.LogError("GL.IssuePluginEvent failed. This version of Unity cannot support RenderManager.");
+                    Debug.LogError("[OSVR] GL.IssuePluginEvent failed. This version of Unity cannot support RenderManager.");
                     DisplayController.UseRenderManager = false;
 #endif
                 }
@@ -243,7 +243,7 @@ namespace OSVR
                     if(_hmdConnectionError)
                     {
                         _hmdConnectionError = false;
-                        Debug.Log("HMD connection established. You can ignore previous error messages indicating Display Startup failure.");
+                        Debug.Log("[OSVR] HMD connection established. You can ignore previous error messages indicating Display Startup failure.");
                     }
 
                     // update the viewer's head pose
@@ -261,7 +261,7 @@ namespace OSVR
                         //report an error message once if the HMD is not connected
                         //it can take a few frames to connect under normal operation, so inidcate when this error has been resolved
                         _hmdConnectionError = true;
-                        Debug.LogError("Display Startup failed. Check HMD connection.");
+                        Debug.LogError("[OSVR] Display Startup failed. Check HMD connection.");
                     }
                     
                 }
@@ -284,7 +284,7 @@ namespace OSVR
                             Camera.Render();
                         }                      
 #else
-                        Debug.LogError("GL.IssuePluginEvent failed. This version of Unity cannot support RenderManager.");
+                        Debug.LogError("[OSVR] GL.IssuePluginEvent failed. This version of Unity cannot support RenderManager.");
                         DisplayController.UseRenderManager = false;
 #endif
                     }

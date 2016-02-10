@@ -47,7 +47,7 @@ namespace OSVR
                         _instance = GameObject.FindObjectOfType<ClientKit>();
                         if (_instance == null)
                         {
-                            Debug.LogError("OSVR Error: You need the ClientKit prefab in your game!!");
+                            Debug.LogError("[OSVR] Error: You need the ClientKit prefab in your game!!");
                         }
                         else
                         {
@@ -134,7 +134,7 @@ namespace OSVR
             {
                 if (null != _contextObject)
                 {
-                    Debug.Log("Shutting down OSVR.");
+                    Debug.Log("[OSVR] Shutting down OSVR.");
                     _contextObject.Dispose();
                     _contextObject = null;
                 }

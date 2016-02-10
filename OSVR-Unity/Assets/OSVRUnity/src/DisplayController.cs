@@ -101,7 +101,7 @@ namespace OSVR
                 _clientKit = FindObjectOfType<ClientKit>();
                 if (_clientKit == null)
                 {
-                    Debug.LogError("DisplayController requires a ClientKit object in the scene.");
+                    Debug.LogError("[OSVR] DisplayController requires a ClientKit object in the scene.");
                 }
 
                 SetupApplicationSettings();
@@ -141,7 +141,7 @@ namespace OSVR
                     _useRenderManager = supportsRenderManager;
                     if (!_useRenderManager)
                     {
-                        Debug.LogError("RenderManager config found but RenderManager is not supported.");
+                        Debug.LogError("[OSVR] RenderManager config found but RenderManager is not supported.");
                         Destroy(_renderManager);
                     }
                     else
@@ -150,14 +150,14 @@ namespace OSVR
                         int result = _renderManager.InitRenderManager();
                         if (result != 0)
                         {
-                            Debug.LogError("Failed to create RenderManager.");
+                            Debug.LogError("[OSVR] Failed to create RenderManager.");
                             _useRenderManager = false;
                         }
                     }
                 }
                 else
                 {
-                    Debug.Log("RenderManager config not detected. Using normal Unity rendering path.");
+                    Debug.Log("[OSVR] RenderManager config not detected. Using normal Unity rendering path.");
                 }
             }
 
@@ -168,7 +168,7 @@ namespace OSVR
                 //get the DisplayConfig object from ClientKit
                 if (_clientKit.context == null)
                 {
-                    Debug.LogError("ClientContext is null. Can't setup display.");
+                    Debug.LogError("[OSVR] ClientContext is null. Can't setup display.");
                     return;
                 }
                 _displayConfig = _clientKit.context.GetDisplayConfig();
@@ -184,7 +184,7 @@ namespace OSVR
                 _viewerCount = _displayConfig.GetNumViewers();
                 if (_viewerCount != 1)
                 {
-                    Debug.LogError(_viewerCount + " viewers found, but this implementation requires exactly one viewer.");
+                    Debug.LogError("[OSVR] " + _viewerCount + " viewers found, but this implementation requires exactly one viewer.");
                     return;
                 }
 
@@ -243,7 +243,7 @@ namespace OSVR
                 _viewerCount = (uint)_displayConfig.GetNumViewers();
                 if (_viewerCount != NUM_VIEWERS)
                 {
-                    Debug.LogError(_viewerCount + " viewers detected. This implementation supports exactly one viewer.");
+                    Debug.LogError("[OSVR] " + _viewerCount + " viewers detected. This implementation supports exactly one viewer.");
                     return;
                 }
                 _viewers = new VRViewer[_viewerCount];
