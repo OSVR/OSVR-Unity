@@ -33,6 +33,7 @@ namespace OSVR
 
             /// Uses the Unity "Persistent Singleton" pattern, see http://unitypatterns.com/singletons/
             private static ClientKit _instance;
+            private bool _osvrServerError = false;
 
             /// <summary>
             /// Use to access the single instance of this object/script in your game.
@@ -86,7 +87,16 @@ namespace OSVR
                 //check if the server is running
                 if (!_contextObject.CheckStatus())
                 {
-                    Debug.LogError("OSVR Server not detected. Start OSVR Server and restart the application.");
+                    if(!_osvrServerError)
+                    {
+                        _osvrServerError = true;
+                        Debug.LogError("OSVR Server not detected. Start OSVR Server and restart the application.");
+                    }                                    
+                }
+                else if(_osvrServerError)
+                {
+                    Debug.Log("OSVR Server connection established. You can ignore previous errors about the server not being detected.");
+                    _osvrServerError = false;
                 }
             }
 
