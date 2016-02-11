@@ -227,7 +227,9 @@ namespace OSVR
                 catch (DllNotFoundException e)
                 {
                     result = -1;
-                    Debug.LogError("[OSVR-Unity] Could not load osvrUnityRenderingPlugin. The project is missing osvrUnityRenderingPlugin.dll, or one of its dependencies.");
+                    Debug.LogError("[OSVR-Unity] Could not load "  + e.Message +
+                        "\nosvrUnityRenderingPlugin.dll, or one of its dependencies, is missing from the project " + 
+                        "or architecture doesn't match.\n");
                 }
                 return result;
             }
