@@ -34,6 +34,6 @@ public class HandleButtonPress : MonoBehaviour
 
     public void handleButton(object sender, OSVR.ClientKit.TimeValue timestamp, int sensor, byte report)
     {
-        Debug.Log("Got button: " + sensor.ToString() + " state is " + report.ToString());
+        Debug.Log("[OSVR-Unity-Samples] Got button: " + sensor.ToString() + " state is " + report.ToString());
     }
 }

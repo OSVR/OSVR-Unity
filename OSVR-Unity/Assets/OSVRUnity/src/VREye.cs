@@ -171,7 +171,7 @@ namespace OSVR
                 _surfaces = new VRSurface[_surfaceCount];
                 if (surfaceCount != NUM_SURFACES)
                 {
-                    Debug.LogError("Eye" + _eyeIndex + " has " + surfaceCount + " surfaces, but " +
+                    Debug.LogError("[OSVR-Unity] Eye" + _eyeIndex + " has " + surfaceCount + " surfaces, but " +
                         "this implementation requires exactly one surface per eye.");
                     return;
                 }

@@ -86,14 +86,14 @@ namespace OSVR.Unity
                 if (null != holder)
                 {
                     usedPath = holder.path;
-                    //print("[OSVR] " + name + ": Found path " + usedPath + " in ancestor " + go.name);
+                    //Debug.Log("[OSVR-Unity] " + name + ": Found path " + usedPath + " in ancestor " + go.name);
                 }
                 go = GetParent.Get(go);
             }
             
             if (0 == usedPath.Length)
             {
-                Debug.LogError("[OSVR] Missing path for " + name + " - no path found in this object's InterfaceGameObject or any ancestor!");
+                Debug.LogError("[OSVR-Unity] Missing path for " + name + " - no path found in this object's InterfaceGameObject or any ancestor!");
                 return;
             }
         }

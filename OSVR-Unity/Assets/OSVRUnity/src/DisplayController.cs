@@ -101,9 +101,9 @@ namespace OSVR
                 _clientKit = FindObjectOfType<ClientKit>();
                 if (_clientKit == null)
                 {
-                    Debug.LogError("DisplayController requires a ClientKit object in the scene.");
+                    Debug.LogError("[OSVR-Unity] DisplayController requires a ClientKit object in the scene.");
                 }
-                
+
                 SetupApplicationSettings();
             }
 
@@ -141,7 +141,7 @@ namespace OSVR
                     _useRenderManager = supportsRenderManager;
                     if (!_useRenderManager)
                     {
-                        Debug.LogError("RenderManager config found but RenderManager is not supported.");
+                        Debug.LogError("[OSVR-Unity] RenderManager config found but RenderManager is not supported.");
                         Destroy(_renderManager);
                     }
                     else
@@ -150,14 +150,14 @@ namespace OSVR
                         int result = _renderManager.InitRenderManager();
                         if (result != 0)
                         {
-                            Debug.LogError("Failed to create RenderManager.");
+                            Debug.LogError("[OSVR-Unity] Failed to create RenderManager.");
                             _useRenderManager = false;
                         }
                     }
                 }
                 else
                 {
-                    Debug.Log("RenderManager config not detected. Using normal Unity rendering path.");
+                    Debug.Log("[OSVR-Unity] RenderManager config not detected. Using normal Unity rendering path.");
                 }
             }
 
@@ -168,7 +168,7 @@ namespace OSVR
                 //get the DisplayConfig object from ClientKit
                 if (_clientKit.context == null)
                 {
-                    Debug.LogError("ClientContext is null. Can't setup display.");
+                    Debug.LogError("[OSVR-Unity] ClientContext is null. Can't setup display.");
                     return;
                 }
                 _displayConfig = _clientKit.context.GetDisplayConfig();
@@ -184,7 +184,7 @@ namespace OSVR
                 _viewerCount = _displayConfig.GetNumViewers();
                 if (_viewerCount != 1)
                 {
-                    Debug.LogError(_viewerCount + " viewers found, but this implementation requires exactly one viewer.");
+                    Debug.LogError("[OSVR-Unity] " + _viewerCount + " viewers found, but this implementation requires exactly one viewer.");
                     return;
                 }
 
@@ -226,11 +226,11 @@ namespace OSVR
                 //Set the resolution. Don't force fullscreen if we have multiple display inputs
                 //We only need to do this if we aren't using RenderManager, because it adjusts the window size for us
                 //@todo figure out why this causes problems with direct mode, perhaps overfill factor?
-                if(numDisplayInputs > 1 && !UseRenderManager)
+                if (numDisplayInputs > 1 && !UseRenderManager)
                 {
                     Screen.SetResolution((int)TotalDisplayWidth, (int)TotalDisplayHeight, false);
-                }                             
-                
+                }
+
             }
 
             // Creates a head and eyes as configured in clientKit
@@ -243,7 +243,7 @@ namespace OSVR
                 _viewerCount = (uint)_displayConfig.GetNumViewers();
                 if (_viewerCount != NUM_VIEWERS)
                 {
-                    Debug.LogError(_viewerCount + " viewers detected. This implementation supports exactly one viewer.");
+                    Debug.LogError("[OSVR-Unity] " + _viewerCount + " viewers detected. This implementation supports exactly one viewer.");
                     return;
                 }
                 _viewers = new VRViewer[_viewerCount];
@@ -290,7 +290,7 @@ namespace OSVR
                     GameObject vrViewer = new GameObject("VRViewer" + viewerIndex);
                     if (vrViewer.GetComponent<AudioListener>() == null)
                     {
-                    vrViewer.AddComponent<AudioListener>(); //add an audio listener
+                        vrViewer.AddComponent<AudioListener>(); //add an audio listener
                     }
 
                     VRViewer vrViewerComponent = vrViewer.AddComponent<VRViewer>();
@@ -326,16 +326,16 @@ namespace OSVR
             public bool CheckDisplayStartup()
             {
                 return _displayConfigInitialized && DisplayConfig.CheckDisplayStartup();
-                }
+            }
 
             public void ExitRenderManager()
             {
-                if(UseRenderManager && RenderManager != null)
+                if (UseRenderManager && RenderManager != null)
                 {
                     RenderManager.ExitRenderManager();
-                    }
-                        }
-                    }
                 }
             }
+        }
+    }
+}
 
