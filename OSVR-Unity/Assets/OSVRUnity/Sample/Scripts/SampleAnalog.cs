@@ -38,6 +38,6 @@ public class SampleAnalog : OSVR.Unity.RequiresAnalogInterface
 
     void Interface_StateChanged(object sender, OSVR.ClientKit.TimeValue timestamp, int sensor, double report)
     {
-        Debug.Log("Got analog value " + report);
+        Debug.Log("[OSVR-Unity-Samples] Got analog value " + report);
     }
 }
