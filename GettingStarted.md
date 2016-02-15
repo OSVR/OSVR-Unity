@@ -154,7 +154,7 @@ Generally, use Static and Dynamic batching to reduce draw calls. Note that the â
 ## Building for Android
 Building an OSVR Android app requires libraries from https://github.com/OSVR/OSVR-Android-SDK.
 
-Copy the .so files to the Assets/Plugins/libs/armeabi-v7a folder:
+Copy the following .so files to the Assets/Plugins/libs/armeabi-v7a folder:
 
 ![OSVR-Unity Android Libs](https://github.com/OSVR/OSVR-Unity/blob/master/images/osvr_unity_androidlibs.png?raw=true)
 
@@ -162,4 +162,4 @@ Make sure your project is set to build for Android:
 
 ![OSVR-Unity Android Build](https://github.com/OSVR/OSVR-Unity/blob/master/images/osvr_unity_androidbuild.png?raw=true)
 
-Please visit this page for running the OSVR Android Server Launcher app: https://github.com/OSVR/OSVR-AndroidServerLauncher
+Before launching the app on an Android device, you'll need to run the OSVR-AndroidServerLauncher app first. Please visit this page for more information: https://github.com/OSVR/OSVR-AndroidServerLauncher
