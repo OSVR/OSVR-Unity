@@ -119,6 +119,7 @@ The following additional DLLs are required in Assets/Plugins/x86_64:
 * SDL2.dll
 * osvrUnityRenderingPlugin.dll -- built from https://github.com/OSVR/OSVR-Unity-Rendering
 * osvrRenderManager.dll
+* D3Dcompiler_47.dll -- Windows 7 only, available in the Unity install directory (C:/Program Files/Unity/Editor/Data/Tools64/)
 
 The easiest way to obtain working binaries is to copy them over from one of the example projects Assets/Plugins/x86_64 folders:
 https://github.com/OSVR/Unity-VR-Samples/tree/master/Assets/Plugins/x86_64
