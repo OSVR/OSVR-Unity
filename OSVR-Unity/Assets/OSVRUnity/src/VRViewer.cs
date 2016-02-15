@@ -57,6 +57,7 @@ namespace OSVR
             private Camera _camera;
             private bool _disabledCamera = true;
             private bool _hmdConnectionError = false;
+            private Rect _emptyViewport = new Rect(0, 0, 0, 0);
 
             #endregion
 
@@ -277,11 +278,14 @@ namespace OSVR
                     {
                         // Issue a RenderEvent, which copies Unity RenderTextures to RenderManager buffers
 #if UNITY_5_2 || UNITY_5_3 || UNITY_5_4
+                        GL.Viewport(_emptyViewport);
+                        GL.Clear(false, true, Camera.backgroundColor);                      
                         GL.IssuePluginEvent(DisplayController.RenderManager.GetRenderEventFunction(), OsvrRenderManager.RENDER_EVENT); 
                         if(DisplayController.showDirectModePreview)
                         {
                             Camera.Render();
-                        }                      
+                        } 
+                                             
 #else
                         Debug.LogError("[OSVR-Unity] GL.IssuePluginEvent failed. This version of Unity cannot support RenderManager.");
                         DisplayController.UseRenderManager = false;
