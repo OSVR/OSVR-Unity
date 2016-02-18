@@ -164,3 +164,7 @@ Make sure your project is set to build for Android:
 ![OSVR-Unity Android Build](https://github.com/OSVR/OSVR-Unity/blob/master/images/osvr_unity_androidbuild.png?raw=true)
 
 Before launching the app on an Android device, you'll need to run the OSVR-AndroidServerLauncher app first. Please visit this page for more information: https://github.com/OSVR/OSVR-AndroidServerLauncher
+
+An example Android app can be downloaded from the Releases section of OSVR-Unity-Palace-Demo: https://github.com/OSVR/OSVR-Unity-Palace-Demo/releases.
+
+You will still need to follow the instructions linked above to push the OSVR-AndroidServerLauncher app to the phone with adb. Since the Palace scene is not optimized for mobile, the example app consists of the simpler OSVRDemo2.unity scene. There is a separate branch in that repo for the Android build in order to better organize the releases, but there aren't any code changes from the master branch. Some Project and Quality settings differ.
