@@ -325,7 +325,7 @@ namespace OSVR
 
             public bool CheckDisplayStartup()
             {
-                return _displayConfigInitialized && DisplayConfig.CheckDisplayStartup();
+                return DisplayConfig != null && _displayConfigInitialized && DisplayConfig.CheckDisplayStartup();
             }
 
             public void ExitRenderManager()
