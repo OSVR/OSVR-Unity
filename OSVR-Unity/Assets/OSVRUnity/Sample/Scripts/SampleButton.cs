@@ -36,6 +36,6 @@ public class SampleButton : OSVR.Unity.RequiresButtonInterface
 
     void handleButton(object sender, OSVR.ClientKit.TimeValue timestamp, int sensor, byte report)
     {
-        Debug.Log("Got button: " + sensor.ToString() + " state is " + report);
+        Debug.Log("[OSVR-Unity-Samples] Got button: " + sensor.ToString() + " state is " + report);
     }
 }

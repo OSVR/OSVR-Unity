@@ -56,7 +56,8 @@ namespace OSVR
             private uint _viewerIndex;
             private Camera _camera;
             private bool _disabledCamera = true;
-            
+            private bool _hmdConnectionError = false;
+            private Rect _emptyViewport = new Rect(0, 0, 0, 0);
 
             #endregion
 
@@ -174,7 +175,20 @@ namespace OSVR
             //Update the pose of each eye, then update and render each eye's surfaces
             public void UpdateEyes()
             {
-
+                if (DisplayController.UseRenderManager)
+                {
+                    //Update RenderInfo
+#if UNITY_5_2 || UNITY_5_3 || UNITY_5_4
+                    GL.IssuePluginEvent(DisplayController.RenderManager.GetRenderEventFunction(), OsvrRenderManager.UPDATE_RENDERINFO_EVENT);
+#else
+                    Debug.LogError("[OSVR-Unity] GL.IssuePluginEvent failed. This version of Unity cannot support RenderManager.");
+                    DisplayController.UseRenderManager = false;
+#endif
+                }
+                else
+                {
+                    DisplayController.UpdateClient();
+                }
                     
                 for (uint eyeIndex = 0; eyeIndex < EyeCount; eyeIndex++)
                 {                   
@@ -220,24 +234,6 @@ namespace OSVR
                 _disabledCamera = true;
             }
 
-            void LateUpdate()
-            {
-                if (DisplayController.UseRenderManager)
-                {
-                    //Update RenderInfo
-#if UNITY_5_2 || UNITY_5_3 || UNITY_5_4
-                  //  GL.IssuePluginEvent(DisplayController.RenderManager.GetRenderEventFunction(), OsvrRenderManager.UPDATE_RENDERINFO_EVENT);
-#else
-                    Debug.LogError("GL.IssuePluginEvent failed. This version of Unity cannot support RenderManager.");
-                    DisplayController.UseRenderManager = false;
-#endif
-                }
-                else
-                {
-                    DisplayController.UpdateClient();
-                }
-            }
-
             // The main rendering loop, should be called late in the pipeline, i.e. from OnPreCull
             // Set our viewer and eye poses and render to each surface.
             void DoRendering()
@@ -245,8 +241,13 @@ namespace OSVR
                 // update poses once DisplayConfig is ready
                 if (DisplayController.CheckDisplayStartup())
                 {
+                    if(_hmdConnectionError)
+                    {
+                        _hmdConnectionError = false;
+                        Debug.Log("[OSVR-Unity] HMD connection established. You can ignore previous error messages indicating Display Startup failure.");
+                    }
+
                     // update the viewer's head pose
-                    // @todo Get viewer pose from RenderManager if UseRenderManager = true
                     // currently getting viewer pose from DisplayConfig always
                     UpdateViewerHeadPose(GetViewerPose(ViewerIndex));
 
@@ -256,11 +257,14 @@ namespace OSVR
                 }
                 else
                 {
-                    if (!DisplayController.CheckDisplayStartup())
+                    if(!_hmdConnectionError)
                     {
-                        //@todo do something other than not show anything
-                        Debug.LogError("Display Startup failed. Check HMD connection.");
+                        //report an error message once if the HMD is not connected
+                        //it can take a few frames to connect under normal operation, so inidcate when this error has been resolved
+                        _hmdConnectionError = true;
+                        Debug.LogError("[OSVR-Unity] Display Startup failed. Check HMD connection.");
                     }
+                    
                 }
             }
 
@@ -274,14 +278,16 @@ namespace OSVR
                     {
                         // Issue a RenderEvent, which copies Unity RenderTextures to RenderManager buffers
 #if UNITY_5_2 || UNITY_5_3 || UNITY_5_4
-                        GL.Clear(false, true, Camera.backgroundColor);
+                        GL.Viewport(_emptyViewport);
+                        GL.Clear(false, true, Camera.backgroundColor);                      
                         GL.IssuePluginEvent(DisplayController.RenderManager.GetRenderEventFunction(), OsvrRenderManager.RENDER_EVENT); 
                         if(DisplayController.showDirectModePreview)
                         {
                             Camera.Render();
-                        }                      
+                        } 
+                                             
 #else
-                        Debug.LogError("GL.IssuePluginEvent failed. This version of Unity cannot support RenderManager.");
+                        Debug.LogError("[OSVR-Unity] GL.IssuePluginEvent failed. This version of Unity cannot support RenderManager.");
                         DisplayController.UseRenderManager = false;
 #endif
                     }

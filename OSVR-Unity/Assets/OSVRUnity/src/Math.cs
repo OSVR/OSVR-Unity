@@ -73,7 +73,7 @@ namespace OSVR
                 }
                 else
                 {
-                    Debug.LogError("More than two video inputs is not supported. Using default viewport.");
+                    Debug.LogError("[OSVR-Unity] More than two video inputs is not supported. Using default viewport.");
                     return new Rect(0, 0, 0.5f, 1f);
                 }
             }

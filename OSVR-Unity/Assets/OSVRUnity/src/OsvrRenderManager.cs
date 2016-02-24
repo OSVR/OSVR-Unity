@@ -219,7 +219,19 @@ namespace OSVR
             //Call the Unity Rendering Plugin to initialize the RenderManager
             public int CreateRenderManager(OSVR.ClientKit.ClientContext clientContext)
             {
-                return CreateRenderManagerFromUnity(clientContext.ContextHandle);
+                int result;
+                try
+                {
+                    result = CreateRenderManagerFromUnity(clientContext.ContextHandle);
+                }
+                catch (DllNotFoundException e)
+                {
+                    result = -1;
+                    Debug.LogError("[OSVR-Unity] Could not load "  + e.Message +
+                        "\nosvrUnityRenderingPlugin.dll, or one of its dependencies, is missing from the project " + 
+                        "or architecture doesn't match.\n");
+                }
+                return result;
             }
 
             //Pass pointer to eye-camera RenderTexture to the Unity Rendering Plugin
@@ -251,24 +263,24 @@ namespace OSVR
             {
                 bool support = true;
 #if UNITY_ANDROID
-                Debug.Log("RenderManager not yet supported on Android.");
+                Debug.Log("[OSVR-Unity] RenderManager not yet supported on Android.");
                 support = false;
 #endif
                 if (!SystemInfo.graphicsDeviceVersion.Contains("OpenGL") && !SystemInfo.graphicsDeviceVersion.Contains("Direct3D 11"))
                 {
-                    Debug.LogError("RenderManager not supported on " +
+                    Debug.LogError("[OSVR-Unity] RenderManager not supported on " +
                         SystemInfo.graphicsDeviceVersion + ". Only Direct3D11 is currently supported.");
                     support = false;
                 }
 
                 if (!SystemInfo.supportsRenderTextures)
                 {
-                    Debug.LogError("RenderManager not supported. RenderTexture (Unity Pro feature) is unavailable.");
+                    Debug.LogError("[OSVR-Unity] RenderManager not supported. RenderTexture (Unity Pro feature) is unavailable.");
                     support = false;
                 }
                 if (!IsUnityVersionSupported())
                 {
-                    Debug.LogError("RenderManager not supported. Unity 5.2+ is required for RenderManager support.");
+                    Debug.LogError("[OSVR-Unity] RenderManager not supported. Unity 5.2+ is required for RenderManager support.");
                     support = false;
                 }
                 return support;
@@ -288,7 +300,7 @@ namespace OSVR
                 }
                 catch
                 {
-                    Debug.LogWarning("Unable to determine Unity version from: " + Application.unityVersion);
+                    Debug.LogWarning("[OSVR-Unity] Unable to determine Unity version from: " + Application.unityVersion);
                     support = false;
                 }
                 return support;
