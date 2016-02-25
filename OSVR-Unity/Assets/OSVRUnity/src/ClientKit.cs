@@ -34,6 +34,7 @@ namespace OSVR
             /// Uses the Unity "Persistent Singleton" pattern, see http://unitypatterns.com/singletons/
             private static ClientKit _instance;
             private bool _osvrServerError = false;
+			private bool _dllFixed = false;
 
             /// <summary>
             /// Use to access the single instance of this object/script in your game.
@@ -73,6 +74,12 @@ namespace OSVR
 
             private void EnsureStarted()
             {
+				if (!_dllFixed)
+                {
+                    DLLSearchPathFixer.fix();
+                    _dllFixed = true;
+                }
+				
                 if (_contextObject == null)
                 {
                     if (0 == AppID.Length)
@@ -102,7 +109,6 @@ namespace OSVR
 
             void Awake()
             {
-                DLLSearchPathFixer.fix();
                 //if an instance of this singleton does not exist, set the instance to this object and make it persist
                 if(_instance == null)
                 {
@@ -118,6 +124,7 @@ namespace OSVR
                     }
                 }
             }
+			
             void Start()
             {
                 Debug.Log("[OSVR-Unity] In Start()");
@@ -140,6 +147,7 @@ namespace OSVR
             {
                 _contextObject.update();
             }
+			
             void Stop()
             {
                 if (null != _contextObject)
