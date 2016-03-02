@@ -1,6 +1,6 @@
 # OSVR for Unity Developers
 
-> Last Updated January 14, 2016
+> Last Updated March 2, 2016
 
 ## Why use OSVR?
 
@@ -114,20 +114,22 @@ Yes! The gizmo is no longer fixed at the origin, and moves around with the HMD.
 For a more information about RenderManager, including an overview of configuration options, visit: https://github.com/OSVR/OSVR-Unity-Rendering/blob/master/README.md
 
 ### Enabling RenderManager in Unity
-The following additional DLLs are required in Assets/Plugins/x86_64:
+The following additional DLLs are required in Assets/Plugins/x86_64 or Assets/Plugins/x86:
 * glew32.dll
 * SDL2.dll
 * osvrUnityRenderingPlugin.dll -- built from https://github.com/OSVR/OSVR-Unity-Rendering
 * osvrRenderManager.dll
 * D3Dcompiler_47.dll -- Windows 7 only, available in the Unity install directory (C:/Program Files/Unity/Editor/Data/Tools64/)
 
-The easiest way to obtain working binaries is to copy them over from one of the example projects Assets/Plugins/x86_64 folders:
+As of OSVR-Unity-v0.6.4-37 build number 317, these are included by default in the OSVRUnity plugin, except for D3Dcompiler_47.dll. Previously, the DLLs were obtained by copying them from one of the example projects, which now should only be done if for some reason the latest build isn't working:
+
 https://github.com/OSVR/Unity-VR-Samples/tree/master/Assets/Plugins/x86_64
+
 https://github.com/OSVR/OSVR-Unity-Palace-Demo/tree/master/Assets/Plugins/x86_64
 
 The OSVR-Unity Asset Store package also contains these DLLs, but they may be more out-of-date than on Github.
 
-Going back to our original Unity project, if we update our Plugins folder with the DLLs, make sure the server is running, and press play, we are now in DirectMode with positional tracking! 
+With the RenderManager DLLs in our project and renderManagerConfig specified in the server config (also the default), when we run the server and press play, we are now in DirectMode with positional tracking! 
 
 ### Direct Mode Preview
 You can see the game view mirrors the HDK display because the “Show Direct Mode Preview” option is checked on the VRDisplaytTracked prefab. It is a rather suboptimal implementation of mirror mode, and will soon be replaced by an equivalent RenderManager feature.
@@ -153,11 +155,7 @@ Generally, use Static and Dynamic batching to reduce draw calls. Note that the �
 ![OSVR-Unity Player Settings](https://github.com/OSVR/OSVR-Unity/blob/master/images/osvr_unity_player.png?raw=true)
 
 ## Building for Android
-Building an OSVR Android app requires libraries from https://github.com/OSVR/OSVR-Android-SDK.
-
-Copy the following .so files to the Assets/Plugins/libs/armeabi-v7a folder:
-
-![OSVR-Unity Android Libs](https://github.com/OSVR/OSVR-Unity/blob/master/images/osvr_unity_androidlibs.png?raw=true)
+Building an OSVR Android app requires libraries from https://github.com/OSVR/OSVR-Android-SDK. As of OSVR-Unity-v0.6.4-37 build number 317, these are included by default in the OSVRUnity plugin.
 
 Make sure your project is set to build for Android:
 
