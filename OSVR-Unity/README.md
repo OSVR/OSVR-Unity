@@ -1,7 +1,5 @@
 # OSVR-Unity README
 
-> _This is an Alpha Release, and probably not entirely idiomatic for Unity. Check back for updates often._
-
 ## Documentation
 For links to details, documentation, and support, visit the repository on github: https://github.com/OSVR/OSVR-Unity#readme
 
@@ -13,7 +11,7 @@ This list only includes Unity-specific issues that have a substantial impact on 
 ## Basic Principles and Files
 On a machine where you're running an OSVR-Unity application, you need to run an OSVR server, part of the OSVR-Core builds. For convenience, a 32-bit OSVR Server install is bundled in the OSVR-Unity snapshot archives. [Contact us](mailto:support@osvr.org) if you need help.
 
-The `OSVR-Unity.unitypackage` package should contain the x86 and x86_64 binary plugins, the compiled Managed-OSVR wrapper, the OSVRUnity scripts (in the `Assets` directory), and a directory of prefabs. Import this package into your project.
+The `OSVR-Unity.unitypackage` package should contain the x86 and x86_64 binary plugins for Windows, Android, and RenderManager, the compiled Managed-OSVR wrapper, the OSVRUnity scripts (in the `Assets` directory), and a directory of prefabs. Import this package into your project.
 
 There is also a few sample/demo applications included, ranging from fairly sparse environments also used for development of the code/prefabs, to a high-detail demo.
 
