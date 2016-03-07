@@ -54,6 +54,7 @@ namespace OSVR
             private bool _displayConfigInitialized = false;
             private uint _totalDisplayWidth;
             private uint _totalSurfaceHeight;
+			private bool _osvrClientKitError = false;
 
             //variables for controlling use of osvrUnityRenderingPlugin.dll which enables DirectMode
             private OsvrRenderManager _renderManager;
@@ -65,6 +66,7 @@ namespace OSVR
                 get { return _displayConfig; }
                 set { _displayConfig = value; }
             }
+			
             public VRViewer[] Viewers { get { return _viewers; } }
             public uint ViewerCount { get { return _viewerCount; } }
             public OsvrRenderManager RenderManager { get { return _renderManager; } }
@@ -72,28 +74,14 @@ namespace OSVR
 
             public uint TotalDisplayWidth
             {
-                get
-                {
-                    return _totalDisplayWidth;
-                }
-
-                set
-                {
-                    _totalDisplayWidth = value;
-                }
+                get { return _totalDisplayWidth; }
+                set { _totalDisplayWidth = value; }
             }
 
             public uint TotalDisplayHeight
             {
-                get
-                {
-                    return _totalSurfaceHeight;
-                }
-
-                set
-                {
-                    _totalSurfaceHeight = value;
-                }
+                get { return _totalSurfaceHeight; }
+                set { _totalSurfaceHeight = value; }
             }
 
             void Awake()
@@ -103,8 +91,8 @@ namespace OSVR
                 {
                     Debug.LogError("[OSVR-Unity] DisplayController requires a ClientKit object in the scene.");
                 }
-
-                SetupApplicationSettings();
+				
+				SetupApplicationSettings();
             }
 
             void SetupApplicationSettings()
@@ -166,11 +154,16 @@ namespace OSVR
             void SetupDisplay()
             {
                 //get the DisplayConfig object from ClientKit
-                if (_clientKit.context == null)
+                if (_clientKit == null || _clientKit.context == null)
                 {
-                    Debug.LogError("[OSVR-Unity] ClientContext is null. Can't setup display.");
+					if (!_osvrClientKitError)
+					{
+						Debug.LogError("[OSVR-Unity] ClientContext is null. Can't setup display.");
+						_osvrClientKitError = true;
+					}
                     return;
                 }
+				
                 _displayConfig = _clientKit.context.GetDisplayConfig();
                 if (_displayConfig == null)
                 {
