@@ -84,7 +84,7 @@ namespace OSVR
                 set { _totalSurfaceHeight = value; }
             }
 
-            void Awake()
+            void Start()
             {
                 _clientKit = FindObjectOfType<ClientKit>();
                 if (_clientKit == null)

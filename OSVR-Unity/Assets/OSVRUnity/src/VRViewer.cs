@@ -85,7 +85,7 @@ namespace OSVR
 
             void OnEnable()
             {
-				Init()
+                Init();
 				
 				if (DisplayController != null)
 					StartCoroutine(_endOfFrameCoroutine);

@@ -35,6 +35,9 @@ namespace OSVR
             private static ClientKit _instance;
             private bool _osvrServerError = false;
 			private bool _dllFixed = false;
+            
+            [SerializeField]
+            private bool _dontDestroyOnLoad = true;
 
             /// <summary>
             /// Use to access the single instance of this object/script in your game.
@@ -53,7 +56,8 @@ namespace OSVR
                         }
                         else
                         {
-                            DontDestroyOnLoad(_instance.gameObject);
+                            if (_instance._dontDestroyOnLoad)
+                                DontDestroyOnLoad(_instance.gameObject);
                         }
                     }
                     return _instance;
@@ -113,7 +117,8 @@ namespace OSVR
                 if(_instance == null)
                 {
                     _instance = this;
-                    DontDestroyOnLoad(this);
+                    if (_dontDestroyOnLoad)
+                        DontDestroyOnLoad(this);
                 }
                 else
                 {
