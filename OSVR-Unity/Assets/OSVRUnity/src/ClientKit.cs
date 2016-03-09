@@ -113,7 +113,7 @@ namespace OSVR
                 if(_instance == null)
                 {
                     _instance = this;
-                    DontDestroyOnLoad(this);
+					DontDestroyOnLoad(this);
                 }
                 else
                 {
