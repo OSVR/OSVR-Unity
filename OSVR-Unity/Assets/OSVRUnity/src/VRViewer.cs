@@ -58,6 +58,7 @@ namespace OSVR
             private bool _disabledCamera = true;
             private bool _hmdConnectionError = false;
             private Rect _emptyViewport = new Rect(0, 0, 0, 0);
+			private IEnumerator _endOfFrameCoroutine;
 
             #endregion
 
@@ -68,27 +69,38 @@ namespace OSVR
 
             void Init()
             {
-                _camera = GetComponent<Camera>();
-                //cache:
-                cachedTransform = transform;
-                if (DisplayController == null)
-                {
-                    DisplayController = FindObjectOfType<DisplayController>();
-                }
+				if (_camera == null)
+				{
+					_camera = GetComponent<Camera>();
+					//cache:
+					cachedTransform = transform;
+					if (DisplayController == null)
+					{
+						DisplayController = FindObjectOfType<DisplayController>();
+					}
+					
+					_endOfFrameCoroutine = EndOfFrame();
+				}
             }
 
             void OnEnable()
             {
-                StartCoroutine("EndOfFrame");
+                Init();
+				
+				if (DisplayController != null)
+					StartCoroutine(_endOfFrameCoroutine);
             }
 
             void OnDisable()
             {
-                StopCoroutine("EndOfFrame");
-                if (DisplayController.UseRenderManager && DisplayController.RenderManager != null)
-                {
-                    DisplayController.ExitRenderManager();
-                }
+				if (DisplayController != null)
+				{
+					StopCoroutine(_endOfFrameCoroutine);
+					if (DisplayController.UseRenderManager && DisplayController.RenderManager != null)
+					{
+						DisplayController.ExitRenderManager();
+					}
+				}
             }
 
             //Creates the Eyes of this Viewer
