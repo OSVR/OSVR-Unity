@@ -86,7 +86,7 @@ namespace OSVR
 
             void Start()
             {
-                _clientKit = FindObjectOfType<ClientKit>();
+                _clientKit = ClientKit.instance;
                 if (_clientKit == null)
                 {
                     Debug.LogError("[OSVR-Unity] DisplayController requires a ClientKit object in the scene.");

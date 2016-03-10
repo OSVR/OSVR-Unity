@@ -120,7 +120,7 @@ namespace OSVR
                     //only use for debugging purposes, do not leave on for release.
                     LinkDebug(functionPointer); // Hook our c++ plugin into Unity's console log.
                 }
-                _clientKit = FindObjectOfType<ClientKit>();
+                _clientKit = ClientKit.instance;
                 //create a client context for RenderManager. This context should not be updated from Unity.
                 _renderManagerClientContext = new OSVR.ClientKit.ClientContext("com.sensics.rendermanagercontext", 0);
                 return CreateRenderManager(_renderManagerClientContext);
