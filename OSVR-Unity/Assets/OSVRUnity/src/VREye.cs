@@ -124,7 +124,6 @@ namespace OSVR
                         surface.SetProjectionMatrix(Viewer.DisplayController.RenderManager.GetEyeProjectionMatrix((int)EyeIndex));
                    
                         surface.Render();
-                        surface.SetActiveRenderTexture();
                     }
                     else
                     {
