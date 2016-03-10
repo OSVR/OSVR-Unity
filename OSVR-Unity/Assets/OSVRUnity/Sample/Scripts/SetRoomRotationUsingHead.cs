@@ -35,7 +35,7 @@ namespace OSVR
 
             void Awake()
             {
-                _clientKit = FindObjectOfType<ClientKit>();
+                _clientKit = ClientKit.instance;
                 _displayController = FindObjectOfType<DisplayController>();
             }
 
