@@ -4,6 +4,11 @@ This is an abbreviated changelog for the OSVR Unity Plugin.
 
 Use git for a full changelog.
 ##Recent Changes
+##Anti-aliasing working with RenderManager
+> 24-March-2016 (commit f97c8a) v0.6.64-bit
+
+- Anti-aliasing now works on the RenderManager rendering path. Previously, it was not inheriting that setting from Unity's Quality Settings. This gets set at RenderTexture creation time. If developers want to adjust AA dynamically, they would have to recreate the RenderTextures, since that RT property cannot be adjusted dynamically.
+
 ### RenderManager update
 > 28-January-2016 (commit d8a6a2) v0.6.4
 
