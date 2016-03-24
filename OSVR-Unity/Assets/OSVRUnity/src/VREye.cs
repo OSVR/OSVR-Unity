@@ -220,6 +220,7 @@ namespace OSVR
 
                             //create a RenderTexture for this eye's camera to render into
                             RenderTexture renderTexture = new RenderTexture(surface.Viewport.Width, surface.Viewport.Height, 24, RenderTextureFormat.Default);
+                            renderTexture.antiAliasing = QualitySettings.antiAliasing;
                             surface.SetRenderTexture(renderTexture);
                         }
                     }
@@ -263,6 +264,7 @@ namespace OSVR
 
                         //create a RenderTexture for this eye's camera to render into
                         RenderTexture renderTexture = new RenderTexture(surface.Viewport.Width, surface.Viewport.Height, 24, RenderTextureFormat.Default);
+                        renderTexture.antiAliasing = QualitySettings.antiAliasing;
                         surface.SetRenderTexture(renderTexture);                       
                     }             
                 }
