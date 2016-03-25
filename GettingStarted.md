@@ -42,7 +42,7 @@ The Tracker View utility (avaialable from http://osvr.github.io/using/) is helpf
 ![Tracker View no positional](https://github.com/OSVR/OSVR-Unity/blob/master/images/tracker_view_nopos.png?raw=true)
 
 ## Getting Started with OSVR-Unity
-Let’s examine the OSVR-Unity plugin. 
+Let’s examine the OSVR-Unity plugin. You can view the source code at https://github.com/OSVR/OSVR-Unity. 
 * Download the latest Unity snapshot build from http://osvr.github.io/build-with/.
 * Create a new Unity 5.3 project.
 * Import OSVR-Unity.unitypackage into the project.
