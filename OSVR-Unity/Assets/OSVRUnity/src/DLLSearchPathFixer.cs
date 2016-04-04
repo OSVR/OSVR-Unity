@@ -117,10 +117,10 @@ namespace OSVR
                 return NewDirs.Contains(dir) || OrigDirs.Contains(dir);
             }
 
-            private string UnityDataDir;
-            private string UnityDataDirBackslashed;
+            private string UnityDataDir = string.Empty;
+            private string UnityDataDirBackslashed = string.Empty;
             private List<string> NewDirs = new List<string>();
-            private List<string> OrigDirs;
+            private List<string> OrigDirs = null;
 
             /// <summary>
             /// Utilities for combining path components with a wider variety of input data types than System.IO.Path.Combine

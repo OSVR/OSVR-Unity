@@ -44,9 +44,6 @@ namespace OSVR
             public Texture2D PluginTexture;
             [HideInInspector]
             public RenderTexture RenderToTexture;
-            private Color[] m_Pixels;
-            private GCHandle m_PixelsHandle;
-            private Shader basicShader;
 
             public Camera Camera { get { return _camera; } set { _camera = value; } }
             public uint SurfaceIndex { get { return _surfaceIndex; } set { _surfaceIndex = value; } }
