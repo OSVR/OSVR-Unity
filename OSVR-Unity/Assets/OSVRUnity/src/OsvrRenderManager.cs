@@ -74,6 +74,10 @@ namespace OSVR
             [DllImport(PluginName, CallingConvention = CallingConvention.Cdecl)]
             private static extern Byte CreateRenderManagerFromUnity(OSVR.ClientKit.SafeClientContextHandle /*OSVR_ClientContext*/ ctx);
 
+            //Create and Register RenderBuffers
+            [DllImport(PluginName, CallingConvention = CallingConvention.Cdecl)]
+            private static extern Byte ConstructRenderBuffers();
+
             [StructLayout(LayoutKind.Sequential)]
             public struct OSVR_ViewportDescription
             {
@@ -124,6 +128,13 @@ namespace OSVR
                 //create a client context for RenderManager. This context should not be updated from Unity.
                 _renderManagerClientContext = new OSVR.ClientKit.ClientContext("com.sensics.rendermanagercontext", 0);
                 return CreateRenderManager(_renderManagerClientContext);
+            }
+
+            //Create and Register RenderBuffers in RenderManager
+            //Called after RM is created and after Unity RenderTexture's are created and assigned via SetEyeColorBuffer
+            public int ConstructBuffers()
+            {
+                return ConstructRenderBuffers();
             }
 
             public void SetNearClippingPlaneDistance(float near)
