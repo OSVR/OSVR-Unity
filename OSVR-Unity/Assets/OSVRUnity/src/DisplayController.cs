@@ -186,6 +186,7 @@ namespace OSVR
 
                 //create scene objects 
                 CreateHeadAndEyes();
+                RenderManager.ConstructBuffers();
                 SetRenderParams();
             }
 
