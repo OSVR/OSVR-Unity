@@ -96,10 +96,7 @@ namespace OSVR
 				if (DisplayController != null)
 				{
 					StopCoroutine(_endOfFrameCoroutine);
-					if (DisplayController.UseRenderManager && DisplayController.RenderManager != null)
-					{
-						DisplayController.ExitRenderManager();
-					}
+                    //@todo any cleanup of RenderTextures necessary here?
 				}
             }
 
