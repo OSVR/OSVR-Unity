@@ -43,7 +43,7 @@ namespace OSVR.Unity
             [HideInInspector]
             public string path;
             
-            PathHolder()
+            void Awake()
             {
                 hideFlags = HideFlags.HideAndDontSave;
             }
@@ -108,12 +108,7 @@ namespace OSVR.Unity
         }
         #endregion
         
-        #region Event Methods
-        void Awake()
-        {
-            AdvertisePath();
-        }
-        
+        #region Event Methods        
         void OnDestroy()
         {
             Stop();
