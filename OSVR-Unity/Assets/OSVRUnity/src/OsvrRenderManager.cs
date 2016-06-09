@@ -113,6 +113,56 @@ namespace OSVR
 
             private bool _linkDebug = false; //causes crash on exit if true, only enable for debugging
 
+            //persistent singleton
+            private static OsvrRenderManager _instance;
+
+            /// <summary>
+            /// Use to access the single instance of this object/script in your game.
+            /// </summary>
+            /// <returns>The instance, or null in case of error</returns>
+            public static OsvrRenderManager instance
+            {
+                get
+                {
+                    if (_instance == null)
+                    {
+                        _instance = GameObject.FindObjectOfType<OsvrRenderManager>();
+                        if (_instance == null)
+                        {
+                            Debug.LogError("[OSVR-Unity] RenderManager not found.");
+                        }
+                        else
+                        {
+                            DontDestroyOnLoad(_instance.gameObject);
+                        }
+                    }
+                    return _instance;
+                }
+            }
+
+            void Awake()
+            {
+                //if an instance of this singleton does not exist, set the instance to this object and make it persist
+                if (_instance == null)
+                {
+                    _instance = this;
+                    DontDestroyOnLoad(this);
+                }
+                else
+                {
+                    //if an instance of this singleton already exists, destroy this one
+                    if (_instance != this)
+                    {
+                        Destroy(this.gameObject);
+                    }
+                }
+            }
+
+            void OnDisable()
+            {
+                ExitRenderManager();
+            }
+
             //Initialize use of RenderManager via CreateRenderManager call
             public int InitRenderManager()
             {
