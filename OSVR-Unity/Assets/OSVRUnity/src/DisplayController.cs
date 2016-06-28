@@ -22,8 +22,9 @@
 /// Email: greg@sensics.com
 /// </summary>
 using UnityEngine;
+using UnityEngine.Rendering;
 using System.Collections;
-using System.Collections.Generic;
+using System;
 
 namespace OSVR
 {
@@ -40,81 +41,59 @@ namespace OSVR
         //
         // In this implementation, we are assuming that there is exactly one viewer and one surface per eye.
         //*/
-        [RequireComponent(typeof(Camera))] //requires a "dummy" camera
         public class DisplayController : MonoBehaviour
         {
-            
+
             public const uint NUM_VIEWERS = 1;
             private const int TARGET_FRAME_RATE = 60; //@todo get from OSVR
-            private const int DISTORTION_MESH_QUADS_WIDTH = 96; //distortion mesh width in quads
-            private const int DISTORTION_MESH_QUADS_HEIGHT = 48; //distortion mesh height in quads
 
             private ClientKit _clientKit;
             private OSVR.ClientKit.DisplayConfig _displayConfig;
-            private VRViewer[] _viewers; 
+            private VRViewer[] _viewers;
             private uint _viewerCount;
-            private bool _renderedStereo = false;
             private bool _displayConfigInitialized = false;
-            private bool _checkDisplayStartup = false;
-            private Camera _camera;
-            private bool _disabledCamera = true;
+            private uint _totalDisplayWidth;
+            private uint _totalSurfaceHeight;
+			private bool _osvrClientKitError = false;
 
-            //distortion mesh
-            public bool useDistortionMesh = true;
-            public bool usePolynomialDistortionMesh = true;
-            private bool loadStaticMesh = false;
-            private Mesh _distortionMesh;
-            private Material _distortionMaterial;
-            private RenderTexture _distortionRenderTexture;
-            public RenderTexture DistortionRenderTexture
-            {
-                get { return _distortionRenderTexture; }
-            }
+            //variables for controlling use of osvrUnityRenderingPlugin.dll which enables DirectMode
+            private OsvrRenderManager _renderManager;
+            private bool _useRenderManager = false; //requires Unity 5.2+ and RenderManager configured osvr server
+            public bool UseRenderManager { get { return _useRenderManager; } set { _useRenderManager = value; } }
 
-            public Camera Camera
-            {
-                get
-                {
-                    if (_camera == null)
-                    {
-                        _camera = GetComponent<Camera>();
-                    }
-                    return _camera;
-                }
-                set { _camera = value; }
-            }
             public OSVR.ClientKit.DisplayConfig DisplayConfig
             {
                 get { return _displayConfig; }
                 set { _displayConfig = value; }
-            }          
-            public VRViewer[] Viewers { get { return _viewers; } }           
-            public uint ViewerCount { get { return _viewerCount; } }
-
-            void Awake()
-            {
-                _clientKit = FindObjectOfType<ClientKit>();
-                if(_clientKit == null)
-                {
-                    Debug.LogError("DisplayController requires a ClientKit object in the scene.");
-                }
-                _camera = GetComponent<Camera>(); //get the "dummy" camera
-                SetupApplicationSettings();
             }
+			
+            public VRViewer[] Viewers { get { return _viewers; } }
+            public uint ViewerCount { get { return _viewerCount; } }
+            public OsvrRenderManager RenderManager { get { return _renderManager; } }
+            [Tooltip("Renders an extra camera to show what the HMD user sees while in Direct Mode. Comes at a framerate cost until this feature becomes part of RenderManager.")]
+            public bool showDirectModePreview = false; //should the monitor show what the user sees in the HMD?
+
+            public uint TotalDisplayWidth
+            {
+                get { return _totalDisplayWidth; }
+                set { _totalDisplayWidth = value; }
+            }
+
+            public uint TotalDisplayHeight
+            {
+                get { return _totalSurfaceHeight; }
+                set { _totalSurfaceHeight = value; }
+            }
+
             void Start()
             {
-                //attempt to setup the display here, but it might take a few frames before we have data
-                SetupDisplay();
-            }
-
-            void OnEnable()
-            {
-                StartCoroutine("EndOfFrame");
-            }
-
-            void OnDisable()
-            {
-                StopCoroutine("EndOfFrame");
+                _clientKit = ClientKit.instance;
+                if (_clientKit == null)
+                {
+                    Debug.LogError("[OSVR-Unity] DisplayController requires a ClientKit object in the scene.");
+                }
+				
+				SetupApplicationSettings();
             }
 
             void SetupApplicationSettings()
@@ -128,115 +107,212 @@ namespace OSVR
                 //Application.targetFrameRate = TARGET_FRAME_RATE;
             }
 
-           
-            //Get a DisplayConfig object from the server via ClientKit.
-            //Setup stereo rendering with DisplayConfig data.
+            // Setup RenderManager for DirectMode or non-DirectMode rendering.
+            // Checks to make sure Unity version and Graphics API are supported, 
+            // and that a RenderManager config file is being used.
+            void SetupRenderManager()
+            {
+                //check if we are configured to use RenderManager or not
+                string renderManagerPath = _clientKit.context.getStringParameter("/renderManagerConfig");
+                _useRenderManager = !(renderManagerPath == null || renderManagerPath.Equals(""));
+                if (_useRenderManager)
+                {
+                    //found a RenderManager config
+                    _renderManager = GameObject.FindObjectOfType<OsvrRenderManager>();
+                    if (_renderManager == null)
+                    {
+                        GameObject renderManagerGameObject = new GameObject("RenderManager");
+                        //add a RenderManager component
+                        _renderManager = renderManagerGameObject.AddComponent<OsvrRenderManager>();
+                    }
+
+                    //check to make sure Unity version and Graphics API are supported
+                    bool supportsRenderManager = _renderManager.IsRenderManagerSupported();
+                    _useRenderManager = supportsRenderManager;
+                    if (!_useRenderManager)
+                    {
+                        Debug.LogError("[OSVR-Unity] RenderManager config found but RenderManager is not supported.");
+                        Destroy(_renderManager);
+                    }
+                    else
+                    {
+                        // attempt to create a RenderManager in the plugin                                              
+                        int result = _renderManager.InitRenderManager();
+                        if (result != 0)
+                        {
+                            Debug.LogError("[OSVR-Unity] Failed to create RenderManager.");
+                            _useRenderManager = false;
+                        }
+                    }
+                }
+                else
+                {
+                    Debug.Log("[OSVR-Unity] RenderManager config not detected. Using normal Unity rendering path.");
+                }
+            }
+
+            // Get a DisplayConfig object from the server via ClientKit.
+            // Setup stereo rendering with DisplayConfig data.
             void SetupDisplay()
             {
                 //get the DisplayConfig object from ClientKit
-                if(_clientKit.context == null)
+                if (_clientKit == null || _clientKit.context == null)
                 {
-                    Debug.LogError("ClientContext is null. Can't setup display.");
+					if (!_osvrClientKitError)
+					{
+						Debug.LogError("[OSVR-Unity] ClientContext is null. Can't setup display.");
+						_osvrClientKitError = true;
+					}
                     return;
                 }
+				
                 _displayConfig = _clientKit.context.GetDisplayConfig();
                 if (_displayConfig == null)
                 {
                     return;
                 }
-                _displayConfigInitialized = true;               
+                _displayConfigInitialized = true;
+
+                SetupRenderManager();
 
                 //get the number of viewers, bail if there isn't exactly one viewer for now
                 _viewerCount = _displayConfig.GetNumViewers();
-                if(_viewerCount != 1)
+                if (_viewerCount != 1)
                 {
-                    Debug.LogError(_viewerCount + " viewers found, but this implementation requires exactly one viewer.");
+                    Debug.LogError("[OSVR-Unity] " + _viewerCount + " viewers found, but this implementation requires exactly one viewer.");
                     return;
                 }
 
-                //distortion mesh
-                if (useDistortionMesh)
-                {
-                    _camera.orthographic = true;
-                    _camera.orthographicSize = 1f;
-                    _distortionMaterial = Resources.Load<Material>("RGBDistortionMesh");
-                    if(loadStaticMesh)
-                    {
-                        //load a static mesh
-                        _distortionMesh = DistortionMesh.LoadDistortionMesh();
-                    }
-                    else
-                    {
-                        if(usePolynomialDistortionMesh)
-                        {
-                            //don't create the mesh here, we need to create one mesh for each eye
-                        }
-                        else
-                        {
+                //Set Unity player resolution
+                SetResolution();
 
-                            //create a mesh
-                            _distortionMesh = DistortionMesh.CreateFullScreenMesh(Camera.orthographicSize,
-                                (float)Screen.width / (float)Screen.height, DISTORTION_MESH_QUADS_WIDTH, DISTORTION_MESH_QUADS_HEIGHT);
+                //create scene objects 
+                CreateHeadAndEyes();
 
-                            //Create RenderTexture with dimensions twice the width of one eye, and height of one eye
-                            OSVR.ClientKit.Viewport viewport = _displayConfig.GetRelativeViewportForViewerEyeSurface(0, 0, 0);
-                            _distortionRenderTexture = new RenderTexture(viewport.Width * 2, viewport.Height, 24);
-                        }
-                        
-                    }
-                   
-                    //create scene objects 
-                    CreateHeadAndEyes();
-                    //set the culling mask to nothing after Surfaces have been created by copying this camera
-                    _camera.cullingMask = 0; 
-                }
-                else
+                //create RenderBuffers in RenderManager
+                if(UseRenderManager && RenderManager != null)
                 {
-                    //create scene objects 
-                    CreateHeadAndEyes(); 
-                }                         
+                    RenderManager.ConstructBuffers();
+                }                          
+                SetRenderParams();
             }
 
+            //Set RenderManager rendering parameters: near and far clip plane distance and IPD
+            private void SetRenderParams()
+            {
+                if (UseRenderManager && RenderManager != null)
+                {
+                    RenderManager.SetNearClippingPlaneDistance(Camera.main.nearClipPlane);
+                    RenderManager.SetFarClippingPlaneDistance(Camera.main.farClipPlane);
+                    //could set IPD as well
+                }
+            }
 
-            //Creates a head and eyes as configured in clientKit
-            //Viewers and Eyes are siblings, children of DisplayController
-            //Each eye has one child Surface which has a camera
+            //Set Resolution of the Unity game window based on total surface width
+            private void SetResolution()
+            {
+                TotalDisplayWidth = 0; //add up the width of each eye
+                TotalDisplayHeight = 0; //don't add up heights
+
+                int numDisplayInputs = DisplayConfig.GetNumDisplayInputs();
+                //for each display
+                for (int i = 0; i < numDisplayInputs; i++)
+                {
+                    OSVR.ClientKit.DisplayDimensions surfaceDisplayDimensions = DisplayConfig.GetDisplayDimensions((byte)i);
+
+                    TotalDisplayWidth += (uint)surfaceDisplayDimensions.Width; //add up the width of each eye
+                    TotalDisplayHeight = (uint)surfaceDisplayDimensions.Height; //store the height -- this shouldn't change
+                }
+
+                //Set the resolution. Don't force fullscreen if we have multiple display inputs
+                //We only need to do this if we aren't using RenderManager, because it adjusts the window size for us
+                //@todo figure out why this causes problems with direct mode, perhaps overfill factor?
+                if (numDisplayInputs > 1 && !UseRenderManager)
+                {
+                    Screen.SetResolution((int)TotalDisplayWidth, (int)TotalDisplayHeight, false);
+                }
+
+            }
+
+            // Creates a head and eyes as configured in clientKit
+            // Viewers and Eyes are siblings, children of DisplayController
+            // Each eye has one child Surface which has a camera
             private void CreateHeadAndEyes()
             {
                 /* ASSUME ONE VIEWER */
-                //Create VRViewers, only one in this implementation
+                // Create VRViewers, only one in this implementation
                 _viewerCount = (uint)_displayConfig.GetNumViewers();
-                if(_viewerCount != NUM_VIEWERS)
+                if (_viewerCount != NUM_VIEWERS)
                 {
-                    Debug.LogError(_viewerCount + " viewers detected. This implementation supports exactly one viewer.");
+                    Debug.LogError("[OSVR-Unity] " + _viewerCount + " viewers detected. This implementation supports exactly one viewer.");
                     return;
-                }               
+                }
                 _viewers = new VRViewer[_viewerCount];
-                //loop through viewers because at some point we could support multiple viewers
-                //but this implementation currently supports exactly one
-                for (uint viewerIndex = 0; viewerIndex < _viewerCount; viewerIndex++)
+
+                uint viewerIndex = 0;
+
+                //Check if there are already VRViewers in the scene.
+                //If so, create eyes for them.
+                VRViewer[] viewersInScene = FindObjectsOfType<VRViewer>();
+                if (viewersInScene != null && viewersInScene.Length > 0)
                 {
-                    //create a VRViewer
+                    for (viewerIndex = 0; viewerIndex < viewersInScene.Length; viewerIndex++)
+                    {
+                        VRViewer viewer = viewersInScene[viewerIndex];
+                        // get the VRViewer gameobject
+                        GameObject vrViewer = viewer.gameObject;
+                        vrViewer.name = "VRViewer" + viewerIndex; //change its name to VRViewer0
+                        //@todo optionally add components                      
+                        if (vrViewer.GetComponent<AudioListener>() == null)
+                        {
+                            vrViewer.AddComponent<AudioListener>(); //add an audio listener
+                        }
+                        viewer.DisplayController = this; //pass DisplayController to Viewers  
+                        viewer.ViewerIndex = viewerIndex; //set the viewer's index                         
+                        vrViewer.transform.parent = this.transform; //child of DisplayController
+                        vrViewer.transform.localPosition = Vector3.zero;
+                        _viewers[viewerIndex] = viewer;
+                        if (viewerIndex == 0)
+                        {
+                            vrViewer.tag = "MainCamera"; //set the MainCamera tag for the first Viewer
+                        }
+
+                        // create Viewer's VREyes
+                        uint eyeCount = (uint)_displayConfig.GetNumEyesForViewer(viewerIndex); //get the number of eyes for this viewer
+                        viewer.CreateEyes(eyeCount);
+                    }
+                }
+
+                // loop through viewers because at some point we could support multiple viewers
+                // but this implementation currently supports exactly one
+                for (; viewerIndex < _viewerCount; viewerIndex++)
+                {
+                    // create a VRViewer
                     GameObject vrViewer = new GameObject("VRViewer" + viewerIndex);
-                    vrViewer.AddComponent<AudioListener>(); //add an audio listener
+                    if (vrViewer.GetComponent<AudioListener>() == null)
+                    {
+                        vrViewer.AddComponent<AudioListener>(); //add an audio listener
+                    }
+
                     VRViewer vrViewerComponent = vrViewer.AddComponent<VRViewer>();
                     vrViewerComponent.DisplayController = this; //pass DisplayController to Viewers  
                     vrViewerComponent.ViewerIndex = viewerIndex; //set the viewer's index                         
                     vrViewer.transform.parent = this.transform; //child of DisplayController
                     vrViewer.transform.localPosition = Vector3.zero;
                     _viewers[viewerIndex] = vrViewerComponent;
+                    vrViewer.tag = "MainCamera";
 
-                    //create Viewer's VREyes
+                    // create Viewer's VREyes
                     uint eyeCount = (uint)_displayConfig.GetNumEyesForViewer(viewerIndex); //get the number of eyes for this viewer
                     vrViewerComponent.CreateEyes(eyeCount);
-                }            
-            }                
+                }
+            }
 
             void Update()
             {
-                //sometimes it takes a few frames to get a DisplayConfig from ClientKit
-                //keep trying until we have initialized
-                if(!_displayConfigInitialized)
+                // sometimes it takes a few frames to get a DisplayConfig from ClientKit
+                // keep trying until we have initialized
+                if (!_displayConfigInitialized)
                 {
                     SetupDisplay();
                 }
@@ -248,94 +324,16 @@ namespace OSVR
                 _clientKit.context.update();
             }
 
-            private VRSurface[] surfaces;
-            //Culling determines which objects are visible to the camera. OnPreCull is called just before this process.
-            //This gets called because we have a camera component, but we disable the camera here so it doesn't render.
-            //We have the "dummy" camera so existing Unity game code can refer to a MainCamera object.
-            //We update our viewer and eye transforms here because it is as late as possible before rendering happens.
-            //OnPreRender is not called because we disable the camera here.
-            void OnPreCull()
+            public bool CheckDisplayStartup()
             {
-                    // Disable dummy camera during rendering
-                    // Enable after frame ends
-                    _camera.enabled = useDistortionMesh;
-
-                    //for each viewer, update each eye, which will update each surface
-                    for (uint viewerIndex = 0; viewerIndex < _viewerCount; viewerIndex++)
-                    {
-                        VRViewer viewer = Viewers[viewerIndex];
-
-                        //update the client
-                        UpdateClient();
-
-                        //update poses once DisplayConfig is ready
-                        if (_checkDisplayStartup)
-                        {
-                            //update the viewer's head pose
-                            viewer.UpdateViewerHeadPose(DisplayConfig.GetViewerPose(viewerIndex));
-
-                            //each viewer update its eyes
-                            viewer.UpdateEyes();
-                        }       
-                        else
-                        {
-                            _checkDisplayStartup = DisplayConfig.CheckDisplayStartup();
-                        }
-                    }       
-
-                    // Flag that we disabled the camera
-                    _disabledCamera = true;
+                return DisplayConfig != null && _displayConfigInitialized && DisplayConfig.CheckDisplayStartup();
             }
 
-            public float leftXOffset = -0.5f;
-            public float rightXOffset = 0.5f;
-            //This couroutine is called every frame.
-            IEnumerator EndOfFrame()
+            public void ExitRenderManager()
             {
-                while (true)
+                if (UseRenderManager && RenderManager != null)
                 {
-                    //if we disabled the dummy camera, enable it here
-                    if (_disabledCamera)
-                    {
-                        Camera.enabled = true;
-                        _disabledCamera = false;
-                    }
-                    yield return new WaitForEndOfFrame();
-                    if (usePolynomialDistortionMesh)
-                    {
-                        if (surfaces == null)
-                        {
-                            surfaces = FindObjectsOfType<VRSurface>();
-                        }
-
-                        if (useDistortionMesh && surfaces[0]._distortionMesh != null)
-                        {
-                            if (_distortionMaterial == null)
-                            {
-                                _distortionMaterial = Resources.Load<Material>("RGBDistortionMesh");
-                            }
-                            _distortionMaterial.SetPass(0);
-                            _distortionMaterial.mainTexture = surfaces[0].DistortionRenderTexture;
-                            Graphics.DrawMeshNow(surfaces[0]._distortionMesh, this.transform.position + new Vector3(leftXOffset, 0, 100), this.transform.rotation);
-                            _distortionMaterial.SetPass(0);
-                            _distortionMaterial.mainTexture = surfaces[1].DistortionRenderTexture;
-                            Graphics.DrawMeshNow(surfaces[1]._distortionMesh, this.transform.position + new Vector3(rightXOffset, 0, 100), this.transform.rotation);
-                        }
-                    }
-                    else if(useDistortionMesh)
-                    {
-                        
-                        if (_distortionMaterial == null)
-                        {
-                            _distortionMaterial = Resources.Load<Material>("RGBDistortionMesh");
-                        }
-                        _distortionMaterial.SetPass(0);
-                        _distortionMaterial.mainTexture = DistortionRenderTexture;
-                        Graphics.DrawMeshNow(_distortionMesh, this.transform.position + new Vector3(0, 0, 1), this.transform.rotation);
-                    }
-                    //@todo any post-frame activity goes here. 
-                    //Send a timestamp?
-                    //GL.IssuePluginEvent?
+                    RenderManager.ExitRenderManager();
                 }
             }
         }

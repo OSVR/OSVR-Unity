@@ -23,9 +23,9 @@
 /// </summary>
 /// 
 using UnityEngine;
+using UnityEngine.Rendering;
 using System.Collections;
-using System;
-using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace OSVR
 {
@@ -39,16 +39,16 @@ namespace OSVR
             private K1RadialDistortion _distortionEffect;
             private uint _surfaceIndex; //index in the eye's VRSurface array
             private VREye _eye; //the eye that this surface controls rendering for
+            private OSVR.ClientKit.Viewport _viewport;
+            [HideInInspector]
+            public Texture2D PluginTexture;
+            [HideInInspector]
+            public RenderTexture RenderToTexture;
 
             public Camera Camera { get { return _camera; } set { _camera = value; } }
             public uint SurfaceIndex { get { return _surfaceIndex; } set { _surfaceIndex = value; } }
             public VREye Eye { get { return _eye; } set { _eye = value; } }
-            public Mesh _distortionMesh;
-            private RenderTexture _distortionRenderTexture;
-            public RenderTexture DistortionRenderTexture
-            {
-                get { return _distortionRenderTexture; }
-            }
+            public OSVR.ClientKit.Viewport Viewport { get { return _viewport;} set {_viewport = value;} }
 
             [HideInInspector]
             public K1RadialDistortion DistortionEffect
@@ -68,10 +68,15 @@ namespace OSVR
             }
 
             //Set the camera's viewport rect
-            public void SetViewport(Rect rect)
+            public void SetViewportRect(Rect rect)
             {
                 _camera.rect = rect;
-                _camera.rect = new Rect(0,0,1,1);
+            }
+
+            //Set the camera's viewport rect
+            public void SetViewport(OSVR.ClientKit.Viewport viewport)
+            {
+                Viewport = viewport;
             }
 
             //Set the camera's view matrix
@@ -101,13 +106,6 @@ namespace OSVR
                 SetK1RadialDistortion(k1Red, k1Green, k1Blue, center);
             }
 
-            //Set the camera's RenderTexture
-            public void SetRenderTexture(RenderTexture renderTexture)
-            {
-                //renderTexture.wrapMode = TextureWrapMode.Repeat;
-                _camera.targetTexture = renderTexture;
-            }
-
             //set distortion parameters for K1 Radial Distortion method
             private void SetK1RadialDistortion(float k1Red, float k1Green, float k1Blue, Vector2 center)
             {
@@ -132,30 +130,41 @@ namespace OSVR
                 }
             }
 
-            //Render the camera
-            public void Render()
-            {                 
-               _camera.Render();   
+            //set the render texture that this camera will render into
+            //pass the native hardware pointer to the UnityRenderingPlugin for use in RenderManager
+            public void SetRenderTexture(RenderTexture rt)
+            {
+                RenderToTexture = rt;
+                Camera.targetTexture = RenderToTexture;
+                RenderTexture.active = RenderToTexture;
+                
+                //Set the native texture pointer so we can access this texture from the plugin
+                Eye.Viewer.DisplayController.RenderManager.SetEyeColorBuffer(RenderToTexture.GetNativeTexturePtr(), (int)Eye.EyeIndex);
+            }
+            public RenderTexture GetRenderTexture()
+            {
+                return Camera.targetTexture;
+            }
+            public void SetActiveRenderTexture()
+            {
+                RenderTexture.active = RenderToTexture;
             }
 
-            public void SetupDistortionMesh()
+            //Render the camera
+            public void Render()
             {
-         
-                //create a distortion mesh
-                DistortionMeshParameters distortionParameters = new DistortionMeshParameters();
-                distortionParameters.m_desiredTriangles = 800;
-                distortionParameters.m_distortionCOP = new Vector2(0.5f, 0.5f); //can we get this one already?
-                distortionParameters.m_distortionD = new Vector2(1f, 1f);
-                distortionParameters.m_distortionPolynomialRed = new List<float>() { -0.0014431943254749858f, 1.2638362259133675f, -4.5868543587645778f, 22.246191847146271f, -33.785967129101159f, 23.778059072708075f };
-                distortionParameters.m_distortionPolynomialGreen = new List<float>() { -0.0014431943254749858f, 1.2638362259133675f, -4.5868543587645778f, 22.246191847146271f, -33.785967129101159f, 23.778059072708075f };
-                distortionParameters.m_distortionPolynomialBlue = new List<float>() { -0.0014431943254749858f, 1.2638362259133675f, -4.5868543587645778f, 22.246191847146271f, -33.785967129101159f, 23.778059072708075f };
+                Camera.targetTexture = RenderToTexture;
+                Camera.Render();
+            }
 
-                _distortionMesh = DistortionMesh.CreatePolynomialDistortionMesh(DistortionMesh.ComputeDistortionMeshVertices(DistortionMesh.DistortionMeshType.SQUARE, distortionParameters,
-                    2f, 1f), distortionParameters.m_desiredTriangles / 2);
-
-                //Distortion Mesh
-                _distortionRenderTexture = new RenderTexture(Screen.width/2, Screen.height, 24);
-                SetRenderTexture(_distortionRenderTexture);
+            public void ClearRenderTarget()
+            {
+                if (RenderTexture.active != null)
+                {
+                    RenderTexture.active.DiscardContents();
+                    RenderTexture.active = null;
+                    GL.InvalidateState();
+                }
             }
         }
     }

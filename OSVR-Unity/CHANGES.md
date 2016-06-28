@@ -4,6 +4,37 @@ This is an abbreviated changelog for the OSVR Unity Plugin.
 
 Use git for a full changelog.
 ##Recent Changes
+## Scene-switching bug fix
+> 08-June-2016 (commit 36df87) v0.6.9 
+
+- A bug causing crashes or disconnects sometimes when switching scenes in Direct Mode has been fixed.
+
+
+## Anti-aliasing working with RenderManager
+> 24-March-2016 (commit f97c8a) v0.6.6
+
+- Anti-aliasing now works on the RenderManager rendering path. Previously, it was not inheriting that setting from Unity's Quality Settings. This gets set at RenderTexture creation time. If developers want to adjust AA dynamically, they would have to recreate the RenderTextures, since that RT property cannot be adjusted dynamically.
+
+### RenderManager update
+> 28-January-2016 (commit d8a6a2) v0.6.4
+
+- Updated to RenderManager v0.6.36 which includes AMD Direct-to-Display mode. 
+- Change to VRDisplayTracked prefab to better support image effects and custom camera scripts. By default, one VREye and one VRSurface (camera) are included in the prefab. Image effects can be applied to the VRSurface object, which will be duplicated to create additional eyes if necessary.
+
+> 25-November-2015 (commit 4ca38e) v0.6.104-g4cae38e
+
+- Added support for RenderManager in Unity 5.2+. RenderManager features include nVidia Direct Mode, Timewarp, and Distortion correction. Works on 700 series or newer nVidia cards with latest (359.0) or slightly older drivers. The following DLLs are also required for RenderManager (these aren't yet included in the Unity package):
+ - osvrUnityRenderingPlugin.dll, built from [OSVR-Unity-Rendering](https://github.com/OSVR/OSVR-Unity-Rendering)
+ - osvrRenderManager.dll, from [RenderManager installer](http://resource.osvr.com/public_download/RenderManager/osvrRenderManager_0_6_23_unsigned.msi)
+ - glew32.dll, from RenderManager installer
+ - SDL2.dll, from RenderManager installer
+ These are all included in the OSVR-Unity-Palace demo.
+ 
+ - Support for displays with two video inputs, such as the Sensics dSight. If the server is configured to use a display with two video inputs, Unity builds will open in a double-wide window rather than fullscreen mode.
+ 
+ - VRFirstPersonController prefab enables simple navigation. The new example scene VRFirstPerson.unity demonstrates its use.
+ 
+
 ### ClientKit Rendering Parameters update
 > 13-September-2015 (commit 34fd6f1) v0.2.119-g34fd6f1
 

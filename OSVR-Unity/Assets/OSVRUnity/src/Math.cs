@@ -52,11 +52,36 @@ namespace OSVR
             }
 
             //Convert OSVR.ClientKit.Viewport to Rect
-            public static Rect ConvertViewport(OSVR.ClientKit.Viewport viewport)
+            public static Rect ConvertViewport(OSVR.ClientKit.Viewport viewport, OSVR.ClientKit.DisplayDimensions surfaceDisplayDimensions, int numDisplayInputs, int eyeIndex, int totalDisplayWidth)
+            {
+                //Unity expects normalized coordinates, not pixel coordinates
+                 if (numDisplayInputs == 1)
+                 {
+                    return new Rect((float)viewport.Left / (float)surfaceDisplayDimensions.Width,
+                            (float)viewport.Bottom / (float)surfaceDisplayDimensions.Height,
+                            (float)viewport.Width / (float)surfaceDisplayDimensions.Width,
+                            (float)viewport.Height / (float)surfaceDisplayDimensions.Height);
+                }
+                else if(numDisplayInputs == 2)
+                {
+                    //with two inputs in fullscreen mode, viewports expect to fill the screen
+                    //Unity can only output to one window, so we offset the right eye by half the total width of the displays
+                    return new Rect(eyeIndex == 0 ? 0 : 0.5f + (float)viewport.Left / (float)totalDisplayWidth,
+                        (float)viewport.Bottom / (float)surfaceDisplayDimensions.Height,
+                        (float)viewport.Width / (float)totalDisplayWidth,
+                        (float)viewport.Height / (float)surfaceDisplayDimensions.Height);
+                }
+                else
+                {
+                    Debug.LogError("[OSVR-Unity] More than two video inputs is not supported. Using default viewport.");
+                    return new Rect(0, 0, 0.5f, 1f);
+                }
+            }
+            public static Rect ConvertViewportRenderManager(OSVR.ClientKit.Viewport viewport)
             {
                 //Unity expects normalized coordinates, not pixel coordinates
                 //@todo below assumes left and right eyes split the screen in half horizontally
-                return new Rect(viewport.Left / (2f*viewport.Width), viewport.Bottom / viewport.Height, viewport.Width/(viewport.Width*2f), 1);
+                return new Rect(viewport.Left / viewport.Width, viewport.Bottom / viewport.Height, viewport.Width / viewport.Width, 1);
             }
 
             //Convert OSVR.ClientKit.Matrix44f to Matrix4x4
@@ -79,7 +104,7 @@ namespace OSVR
                 matrix4x4[1, 3] = matrix.M13;
                 matrix4x4[2, 3] = matrix.M14;
                 matrix4x4[3, 3] = matrix.M15;
-                return matrix4x4;
+                return matrix4x4;// * Matrix4x4.Scale(new Vector3(1, -1, 1)); ;
             }
         }
     }
