@@ -39,6 +39,11 @@ public class OsvrEditorUtils : EditorWindow
     private const string OSVR_TRACKERVIEW_FILENAME = "OSVRTrackerView.exe";
     private const string OSVR_TRACKERVIEW_README = "https://github.com/OSVR/OSVR-Tracker-Viewer/blob/master/README.md";
     private const string OSVR_GETTINGSTARTED_README = "https://github.com/OSVR/OSVR-Unity/blob/master/GettingStarted.md";
+    private const string OSVR_UNITY_SOURCE = "https://github.com/OSVR/OSVR-Unity";
+    private const string OSVR_DOCS = "https://github.com/OSVR/OSVR-Docs";
+    private const string OSVR_DEVICES = "http://osvr.github.io/compatibility/";
+    private const string OSVR_GITHUB_IO = "http://osvr.github.io/";
+
 
     //print tree
     private const string OSVR_PRINTTREE_PROCESS = "osvr_print_tree";
@@ -69,7 +74,7 @@ public class OsvrEditorUtils : EditorWindow
     public static string PrintTreeArguments = ""; //current command-line args 
     public static string PrintTreeFilename = OSVR_PRINTTREE_FILENAME; //current command-line args 
 
-    [MenuItem("Window/OSVR Utilities")]
+    [MenuItem("OSVR/OSVR Utilities")]
     public static void ShowWindow()
     {
         Load();
@@ -126,14 +131,28 @@ public class OsvrEditorUtils : EditorWindow
 
     void OnGUI()
     {
-        #region OSVR-Unity
-        GUILayout.Label("OSVR-Unity", EditorStyles.boldLabel);
-        if (GUILayout.Button("Open OSVR-Unity Getting Started Guide"))
+        #region Documentation
+        GUILayout.Label("Documentation & Support", EditorStyles.boldLabel);
+        if (GUILayout.Button("OSVR-Unity Getting Started Guide"))
         {
             Application.OpenURL(OSVR_GETTINGSTARTED_README);
         }
-        //@todo add version information
-
+        if (GUILayout.Button("OSVR-Unity Source Code"))
+        {
+            Application.OpenURL(OSVR_UNITY_SOURCE);
+        }
+        if (GUILayout.Button("OSVR-Docs repo"))
+        {
+            Application.OpenURL(OSVR_DOCS);
+        }
+        if (GUILayout.Button("OSVR Device Compatibility"))
+        {
+            Application.OpenURL(OSVR_DEVICES);
+        }
+        if (GUILayout.Button("Additional docs and support links"))
+        {
+            Application.OpenURL(OSVR_GITHUB_IO);
+        }
         #endregion
         #region OSVR_SERVER
         GUILayout.Label("OSVR Server Settings", EditorStyles.boldLabel);
