@@ -33,24 +33,29 @@ public class OsvrEditorUtils : EditorWindow
     private const string OSVR_SERVER_FILENAME = "osvr_server.exe"; //default server filename
     private const string OSVR_SERVER_PROCESS = "osvr_server"; //default server filename
     private const string OSVR_SERVER_CONFIG = "osvr_server_config.json"; //default server config
+    private const string OSVR_CONFIG_FILENAME = "OSVR-Config.exe"; //default server config
 
     //trackerview
     private const string OSVR_TRACKERVIEW_PROCESS = "OSVRTrackerView";
     private const string OSVR_TRACKERVIEW_FILENAME = "OSVRTrackerView.exe";
+    private const string OSVR_CONFIG_PROCESS = "OSVRConfig (32 bit)"; //default server filename
     private const string OSVR_TRACKERVIEW_README = "https://github.com/OSVR/OSVR-Tracker-Viewer/blob/master/README.md";
     private const string OSVR_GETTINGSTARTED_README = "https://github.com/OSVR/OSVR-Unity/blob/master/GettingStarted.md";
     private const string OSVR_UNITY_SOURCE = "https://github.com/OSVR/OSVR-Unity";
+    private const string OSVR_UNITY_RENDERING_SOURCE = "https://github.com/OSVR/OSVR-Unity-Rendering";
+    private const string RENDERMANAGER_SOURCE = "https://github.com/sensics/OSVR-RenderManager";
     private const string OSVR_DOCS = "https://github.com/OSVR/OSVR-Docs";
     private const string OSVR_DEVICES = "http://osvr.github.io/compatibility/";
     private const string OSVR_GITHUB_IO = "http://osvr.github.io/";
+    private const string OSVR_SDK_INSTALLER = "http://access.osvr.com/binary/osvr-sdk-installer";
+    private const string OSVR_CONFIG_INSTALLER = "http://access.osvr.com/binary/osvr_config";
+    private const string OSVR_CONTROL = "https://github.com/OSVR/OSVR-Docs/blob/master/Utilities/OSVRControl.md";
 
 
     //print tree
     private const string OSVR_PRINTTREE_PROCESS = "osvr_print_tree";
     private const string OSVR_PRINTTREE_FILENAME = "osvr_print_tree.exe";
     private const string OSVR_PRINTTREE_README = "http://resource.osvr.com/docs/OSVR-Core/OSVRPrintTree.html";
-
-    private const string OSVR_CONFIG_URL = "https://github.com/OSVR/OSVR-Config";
 
     //reset yaw
     private const string OSVR_RESETYAW_PROCESS = "osvr_reset_yaw";
@@ -61,12 +66,14 @@ public class OsvrEditorUtils : EditorWindow
     private const string PP_OSVR_EXE_KEY = "osvr_server_exe"; //PlayerPrefs key
     private const string PP_OSVR_ARGS_KEY = "osvr_server_args"; //PlayerPrefs key
     private const string PP_TRACKERVIEW_ARGS_KEY = "trackerview_args"; //PlayerPrefs key
+    private const string PP_OSVR_CONFIG_KEY = "osvr_config_dir"; //PlayerPrefs key
 
     private bool isServerRunning = false; //is an osvr_server.exe process running?
 
     public static string OsvrServerDirectory = OSVR_RUNTIME_DIR; //current server directory
     public static string OsvrServerFilename = OSVR_SERVER_FILENAME; //current filename of server
     public static string OsvrServerArguments = OSVR_SERVER_CONFIG; //current command-line args 
+    public static string OsvrConfigDirectory = ""; //current OSVR-Config directory
 
     public static string TrackerViewArguments = ""; //current command-line args 
     public static string TrackerViewFilename = OSVR_TRACKERVIEW_FILENAME; //current command-line args 
@@ -106,6 +113,7 @@ public class OsvrEditorUtils : EditorWindow
         OsvrServerFilename = PlayerPrefs.GetString(PP_OSVR_EXE_KEY, OSVR_SERVER_FILENAME);
         OsvrServerArguments = PlayerPrefs.GetString(PP_OSVR_ARGS_KEY, OSVR_SERVER_CONFIG);
         TrackerViewArguments = PlayerPrefs.GetString(PP_TRACKERVIEW_ARGS_KEY, "");
+        OsvrConfigDirectory = PlayerPrefs.GetString(PP_OSVR_CONFIG_KEY, "");
     }
 
     //Save server properties in PlayerPrefs
@@ -114,6 +122,7 @@ public class OsvrEditorUtils : EditorWindow
         PlayerPrefs.SetString(PP_OSVR_DIR_KEY, OsvrServerDirectory);
         PlayerPrefs.SetString(PP_OSVR_EXE_KEY, OsvrServerFilename);
         PlayerPrefs.SetString(PP_OSVR_ARGS_KEY, OsvrServerArguments);
+        PlayerPrefs.SetString(PP_OSVR_CONFIG_KEY, OsvrConfigDirectory);
         PlayerPrefs.Save();
     }
 
@@ -131,19 +140,27 @@ public class OsvrEditorUtils : EditorWindow
 
     void OnGUI()
     {
-        #region Documentation
+        #region DOCUMENTATION
         GUILayout.Label("Documentation & Support", EditorStyles.boldLabel);
         if (GUILayout.Button("OSVR-Unity Getting Started Guide"))
         {
             Application.OpenURL(OSVR_GETTINGSTARTED_README);
         }
+        if (GUILayout.Button("OSVR-Docs repo"))
+        {
+            Application.OpenURL(OSVR_DOCS);
+        }
         if (GUILayout.Button("OSVR-Unity Source Code"))
         {
             Application.OpenURL(OSVR_UNITY_SOURCE);
         }
-        if (GUILayout.Button("OSVR-Docs repo"))
+        if (GUILayout.Button("OSVR-Unity-Rendering-Plugin Source Code"))
         {
-            Application.OpenURL(OSVR_DOCS);
+            Application.OpenURL(OSVR_UNITY_RENDERING_SOURCE);
+        }
+        if (GUILayout.Button("RenderManager Source Code"))
+        {
+            Application.OpenURL(RENDERMANAGER_SOURCE);
         }
         if (GUILayout.Button("OSVR Device Compatibility"))
         {
@@ -152,6 +169,21 @@ public class OsvrEditorUtils : EditorWindow
         if (GUILayout.Button("Additional docs and support links"))
         {
             Application.OpenURL(OSVR_GITHUB_IO);
+        }
+        #endregion
+        #region INSTALLERS
+        GUILayout.Label("Installers", EditorStyles.boldLabel);
+        if (GUILayout.Button("OSVR SDK"))
+        {
+            Application.OpenURL(OSVR_SDK_INSTALLER);
+        }
+        if (GUILayout.Button("OSVR Config"))
+        {
+            Application.OpenURL(OSVR_CONFIG_INSTALLER);
+        }
+        if (GUILayout.Button("OSVR Control"))
+        {
+            Application.OpenURL(OSVR_CONTROL);
         }
         #endregion
         #region OSVR_SERVER
@@ -194,19 +226,25 @@ public class OsvrEditorUtils : EditorWindow
                 LaunchServer(false);
             }
         }        
-        if (GUILayout.Button("Save Server Settings"))
+        if (GUILayout.Button("Save Server Path/Config"))
         {
             Save();
             
         }
-        if (GUILayout.Button("Get OSVR-Config Utility"))
+        #endregion
+        #region OSVR-CONFIG
+        GUILayout.Label("OSVR-Config", EditorStyles.boldLabel);
+        OsvrConfigDirectory = EditorGUILayout.TextField("OSVR-Config Directory", OsvrConfigDirectory);
+        if (GUILayout.Button("Launch OSVR-Config Utility"))
         {
-            Application.OpenURL(OSVR_CONFIG_URL);
+            Save();
+            LaunchOSVRConfig();
         }
-            #endregion
+
+        #endregion
         #region OSVR_TRACKERVIEW
-            //Tracker View
-            GUILayout.Label("Tracker Viewer", EditorStyles.boldLabel);
+        //Tracker View
+        GUILayout.Label("Tracker Viewer", EditorStyles.boldLabel);
         if (isServerRunning)
         {
             TrackerViewArguments = EditorGUILayout.TextField("TrackerView arguments", TrackerViewArguments);
@@ -403,6 +441,21 @@ public class OsvrEditorUtils : EditorWindow
             Arguments = OsvrServerArguments,
             ErrorDialog = true
         });
+    }
+
+    public static void LaunchOSVRConfig()
+    {
+        if(File.Exists(OsvrConfigDirectory + "\\" + OSVR_CONFIG_FILENAME))
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                WorkingDirectory = OsvrConfigDirectory,
+                FileName = OSVR_CONFIG_FILENAME,
+                Arguments = "",
+                ErrorDialog = true
+            });
+        }
+        
     }
 
     public static void LaunchTrackerView()
