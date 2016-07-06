@@ -379,7 +379,7 @@ public class OsvrEditorUtils : EditorWindow
     }
 
     //Load server properties from EditorPrefs
-    public void Load()
+    private void Load()
     {
         OsvrServerDirectory = EditorPrefs.GetString(PP_OSVR_DIR_KEY, OSVR_RUNTIME_DIR);
         OsvrServerFilename = EditorPrefs.GetString(PP_OSVR_EXE_KEY, OSVR_SERVER_FILENAME);
@@ -389,7 +389,7 @@ public class OsvrEditorUtils : EditorWindow
     }
 
     //Save server properties in EditorPrefs
-    public void Save()
+    private void Save()
     {
         EditorPrefs.SetString(PP_OSVR_DIR_KEY, OsvrServerDirectory);
         EditorPrefs.SetString(PP_OSVR_EXE_KEY, OsvrServerFilename);
@@ -398,13 +398,13 @@ public class OsvrEditorUtils : EditorWindow
     }
 
     //Save OSVR Server path to EditorPrefs
-    public void SavePath(string p)
+    private void SavePath(string p)
     {
         EditorPrefs.SetString(PP_OSVR_DIR_KEY, p);
     }
 
     //Save TrackerView command-line args
-    public void SaveTrackerViewArguments()
+    private void SaveTrackerViewArguments()
     {
         EditorPrefs.SetString(PP_TRACKERVIEW_ARGS_KEY, TrackerViewArguments);
     }
@@ -440,7 +440,7 @@ public class OsvrEditorUtils : EditorWindow
     }
 
     //Launch osvr_server.exe with option to kill an existing server process
-    public void LaunchServer(bool killRunningServer)
+    private void LaunchServer(bool killRunningServer)
     {
         if(killRunningServer)
         {
@@ -456,7 +456,7 @@ public class OsvrEditorUtils : EditorWindow
     }
 
     //launch OSVR-Config utility
-    public void LaunchOSVRConfig()
+    private void LaunchOSVRConfig()
     {
         if(File.Exists(OsvrConfigDirectory + "\\" + OSVR_CONFIG_FILENAME))
         {
@@ -472,7 +472,7 @@ public class OsvrEditorUtils : EditorWindow
     }
 
     //launch OSVRTrackerView.exe
-    public void LaunchTrackerView()
+    private void LaunchTrackerView()
     {
         Process.Start(new ProcessStartInfo
         {
@@ -484,7 +484,7 @@ public class OsvrEditorUtils : EditorWindow
     }
 
     //kill a process by process name
-    public static void KillProcess(string processName)
+    private void KillProcess(string processName)
     {
         Process[] processNames = Process.GetProcessesByName(processName);
         for(int i = processNames.Length - 1; i > -1; i--)
