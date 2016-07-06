@@ -81,6 +81,9 @@ public class OsvrEditorUtils : EditorWindow
     public string PrintTreeArguments = ""; //current command-line args 
     public string PrintTreeFilename = OSVR_PRINTTREE_FILENAME; //current command-line args 
 
+    //OSVR logo
+    private Texture2D osvrLogo;
+
     [MenuItem("OSVR/OSVR Utilities")]
     public static void ShowWindow()
     { 
@@ -102,8 +105,21 @@ public class OsvrEditorUtils : EditorWindow
         }       
     }
 
+    void OnEnable()
+    {
+        var dir = MonoScript.FromScriptableObject(this);
+        string logoPath = AssetDatabase.GetAssetPath(dir);
+        logoPath = Path.GetDirectoryName(logoPath).Replace("Editor", "Textures/");
+        osvrLogo = AssetDatabase.LoadAssetAtPath<Texture2D>(logoPath + "osvr-logo.png");
+    }
+
     void OnGUI()
     {
+        if(osvrLogo != null)
+        {
+            GUILayout.Label(osvrLogo);
+        }        
+
         #region DOCUMENTATION
         GUILayout.Label("Documentation & Support", EditorStyles.boldLabel);
         if (GUILayout.Button("OSVR-Unity Getting Started Guide"))
