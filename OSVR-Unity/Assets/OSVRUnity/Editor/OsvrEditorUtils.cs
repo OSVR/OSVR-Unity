@@ -61,46 +61,45 @@ public class OsvrEditorUtils : EditorWindow
     private const string OSVR_RESETYAW_PROCESS = "osvr_reset_yaw";
     private const string OSVR_RESETYAW_FILENAME = "osvr_reset_yaw.exe";
 
-    //PlayerPrefs keys for caching values
-    private const string PP_OSVR_DIR_KEY = "osvr_server_dir"; //PlayerPrefs key
-    private const string PP_OSVR_EXE_KEY = "osvr_server_exe"; //PlayerPrefs key
-    private const string PP_OSVR_ARGS_KEY = "osvr_server_args"; //PlayerPrefs key
-    private const string PP_TRACKERVIEW_ARGS_KEY = "trackerview_args"; //PlayerPrefs key
-    private const string PP_OSVR_CONFIG_KEY = "osvr_config_dir"; //PlayerPrefs key
+    //EditorPrefs keys for caching values
+    private const string PP_OSVR_DIR_KEY = "osvr_server_dir"; //EditorPrefs key
+    private const string PP_OSVR_EXE_KEY = "osvr_server_exe"; //EditorPrefs key
+    private const string PP_OSVR_ARGS_KEY = "osvr_server_args"; //EditorPrefs key
+    private const string PP_TRACKERVIEW_ARGS_KEY = "trackerview_args"; //EditorPrefs key
+    private const string PP_OSVR_CONFIG_KEY = "osvr_config_dir"; //EditorPrefs key
 
     private bool isServerRunning = false; //is an osvr_server.exe process running?
 
-    public static string OsvrServerDirectory = OSVR_RUNTIME_DIR; //current server directory
-    public static string OsvrServerFilename = OSVR_SERVER_FILENAME; //current filename of server
-    public static string OsvrServerArguments = OSVR_SERVER_CONFIG; //current command-line args 
-    public static string OsvrConfigDirectory = ""; //current OSVR-Config directory
+    public string OsvrServerDirectory = OSVR_RUNTIME_DIR; //current server directory
+    public string OsvrServerFilename = OSVR_SERVER_FILENAME; //current filename of server
+    public string OsvrServerArguments = OSVR_SERVER_CONFIG; //current command-line args 
+    public string OsvrConfigDirectory = ""; //current OSVR-Config directory
 
-    public static string TrackerViewArguments = ""; //current command-line args 
-    public static string TrackerViewFilename = OSVR_TRACKERVIEW_FILENAME; //current command-line args 
+    public string TrackerViewArguments = ""; //current command-line args 
+    public string TrackerViewFilename = OSVR_TRACKERVIEW_FILENAME; //current command-line args 
 
-    public static string PrintTreeArguments = ""; //current command-line args 
-    public static string PrintTreeFilename = OSVR_PRINTTREE_FILENAME; //current command-line args 
+    public string PrintTreeArguments = ""; //current command-line args 
+    public string PrintTreeFilename = OSVR_PRINTTREE_FILENAME; //current command-line args 
 
     [MenuItem("OSVR/OSVR Utilities")]
     public static void ShowWindow()
-    {
-        Load();
+    { 
         OsvrEditorUtils osvrUtilsWindow = EditorWindow.GetWindow<OsvrEditorUtils>();
-
+        osvrUtilsWindow.Load();
         GUIContent titleContent = new GUIContent("OSVR");
         osvrUtilsWindow.titleContent = titleContent;
 
-        string path = "";
         //set the OSVR server directory
-        if (Directory.Exists(OSVR_RUNTIME_DIR))
+        if (osvrUtilsWindow.OsvrServerDirectory == "" && Directory.Exists(OSVR_RUNTIME_DIR))
         {
-            OsvrServerDirectory = OSVR_RUNTIME_DIR;
+            osvrUtilsWindow.OsvrServerDirectory = OSVR_RUNTIME_DIR;
+            osvrUtilsWindow.SavePath(OSVR_RUNTIME_DIR);
         }
-        else if (Directory.Exists(OSVR_SDK_DIR))
+        else if (osvrUtilsWindow.OsvrServerDirectory == "" && Directory.Exists(OSVR_SDK_DIR))
         {
-            OsvrServerDirectory = OSVR_SDK_DIR;
-        }
-        SavePath(path);
+            osvrUtilsWindow.OsvrServerDirectory = OSVR_SDK_DIR;
+            osvrUtilsWindow.SavePath(OSVR_SDK_DIR);
+        }       
     }
 
     void OnGUI()
@@ -168,7 +167,7 @@ public class OsvrEditorUtils : EditorWindow
         OsvrServerArguments = EditorGUILayout.TextField("Configuration file", OsvrServerArguments);
         if (GUILayout.Button("Select Config File"))
         {
-            OsvrServerArguments = Path.GetFileName(EditorUtility.OpenFilePanel("Select Configuration File", OsvrServerDirectory, "json"));
+            OsvrServerArguments = "\"" + EditorUtility.OpenFilePanel("Select Configuration File", OsvrServerDirectory, "json").Replace("/", "\\") + "\"";
         }
 
         if(isServerRunning)
@@ -236,7 +235,6 @@ public class OsvrEditorUtils : EditorWindow
         }
         else
         {
-
             // Disable the jumping height control if canJump is false:
             EditorGUI.BeginDisabledGroup(isServerRunning == false);
             GUILayout.Button("Start osvr_server.exe to enable OSVRTrackerView");
@@ -271,7 +269,6 @@ public class OsvrEditorUtils : EditorWindow
         }
         else
         {
-
             // Disable the jumping height control if canJump is false:
             EditorGUI.BeginDisabledGroup(isServerRunning == false);
             GUILayout.Button("Start osvr_server.exe to enable Print Tree");
@@ -365,38 +362,35 @@ public class OsvrEditorUtils : EditorWindow
         #endregion
     }
 
-    //Load server properties from PlayerPrefs
-    public static void Load()
+    //Load server properties from EditorPrefs
+    public void Load()
     {
-        OsvrServerDirectory = PlayerPrefs.GetString(PP_OSVR_DIR_KEY, OSVR_RUNTIME_DIR);
-        OsvrServerFilename = PlayerPrefs.GetString(PP_OSVR_EXE_KEY, OSVR_SERVER_FILENAME);
-        OsvrServerArguments = PlayerPrefs.GetString(PP_OSVR_ARGS_KEY, OSVR_SERVER_CONFIG);
-        TrackerViewArguments = PlayerPrefs.GetString(PP_TRACKERVIEW_ARGS_KEY, "");
-        OsvrConfigDirectory = PlayerPrefs.GetString(PP_OSVR_CONFIG_KEY, "");
+        OsvrServerDirectory = EditorPrefs.GetString(PP_OSVR_DIR_KEY, OSVR_RUNTIME_DIR);
+        OsvrServerFilename = EditorPrefs.GetString(PP_OSVR_EXE_KEY, OSVR_SERVER_FILENAME);
+        OsvrServerArguments = EditorPrefs.GetString(PP_OSVR_ARGS_KEY, OSVR_SERVER_CONFIG);
+        TrackerViewArguments = EditorPrefs.GetString(PP_TRACKERVIEW_ARGS_KEY, "");
+        OsvrConfigDirectory = EditorPrefs.GetString(PP_OSVR_CONFIG_KEY, "");
     }
 
-    //Save server properties in PlayerPrefs
-    public static void Save()
+    //Save server properties in EditorPrefs
+    public void Save()
     {
-        PlayerPrefs.SetString(PP_OSVR_DIR_KEY, OsvrServerDirectory);
-        PlayerPrefs.SetString(PP_OSVR_EXE_KEY, OsvrServerFilename);
-        PlayerPrefs.SetString(PP_OSVR_ARGS_KEY, OsvrServerArguments);
-        PlayerPrefs.SetString(PP_OSVR_CONFIG_KEY, OsvrConfigDirectory);
-        PlayerPrefs.Save();
+        EditorPrefs.SetString(PP_OSVR_DIR_KEY, OsvrServerDirectory);
+        EditorPrefs.SetString(PP_OSVR_EXE_KEY, OsvrServerFilename);
+        EditorPrefs.SetString(PP_OSVR_ARGS_KEY, OsvrServerArguments);
+        EditorPrefs.SetString(PP_OSVR_CONFIG_KEY, OsvrConfigDirectory);
     }
 
-    //Save OSVR Server path to PlayerPrefs
-    public static void SavePath(string p)
+    //Save OSVR Server path to EditorPrefs
+    public void SavePath(string p)
     {
-        PlayerPrefs.SetString(PP_OSVR_DIR_KEY, p);
-        PlayerPrefs.Save();
+        EditorPrefs.SetString(PP_OSVR_DIR_KEY, p);
     }
 
     //Save TrackerView command-line args
-    public static void SaveTrackerViewArguments()
+    public void SaveTrackerViewArguments()
     {
-        PlayerPrefs.SetString(PP_TRACKERVIEW_ARGS_KEY, TrackerViewArguments);
-        PlayerPrefs.Save();
+        EditorPrefs.SetString(PP_TRACKERVIEW_ARGS_KEY, TrackerViewArguments);
     }
 
     //Launch osvr_reset_yaw.exe
@@ -430,7 +424,7 @@ public class OsvrEditorUtils : EditorWindow
     }
 
     //Launch osvr_server.exe with option to kill an existing server process
-    public static void LaunchServer(bool killRunningServer)
+    public void LaunchServer(bool killRunningServer)
     {
         if(killRunningServer)
         {
@@ -446,7 +440,7 @@ public class OsvrEditorUtils : EditorWindow
     }
 
     //launch OSVR-Config utility
-    public static void LaunchOSVRConfig()
+    public void LaunchOSVRConfig()
     {
         if(File.Exists(OsvrConfigDirectory + "\\" + OSVR_CONFIG_FILENAME))
         {
@@ -462,7 +456,7 @@ public class OsvrEditorUtils : EditorWindow
     }
 
     //launch OSVRTrackerView.exe
-    public static void LaunchTrackerView()
+    public void LaunchTrackerView()
     {
         Process.Start(new ProcessStartInfo
         {
