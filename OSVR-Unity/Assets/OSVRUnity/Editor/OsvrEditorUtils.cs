@@ -120,52 +120,6 @@ public class OsvrEditorUtils : EditorWindow
             GUILayout.Label(osvrLogo);
         }        
 
-        #region DOCUMENTATION
-        GUILayout.Label("Documentation & Support", EditorStyles.boldLabel);
-        if (GUILayout.Button("OSVR-Unity Getting Started Guide"))
-        {
-            Application.OpenURL(OSVR_GETTINGSTARTED_README);
-        }
-        if (GUILayout.Button("OSVR-Docs repo"))
-        {
-            Application.OpenURL(OSVR_DOCS);
-        }
-        if (GUILayout.Button("OSVR-Unity Source Code"))
-        {
-            Application.OpenURL(OSVR_UNITY_SOURCE);
-        }
-        if (GUILayout.Button("OSVR-Unity-Rendering-Plugin Source Code"))
-        {
-            Application.OpenURL(OSVR_UNITY_RENDERING_SOURCE);
-        }
-        if (GUILayout.Button("RenderManager Source Code"))
-        {
-            Application.OpenURL(RENDERMANAGER_SOURCE);
-        }
-        if (GUILayout.Button("OSVR Device Compatibility"))
-        {
-            Application.OpenURL(OSVR_DEVICES);
-        }
-        if (GUILayout.Button("Additional docs and support links"))
-        {
-            Application.OpenURL(OSVR_GITHUB_IO);
-        }
-        #endregion
-        #region INSTALLERS
-        GUILayout.Label("Installers", EditorStyles.boldLabel);
-        if (GUILayout.Button("OSVR SDK"))
-        {
-            Application.OpenURL(OSVR_SDK_INSTALLER);
-        }
-        if (GUILayout.Button("OSVR Config"))
-        {
-            Application.OpenURL(OSVR_CONFIG_INSTALLER);
-        }
-        if (GUILayout.Button("OSVR Control"))
-        {
-            Application.OpenURL(OSVR_CONTROL);
-        }
-        #endregion
         #region OSVR_SERVER
         GUILayout.Label("OSVR Server Settings", EditorStyles.boldLabel);
         OsvrServerDirectory = EditorGUILayout.TextField("OSVR Directory", OsvrServerDirectory);
@@ -374,6 +328,52 @@ public class OsvrEditorUtils : EditorWindow
                 Arguments = "",
                 ErrorDialog = true
             });
+        }
+        #endregion
+        #region DOCUMENTATION
+        GUILayout.Label("Documentation & Support", EditorStyles.boldLabel);
+        if (GUILayout.Button("OSVR-Unity Getting Started Guide"))
+        {
+            Application.OpenURL(OSVR_GETTINGSTARTED_README);
+        }
+        if (GUILayout.Button("OSVR-Docs repo"))
+        {
+            Application.OpenURL(OSVR_DOCS);
+        }
+        if (GUILayout.Button("OSVR-Unity Source Code"))
+        {
+            Application.OpenURL(OSVR_UNITY_SOURCE);
+        }
+        if (GUILayout.Button("OSVR-Unity-Rendering-Plugin Source Code"))
+        {
+            Application.OpenURL(OSVR_UNITY_RENDERING_SOURCE);
+        }
+        if (GUILayout.Button("RenderManager Source Code"))
+        {
+            Application.OpenURL(RENDERMANAGER_SOURCE);
+        }
+        if (GUILayout.Button("OSVR Device Compatibility"))
+        {
+            Application.OpenURL(OSVR_DEVICES);
+        }
+        if (GUILayout.Button("Additional docs and support links"))
+        {
+            Application.OpenURL(OSVR_GITHUB_IO);
+        }
+        #endregion
+        #region INSTALLERS
+        GUILayout.Label("Installers", EditorStyles.boldLabel);
+        if (GUILayout.Button("OSVR SDK"))
+        {
+            Application.OpenURL(OSVR_SDK_INSTALLER);
+        }
+        if (GUILayout.Button("OSVR Config"))
+        {
+            Application.OpenURL(OSVR_CONFIG_INSTALLER);
+        }
+        if (GUILayout.Button("OSVR Control"))
+        {
+            Application.OpenURL(OSVR_CONTROL);
         }
         #endregion
     }
