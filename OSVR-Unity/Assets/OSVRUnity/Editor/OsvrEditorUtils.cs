@@ -17,7 +17,7 @@
 /// See the License for the specific language governing permissions and
 /// limitations under the License.
 /// </copyright>
-
+#if UNITY_5
 using UnityEngine;
 using UnityEditor;
 using System.IO;
@@ -501,3 +501,4 @@ public class OsvrEditorUtils : EditorWindow
         return processNames.Length != 0;
     }
 }
+#endif
