@@ -4,6 +4,14 @@ This is an abbreviated changelog for the OSVR Unity Plugin.
 
 Use git for a full changelog.
 ##Recent Changes
+## OSVR Editor Utilities
+> 08-July-2016 (commit 7fb855) v0.6.10
+
+- Added an OSVR editor window accessible through the Unity menu bar. It includes:
+	- Links for launching utilities (TrackerView, Reset Yaw, DirectMode Enable/Disable, etc.) located in the OSVR Runtime/SDK directory.
+	- Ability to launch and configure any osvr_server.exe from the Unity editor. Useful for faster testing various server/render configurations.
+	- Links to installers and documentation.
+
 ## Scene-switching bug fix
 > 08-June-2016 (commit 36df87) v0.6.9 
 
