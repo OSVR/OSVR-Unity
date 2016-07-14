@@ -30,6 +30,9 @@ namespace OSVR
             public string AppID;
 
             private OSVR.ClientKit.ClientContext _contextObject;
+#if UNITY_STANDALONE_WIN
+            private OSVR.ClientKit.ServerAutoStarter _serverAutoStarter;
+#endif
 
             /// Uses the Unity "Persistent Singleton" pattern, see http://unitypatterns.com/singletons/
             private static ClientKit _instance;
@@ -88,8 +91,15 @@ namespace OSVR
                         AppID = "com.osvr.osvr-unity.dummy";
                     }
                     Debug.Log("[OSVR-Unity] Starting with app ID: " + AppID);
-                    _contextObject = new OSVR.ClientKit.ClientContext(AppID, 0);
+                    _contextObject = new OSVR.ClientKit.ClientContext(AppID, 0);                  
                 }
+
+#if UNITY_STANDALONE_WIN
+                if(_serverAutoStarter == null)
+                {
+                    _serverAutoStarter = new OSVR.ClientKit.ServerAutoStarter();
+                }
+#endif
 
                 //check if the server is running
                 if (!_contextObject.CheckStatus())
@@ -159,6 +169,13 @@ namespace OSVR
                         Debug.Log("[OSVR-Unity] Shutting down OSVR.");
                         _contextObject.Dispose();
                         _contextObject = null;
+#if UNITY_STANDALONE_WIN
+                        if(_serverAutoStarter != null)
+                        {
+                            _serverAutoStarter.Dispose();
+                            _serverAutoStarter = null;
+                        }
+#endif
                     }
                 }
             }
