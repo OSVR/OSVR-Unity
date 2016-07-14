@@ -134,10 +134,11 @@ public class OsvrEditorUtils : EditorWindow
             EditorGUILayout.LabelField("osvr_server.exe is not running.");
         }
 
-        OsvrServerArguments = EditorGUILayout.TextField("Configuration file", OsvrServerArguments);
+        string serverArgs = EditorGUILayout.TextField("Configuration file", OsvrServerArguments);
         if (GUILayout.Button("Select Config File"))
         {
-            OsvrServerArguments = "\"" + EditorUtility.OpenFilePanel("Select Configuration File", OsvrServerDirectory, "json").Replace("/", "\\") + "\"";
+            serverArgs = "\"" + EditorUtility.OpenFilePanel("Select Configuration File", OsvrServerDirectory, "json").Replace("/", "\\") + "\"";
+            OsvrServerArguments = serverArgs;
         }
 
         if(isServerRunning)
