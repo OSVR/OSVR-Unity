@@ -44,6 +44,7 @@ public class OsvrEditorUtils : EditorWindow
     private const string OSVR_UNITY_SOURCE = "https://github.com/OSVR/OSVR-Unity";
     private const string OSVR_UNITY_RENDERING_SOURCE = "https://github.com/OSVR/OSVR-Unity-Rendering";
     private const string RENDERMANAGER_SOURCE = "https://github.com/sensics/OSVR-RenderManager";
+    private const string RENDERMANAGER_OPTIMIZATION = "https://github.com/sensics/OSVR-RenderManager/blob/master/doc/renderingOptimization.md";
     private const string OSVR_DOCS = "https://github.com/OSVR/OSVR-Docs";
     private const string OSVR_DEVICES = "http://osvr.github.io/compatibility/";
     private const string OSVR_GITHUB_IO = "http://osvr.github.io/";
@@ -340,6 +341,10 @@ public class OsvrEditorUtils : EditorWindow
         if (GUILayout.Button("OSVR-Docs repo"))
         {
             Application.OpenURL(OSVR_DOCS);
+        }
+        if(GUILayout.Button("RenderManager Rendering Optimizations"))
+        {
+            Application.OpenURL(RENDERMANAGER_OPTIMIZATION);
         }
         if (GUILayout.Button("OSVR-Unity Source Code"))
         {
