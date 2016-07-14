@@ -32,7 +32,7 @@ public class OsvrEditorUtils : EditorWindow
     private const string OSVR_SDK_DIR = "C:\\Program Files\\OSVR\\SDK\\bin"; //default SDK install path
     private const string OSVR_SERVER_FILENAME = "osvr_server.exe"; //default server filename
     private const string OSVR_SERVER_PROCESS = "osvr_server"; //default server filename
-    private const string OSVR_SERVER_CONFIG = "osvr_server_config.json"; //default server config
+    private const string OSVR_SERVER_CONFIG = "\"C:\\Program Files\\OSVR\\Runtime\\bin\\osvr_server_config.json\""; //default server config
     private const string OSVR_CONFIG_FILENAME = "OSVR-Config.exe"; //default server config
 
     //trackerview
@@ -44,6 +44,7 @@ public class OsvrEditorUtils : EditorWindow
     private const string OSVR_UNITY_SOURCE = "https://github.com/OSVR/OSVR-Unity";
     private const string OSVR_UNITY_RENDERING_SOURCE = "https://github.com/OSVR/OSVR-Unity-Rendering";
     private const string RENDERMANAGER_SOURCE = "https://github.com/sensics/OSVR-RenderManager";
+    private const string RENDERMANAGER_OPTIMIZATION = "https://github.com/sensics/OSVR-RenderManager/blob/master/doc/renderingOptimization.md";
     private const string OSVR_DOCS = "https://github.com/OSVR/OSVR-Docs";
     private const string OSVR_DEVICES = "http://osvr.github.io/compatibility/";
     private const string OSVR_GITHUB_IO = "http://osvr.github.io/";
@@ -134,10 +135,11 @@ public class OsvrEditorUtils : EditorWindow
             EditorGUILayout.LabelField("osvr_server.exe is not running.");
         }
 
-        OsvrServerArguments = EditorGUILayout.TextField("Configuration file", OsvrServerArguments);
+        string serverArgs = EditorGUILayout.TextField("Configuration file", OsvrServerArguments);
         if (GUILayout.Button("Select Config File"))
         {
-            OsvrServerArguments = "\"" + EditorUtility.OpenFilePanel("Select Configuration File", OsvrServerDirectory, "json").Replace("/", "\\") + "\"";
+            serverArgs = "\"" + EditorUtility.OpenFilePanel("Select Configuration File", OsvrServerDirectory, "json").Replace("/", "\\") + "\"";
+            OsvrServerArguments = serverArgs;
         }
 
         if(isServerRunning)
@@ -339,6 +341,10 @@ public class OsvrEditorUtils : EditorWindow
         if (GUILayout.Button("OSVR-Docs repo"))
         {
             Application.OpenURL(OSVR_DOCS);
+        }
+        if(GUILayout.Button("RenderManager Rendering Optimizations"))
+        {
+            Application.OpenURL(RENDERMANAGER_OPTIMIZATION);
         }
         if (GUILayout.Button("OSVR-Unity Source Code"))
         {
