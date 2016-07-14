@@ -39,59 +39,8 @@ namespace OSVR
         //*/
         public class OsvrRenderManager : MonoBehaviour
         {
-            public const int RENDER_EVENT = 0;
-            public const int SHUTDOWN_EVENT = 1;
-            public const int UPDATE_RENDERINFO_EVENT = 2;
-            private const string PluginName = "osvrUnityRenderingPlugin";
-
-            // Allow for calling into the debug console from C++
-            [DllImport(PluginName)]
-            private static extern void LinkDebug([MarshalAs(UnmanagedType.FunctionPtr)]IntPtr debugCal);
-            [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-            private delegate void DebugLog(string log);
-            private static readonly DebugLog debugLog = DebugWrapper;
-            private static readonly IntPtr functionPointer = Marshal.GetFunctionPointerForDelegate(debugLog);
-            private static void DebugWrapper(string log) { Debug.Log(log); }
-
-            //get the render event function that we'll call every frame via GL.IssuePluginEvent
-            [DllImport(PluginName, CallingConvention = CallingConvention.StdCall)]
-            private static extern IntPtr GetRenderEventFunc();
-
-            //Pass a pointer to a texture (RenderTexture.GetNativeTexturePtr()) to the plugin
-            [DllImport(PluginName, CallingConvention = CallingConvention.Cdecl)]
-            private static extern void SetColorBufferFromUnity(System.IntPtr texturePtr, int eye);
-
-            [DllImport(PluginName, CallingConvention = CallingConvention.Cdecl)]
-            private static extern void SetNearClipDistance(double nearClipPlaneDistance);
-
-            [DllImport(PluginName, CallingConvention = CallingConvention.Cdecl)]
-            private static extern void SetFarClipDistance(double farClipPlaneDistance);
-
-            [DllImport(PluginName, CallingConvention = CallingConvention.Cdecl)]
-            private static extern void SetIPD(double ipdMeters);
-
-            //Create a RenderManager object in the plugin, passing in a ClientContext
-            [DllImport(PluginName, CallingConvention = CallingConvention.Cdecl)]
-            private static extern Byte CreateRenderManagerFromUnity(OSVR.ClientKit.SafeClientContextHandle /*OSVR_ClientContext*/ ctx);
-
-            //Create and Register RenderBuffers
-            [DllImport(PluginName, CallingConvention = CallingConvention.Cdecl)]
-            private static extern Byte ConstructRenderBuffers();
-
             [StructLayout(LayoutKind.Sequential)]
-            public struct OSVR_ViewportDescription
-            {
-                public double left;    //< Left side of the viewport in pixels
-                public double lower;   //< First pixel in the viewport at the bottom.
-                public double width;   //< Last pixel in the viewport at the top
-                public double height;   //< Last pixel on the right of the viewport in pixels
-            }
-
-            [DllImport(PluginName, CallingConvention = CallingConvention.Cdecl)]
-            private static extern OSVR_ViewportDescription GetViewport(int eye);
-
-            [StructLayout(LayoutKind.Sequential)]
-            public struct OSVR_ProjectionMatrix
+            private struct OSVR_ProjectionMatrix
             {
                 public double left;
                 public double right;
@@ -101,17 +50,137 @@ namespace OSVR
                 public double farClip;
             }
 
-            [DllImport(PluginName, CallingConvention = CallingConvention.Cdecl)]
-            private static extern OSVR_ProjectionMatrix GetProjectionMatrix(int eye);
+            [StructLayout(LayoutKind.Sequential)]
+            private struct OSVR_ViewportDescription
+            {
+                public double left;    //< Left side of the viewport in pixels
+                public double lower;   //< First pixel in the viewport at the bottom.
+                public double width;   //< Last pixel in the viewport at the top
+                public double height;   //< Last pixel on the right of the viewport in pixels
+            }
 
-            [DllImport(PluginName, CallingConvention = CallingConvention.Cdecl)]
-            private static extern OSVR.ClientKit.Pose3 GetEyePose(int eye);
+            public const int RENDER_EVENT = 0;
+            public const int SHUTDOWN_EVENT = 1;
+            public const int UPDATE_RENDERINFO_EVENT = 2;
+            private const string PluginName = "osvrUnityRenderingPlugin";
 
+            [UnmanagedFunctionPointer(CallingConvention.Winapi)]
+            private delegate void DebugLog(string log);
+            private static readonly DebugLog debugLog = DebugWrapper;
+            private static readonly IntPtr functionPointer = Marshal.GetFunctionPointerForDelegate(debugLog);
+            private static void DebugWrapper(string log) { Debug.Log(log); }
 
-            [DllImport(PluginName, CallingConvention = CallingConvention.Cdecl)]
-            private static extern void ShutdownRenderManager();
+            //Create and Register RenderBuffers
+            [DllImport(PluginName)]
+            private static extern Byte 
+                ConstructRenderBuffers();
+
+            //Create a RenderManager object in the plugin, passing in a ClientContext
+            [DllImport(PluginName)]
+            private static extern Byte
+                CreateRenderManagerFromUnity(OSVR.ClientKit.SafeClientContextHandle /*OSVR_ClientContext*/ ctx);
+
+            [DllImport(PluginName)]
+            private static extern OSVR.ClientKit.Pose3
+                GetEyePose(int eye);
+
+            [DllImport(PluginName)]
+            private static extern OSVR_ProjectionMatrix
+                GetProjectionMatrix(int eye);
+
+            //get the render event function that we'll call every frame via GL.IssuePluginEvent
+            [DllImport(PluginName)]
+            private static extern IntPtr
+                GetRenderEventFunc();
+
+            [DllImport(PluginName)]
+            private static extern OSVR_ViewportDescription
+                GetViewport(int eye);
+
+            // Allow for calling into the debug console from C++
+            [DllImport(PluginName)]
+            private static extern void
+                LinkDebug([MarshalAs(UnmanagedType.FunctionPtr)]IntPtr debugCal);
+
+            // OnRenderEvent is not needed
+
+            // Pass a pointer to a texture (RenderTexture.GetNativeTexturePtr()) to the plugin
+            // @todo native code may change the return type to OSVR_ReturnCode.
+            // If so, change the return type here to Byte
+            [DllImport(PluginName)]
+            private static extern int 
+                SetColorBufferFromUnity(System.IntPtr texturePtr, int eye);
+
+            [DllImport(PluginName)]
+            private static extern void
+                SetFarClipDistance(double farClipPlaneDistance);
+
+            [DllImport(PluginName)]
+            private static extern void
+                SetIPD(double ipdMeters);
+
+            [DllImport(PluginName)]
+            private static extern void
+                SetNearClipDistance(double nearClipPlaneDistance);
+
+            [DllImport(PluginName)]
+            private static extern void
+                ShutdownRenderManager();
+
+            // UnityPluginLoad is not needed
+            // UnityPluginUnload is not needed
 
             private bool _linkDebug = false; //causes crash on exit if true, only enable for debugging
+
+            //persistent singleton
+            private static OsvrRenderManager _instance;
+
+            /// <summary>
+            /// Use to access the single instance of this object/script in your game.
+            /// </summary>
+            /// <returns>The instance, or null in case of error</returns>
+            public static OsvrRenderManager instance
+            {
+                get
+                {
+                    if (_instance == null)
+                    {
+                        _instance = GameObject.FindObjectOfType<OsvrRenderManager>();
+                        if (_instance == null)
+                        {
+                            Debug.LogError("[OSVR-Unity] RenderManager not found.");
+                        }
+                        else
+                        {
+                            DontDestroyOnLoad(_instance.gameObject);
+                        }
+                    }
+                    return _instance;
+                }
+            }
+
+            void Awake()
+            {
+                //if an instance of this singleton does not exist, set the instance to this object and make it persist
+                if (_instance == null)
+                {
+                    _instance = this;
+                    DontDestroyOnLoad(this);
+                }
+                else
+                {
+                    //if an instance of this singleton already exists, destroy this one
+                    if (_instance != this)
+                    {
+                        Destroy(this.gameObject);
+                    }
+                }
+            }
+
+            void OnDisable()
+            {
+                ExitRenderManager();
+            }
 
             //Initialize use of RenderManager via CreateRenderManager call
             public int InitRenderManager()

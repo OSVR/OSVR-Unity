@@ -1,6 +1,6 @@
 # OSVR for Unity Developers
 
-> Last Updated March 2, 2016
+> Last Updated June 23, 2016
 
 ## Why use OSVR?
 
@@ -14,7 +14,7 @@ The rest of this document assumes you generally understand the benefits of OSVR 
 
 ## OSVR-Core and OSVR Server
 
-When using OSVR, you need to run OSVR server. Download the latest OSVR-Core binary snapshot from: http://osvr.github.io/using/
+When using OSVR, you need to run OSVR server. osvr_server.exe is included in the OSVR Runtime and SDK installers. Download the latest OSVR SDK installer from: http://osvr.github.io/using/
 
 Note that the Unity Asset Store version may be slightly behind the Github version, but that currently, the Unity Asset Store version contains additional DLLs for RenderManager that are not contained in the OSVR-Unity.unitypackage distributed on Github (these DLLs are available in the OSVR-Unity examples project, however).
 

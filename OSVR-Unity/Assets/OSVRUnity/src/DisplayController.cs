@@ -121,8 +121,9 @@ namespace OSVR
                     _renderManager = GameObject.FindObjectOfType<OsvrRenderManager>();
                     if (_renderManager == null)
                     {
+                        GameObject renderManagerGameObject = new GameObject("RenderManager");
                         //add a RenderManager component
-                        _renderManager = gameObject.AddComponent<OsvrRenderManager>();
+                        _renderManager = renderManagerGameObject.AddComponent<OsvrRenderManager>();
                     }
 
                     //check to make sure Unity version and Graphics API are supported

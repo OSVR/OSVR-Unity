@@ -4,8 +4,22 @@ This is an abbreviated changelog for the OSVR Unity Plugin.
 
 Use git for a full changelog.
 ##Recent Changes
-##Anti-aliasing working with RenderManager
-> 24-March-2016 (commit f97c8a) v0.6.64-bit
+## OSVR Editor Utilities
+> 08-July-2016 (commit 7fb855) v0.6.10
+
+- Added an OSVR editor window accessible through the Unity menu bar. It includes:
+	- Links for launching utilities (TrackerView, Reset Yaw, DirectMode Enable/Disable, etc.) located in the OSVR Runtime/SDK directory.
+	- Ability to launch and configure any osvr_server.exe from the Unity editor. Useful for faster testing various server/render configurations.
+	- Links to installers and documentation.
+
+## Scene-switching bug fix
+> 08-June-2016 (commit 36df87) v0.6.9 
+
+- A bug causing crashes or disconnects sometimes when switching scenes in Direct Mode has been fixed.
+
+
+## Anti-aliasing working with RenderManager
+> 24-March-2016 (commit f97c8a) v0.6.6
 
 - Anti-aliasing now works on the RenderManager rendering path. Previously, it was not inheriting that setting from Unity's Quality Settings. This gets set at RenderTexture creation time. If developers want to adjust AA dynamically, they would have to recreate the RenderTextures, since that RT property cannot be adjusted dynamically.
 
