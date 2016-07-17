@@ -32,6 +32,8 @@ namespace OSVR
             private OSVR.ClientKit.ClientContext _contextObject;
 #if UNITY_STANDALONE_WIN
             private OSVR.ClientKit.ServerAutoStarter _serverAutoStarter;
+
+            public bool autoStartServer = true;
 #endif
 
             /// Uses the Unity "Persistent Singleton" pattern, see http://unitypatterns.com/singletons/
@@ -95,7 +97,7 @@ namespace OSVR
                 }
 
 #if UNITY_STANDALONE_WIN
-                if(_serverAutoStarter == null)
+                if(_serverAutoStarter == null && autoStartServer)
                 {
                     _serverAutoStarter = new OSVR.ClientKit.ServerAutoStarter();
                 }
