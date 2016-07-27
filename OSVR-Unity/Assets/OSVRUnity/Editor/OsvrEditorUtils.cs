@@ -30,10 +30,14 @@ public class OsvrEditorUtils : EditorWindow
 {
     private const string OSVR_RUNTIME_DIR = "C:\\Program Files\\OSVR\\Runtime\\bin"; //default Runtime install path
     private const string OSVR_SDK_DIR = "C:\\Program Files\\OSVR\\SDK\\bin"; //default SDK install path
+    private const string OSVR_CONFIG_DIR = "C:\\Program Files\\OSVR\\Runtime\\config"; //default OSVR Configurator Path
     private const string OSVR_SERVER_FILENAME = "osvr_server.exe"; //default server filename
     private const string OSVR_SERVER_PROCESS = "osvr_server"; //default server filename
     private const string OSVR_SERVER_CONFIG = "\"C:\\Program Files\\OSVR\\Runtime\\bin\\osvr_server_config.json\""; //default server config
     private const string OSVR_CONFIG_FILENAME = "OSVR-Config.exe"; //default server config
+
+    //osvr-central
+    private const string OSVR_CENTRAL_FILENAME = "osvr_central.exe";
 
     //trackerview
     private const string OSVR_TRACKERVIEW_PROCESS = "OSVRTrackerView";
@@ -103,7 +107,7 @@ public class OsvrEditorUtils : EditorWindow
         {
             osvrUtilsWindow.OsvrServerDirectory = OSVR_SDK_DIR;
             osvrUtilsWindow.SavePath(OSVR_SDK_DIR);
-        }       
+        }
     }
 
     void OnEnable()
