@@ -118,6 +118,16 @@ public class OsvrEditorUtils : EditorWindow
         osvrLogo = AssetDatabase.LoadAssetAtPath<Texture2D>(logoPath + "osvr-logo.png");
     }
 
+    void OnFocus()
+    {
+        CheckServerRunning();
+    }
+
+    void OnLostFocus()
+    {
+        CheckServerRunning();
+    }
+
     void OnGUI()
     {
         if(osvrLogo != null)
@@ -128,14 +138,12 @@ public class OsvrEditorUtils : EditorWindow
         #region OSVR_SERVER
         GUILayout.Label("OSVR Server Settings", EditorStyles.boldLabel);
         OsvrServerDirectory = EditorGUILayout.TextField("OSVR Directory", OsvrServerDirectory);
-        if (CheckProcessRunning(OSVR_SERVER_PROCESS))
+        if (CheckServerRunning())
         {
-            isServerRunning = true;
             EditorGUILayout.LabelField("osvr_server.exe is running.");
         }
         else
         {
-            isServerRunning = false;
             EditorGUILayout.LabelField("osvr_server.exe is not running.");
         }
 
@@ -509,6 +517,12 @@ public class OsvrEditorUtils : EditorWindow
     {
         Process[] processNames = Process.GetProcessesByName(processName);
         return processNames.Length != 0;
+    }
+
+    //helper function to set a flag indicating server status
+    private bool CheckServerRunning()
+    {
+        return isServerRunning = CheckProcessRunning(OSVR_SERVER_PROCESS);
     }
 }
 #endif
