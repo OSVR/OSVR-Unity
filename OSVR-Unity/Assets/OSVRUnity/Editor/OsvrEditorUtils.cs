@@ -180,6 +180,14 @@ public class OsvrEditorUtils : EditorWindow
             
         }
         #endregion
+        #region OSVR_CENTRAL
+        //Tracker View
+        GUILayout.Label("OSVR Central", EditorStyles.boldLabel);
+        if (GUILayout.Button("Launch OSVR-Central"))
+        {
+            LaunchOSVRCentral();
+        }      
+        #endregion
         #region OSVR-CONFIG
         GUILayout.Label("OSVR-Config", EditorStyles.boldLabel);
         OsvrConfigDirectory = EditorGUILayout.TextField("OSVR-Config Directory", OsvrConfigDirectory);
@@ -381,15 +389,11 @@ public class OsvrEditorUtils : EditorWindow
         #endregion
         #region INSTALLERS
         GUILayout.Label("Installers", EditorStyles.boldLabel);
-        if (GUILayout.Button("OSVR SDK"))
+        if (GUILayout.Button(new GUIContent("OSVR SDK", "OSVR SDK Installer with included utilities.")))
         {
             Application.OpenURL(OSVR_SDK_INSTALLER);
         }
-        if (GUILayout.Button("OSVR Config"))
-        {
-            Application.OpenURL(OSVR_CONFIG_INSTALLER);
-        }
-        if (GUILayout.Button("OSVR Control"))
+        if (GUILayout.Button(new GUIContent("OSVR Control", "Application for toggling side-by-side mode and updating firmware.")))
         {
             Application.OpenURL(OSVR_CONTROL);
         }
@@ -403,7 +407,7 @@ public class OsvrEditorUtils : EditorWindow
         OsvrServerFilename = EditorPrefs.GetString(PP_OSVR_EXE_KEY, OSVR_SERVER_FILENAME);
         OsvrServerArguments = EditorPrefs.GetString(PP_OSVR_ARGS_KEY, OSVR_SERVER_CONFIG);
         TrackerViewArguments = EditorPrefs.GetString(PP_TRACKERVIEW_ARGS_KEY, "");
-        OsvrConfigDirectory = EditorPrefs.GetString(PP_OSVR_CONFIG_KEY, "");
+        OsvrConfigDirectory = EditorPrefs.GetString(PP_OSVR_CONFIG_KEY, OSVR_CONFIG_DIR);
     }
 
     //Save server properties in EditorPrefs
@@ -471,6 +475,21 @@ public class OsvrEditorUtils : EditorWindow
             Arguments = OsvrServerArguments,
             ErrorDialog = true
         });
+    }
+
+    //launch OSVR-Central utility
+    private void LaunchOSVRCentral()
+    {
+        if (File.Exists(OsvrServerDirectory + "\\" + OSVR_CENTRAL_FILENAME))
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                WorkingDirectory = OsvrServerDirectory,
+                FileName = OSVR_CENTRAL_FILENAME,
+                Arguments = "",
+                ErrorDialog = true
+            });
+        }
     }
 
     //launch OSVR-Config utility
