@@ -58,9 +58,12 @@ or get OSVR-Unity from the Unity Asset Store: http://u3d.as/g8N. This version ma
 
 * Create a new Unity (4.6 or higher) project.
 * Import OSVRUnity.unitypackage into the project.
-* Open VRFirstPerson.unity scene.
+* Open VRFirstPerson.unity scene. This scene demonstrates a first-person controller VR setup.
+* Optionally open the OSVR Editor window from the Unity menu bar (pictured below). You can use this to quickly change config files, launch utilities, and access links to documentation.
 
-This scene demonstrates a first-person controller VR setup. Let’s examine some of the objects in the scene hierarchy:
+![OSVR-Unity Editor](https://github.com/OSVR/OSVR-Unity/blob/master/images/osvr_unity_editor.png?raw=true)
+
+Now let’s examine some of the objects in the scene hierarchy:
 
 ### ClientKit
 The ClientKit object communicates with OSVR Server and must be in every scene. It requires an app ID, which can be any string identifier.
