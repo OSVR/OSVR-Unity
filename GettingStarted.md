@@ -1,54 +1,69 @@
 # OSVR for Unity Developers
 
-> Last Updated June 23, 2016
+> Last Updated July 28, 2016
 
 ## Why use OSVR?
 
-Open-source Virtual Reality (OSVR) is an open-source software platform for VR/AR applications. It provides abstraction layers for VR devices and peripherals so that a game developer does not need to hardcode support for particular hardware. 
+Open-source Virtual Reality (OSVR) is an open-source software platform for VR/AR applications. It provides abstraction layers for VR devices and peripherals so that a game developer can support many different VR devices with one SDK, rather than maintaining a separate SDK for each supported device. 
 OSVR provides interfaces – pipes of data – as opposed to an API tied to a specific piece of hardware. If you want hand position, for example, OSVR will give you hand position regardless of whether the data comes from a Microsoft Kinect, Razer Hydra, or Leap Motion. 
 Game developers can focus on what they want to do with the data, as opposed to how to obtain it.
 
-If you’re not convinced yet, or would like to read a more complete introduction to OSVR, please visit: http://osvr.github.io/whitepapers/introduction_to_osvr/
+For a more complete introduction to OSVR, please visit: http://osvr.github.io/whitepapers/introduction_to_osvr/
 
-The rest of this document assumes you generally understand the benefits of OSVR and would like to know how to start using it. Before we get into the Unity plugin, let’s make sure OSVR is up and running.
+The rest of this document assumes you're ready to start developing VR applications in Unity with the OSVR-Unity plugin. We also assume you are using a Hacker Development Kit
 
-## OSVR-Core and OSVR Server
+Before we jump into OSVR-Unity, you'll need to install the OSVR SDK:
 
-When using OSVR, you need to run OSVR server. osvr_server.exe is included in the OSVR Runtime and SDK installers. Download the latest OSVR SDK installer from: http://osvr.github.io/using/
+## Install OSVR SDK
 
-Note that the Unity Asset Store version may be slightly behind the Github version, but that currently, the Unity Asset Store version contains additional DLLs for RenderManager that are not contained in the OSVR-Unity.unitypackage distributed on Github (these DLLs are available in the OSVR-Unity examples project, however).
+**Download and install the latest OSVR SDK installer from: http://osvr.github.io/using/**
 
-Let’s examine the /bin directory of an extracted OSVR-Core binary snahpshot:
+This installer creates a directory: "C:\Program Files\OSVR\"
 
-![OSVR-Core snapshot bin](https://github.com/OSVR/OSVR-Unity/blob/master/images/osvr_snapshot_bin.png?raw=true)
+We can find **osvr_server.exe** in the directory: "C:\Program Files\OSVR\Runtime\bin"
 
-**osvr_server.exe** will launch the OSVR Server. By default, it uses **osvr_server_config.json** as a configuration file. Since the configuration file is crucial to enabling functionality in OSVR, we will explore it in more detail later.
+## OSVR Server
 
-First, launch **osvr_server.exe**, if you see this message:
+When using OSVR, OSVR server needs to be running in order for your Unity application to receive data from connected devices.
+There are multiple ways to start the server (pick one):
 
-![osvr_server no hmd](https://github.com/OSVR/OSVR-Unity/blob/master/images/osvr_server_nohmd.png?raw=true)
+- As of July 14, 2016 (OSVR-Unity Build 421), the server will launch automatically when your Unity application is launched on Windows. This option is configurable on the ClientKit prefab if you wish to disable server-autostart. This feature is not yet available on Android. 
+- **osvr_central.exe**, which ships with the OSVR SDK, acts as a hub for multiple OSVR utilities/tools, controls and settings. You can launch and configure the server from this app.
+- Launch the server and other OSVR utilities from the **OSVR Editor Window**, available from the Unity menu bar.
+- Launch the server manually by double-clicking **osvr_server.exe**. By default, it uses **osvr_server_config.json** as a configuration file. You can use a different config file by dragging-and-dropping the .json config file onto **osvr_server.exe**.
+- Launch the server from the command line, with the config file passed in as an argument, such as "osvr_server.exe osvr_server_config.example.json"
 
+Since the configuration file is crucial to enabling functionality in OSVR, we will explore it in more detail later.
 
-Then no hardware has been discovered. This document will assume you’re using an HDK. If you need help with HDK setup, please visit the HDK Unboxing and Starting Guide: https://github.com/OSVR/OSVR-General/wiki/HDK-Unboxing-and-Getting-Started
+This document will assume you’re using an HDK. If you need help with HDK setup, please visit the HDK Unboxing and Starting Guide: https://github.com/OSVR/OSVR-General/wiki/HDK-Unboxing-and-Getting-Started
 
-This message shows that the server has found an HDK:
+Connect the device and launch **osvr_server.exe**. If you see this message:
+
+The "Added device" message shows that the server has found an HDK:
 
 ![osvr_server found HDK](https://github.com/OSVR/OSVR-Unity/blob/master/images/osvr_server_foundhdk.png?raw=true)
 
 ## Tracker View
 
-The Tracker View utility (avaialable from http://osvr.github.io/using/) is helpful for quickly checking if tracking is working as expected. It shows the position and orientation of tracked objects. Here we see the orientation of the HDK without positional tracking. Z (blue) points towards the back of the head, Y (green) up, and X (red) to the right.
+The Tracker View utility (OSVRTrackerView.exe) is helpful for quickly checking if tracking is working as expected. It shows the position and orientation of tracked objects. Here we see the orientation of the HDK without positional tracking. Z (blue) points towards the back of the head, Y (green) up, and X (red) to the right.
 
 ![Tracker View no positional](https://github.com/OSVR/OSVR-Unity/blob/master/images/tracker_view_nopos.png?raw=true)
 
 ## Getting Started with OSVR-Unity
 Let’s examine the OSVR-Unity plugin. You can view the source code at https://github.com/OSVR/OSVR-Unity. 
-* Download the latest Unity snapshot build from http://osvr.github.io/build-with/.
-* Create a new Unity 5.3 project.
-* Import OSVR-Unity.unitypackage into the project.
-* Open VRFirstPerson.unity scene.
 
-This scene demonstrates a first-person controller VR setup. Let’s examine some of the objects in the scene hierarchy:
+**Download the latest OSVR-Unity plugin from: http://access.osvr.com/binary/osvr-unity**
+
+or get OSVR-Unity from the Unity Asset Store: http://u3d.as/g8N. This version may be slightly behind the link above.
+
+* Create a new Unity (4.6 or higher) project.
+* Import OSVRUnity.unitypackage into the project.
+* Open VRFirstPerson.unity scene. This scene demonstrates a first-person controller VR setup.
+* Optionally open the OSVR Editor window from the Unity menu bar (pictured below). You can use this to quickly change config files, launch utilities, and access links to documentation.
+
+![OSVR-Unity Editor](https://github.com/OSVR/OSVR-Unity/blob/master/images/osvr_unity_editor.png?raw=true)
+
+Now let’s examine some of the objects in the scene hierarchy:
 
 ### ClientKit
 The ClientKit object communicates with OSVR Server and must be in every scene. It requires an app ID, which can be any string identifier.
@@ -110,26 +125,22 @@ Let’s run the server and check Tracker View again to see if we’re getting po
 
 Yes! The gizmo is no longer fixed at the origin, and moves around with the HMD. 
 
-## RenderManager
-For a more information about RenderManager, including an overview of configuration options, visit: https://github.com/OSVR/OSVR-Unity-Rendering/blob/master/README.md
+## RenderManager and Unity-Rendering Plugin
+RenderManager provides a number of additional functions in support of VR rendering. It adds features suc has Direct Mode support, distortion correction, client-side predictive tracking, asynchronous time warp, overfill, and oversampling. For a more information about OSVR-RenderManager, including an overview of configuration options, visit: https://github.com/sensics/OSVR-RenderManager
+
+For a more information about the Unity Rendering Plugin which enables OSVR-RenderManager in OSVR-Unity projects, visit: https://github.com/OSVR/OSVR-Unity-Rendering/blob/master/README.md
 
 ### Enabling RenderManager in Unity
-The following additional DLLs are required in Assets/Plugins/x86_64 or Assets/Plugins/x86:
+The following DLLs included in the unitypackage are required for RenderManager support are found in Assets/Plugins/x86_64 or Assets/Plugins/x86:
 * glew32.dll
 * SDL2.dll
 * osvrUnityRenderingPlugin.dll -- built from https://github.com/OSVR/OSVR-Unity-Rendering
 * osvrRenderManager.dll
 * D3Dcompiler_47.dll -- Windows 7 only, available in the Unity install directory (C:/Program Files/Unity/Editor/Data/Tools64/)
 
-As of OSVR-Unity-v0.6.4-37 build number 317, these are included by default in the OSVRUnity plugin, except for D3Dcompiler_47.dll. Previously, the DLLs were obtained by copying them from one of the example projects, which now should only be done if for some reason the latest build isn't working:
+It is possible to update RenderManager features in an existing Unity project by only replacing **osvrUnityRenderingPlugin.dll** and **osvrRenderManager.dll**. Most users will not need to do this, but it is good to know.
 
-https://github.com/OSVR/Unity-VR-Samples/tree/master/Assets/Plugins/x86_64
-
-https://github.com/OSVR/OSVR-Unity-Palace-Demo/tree/master/Assets/Plugins/x86_64
-
-The OSVR-Unity Asset Store package also contains these DLLs, but they may be more out-of-date than on Github.
-
-With the RenderManager DLLs in our project and renderManagerConfig specified in the server config (also the default), when we run the server and press play, we are now in DirectMode with positional tracking! 
+With the RenderManager DLLs in our project and a renderManagerConfig specified in the server config (also the default), when we run the server and press play, we are now in DirectMode with positional tracking! 
 
 ### Direct Mode Preview
 You can see the game view mirrors the HDK display because the “Show Direct Mode Preview” option is checked on the VRDisplaytTracked prefab. It is a rather suboptimal implementation of mirror mode, and will soon be replaced by an equivalent RenderManager feature.
@@ -142,7 +153,9 @@ There are a number of configuration options available when using RenderManager. 
 ![OSVR-Unity RenderManager Config](https://github.com/OSVR/OSVR-Unity/blob/master/images/osvr_rendermanager_config.png?raw=true)
 
 ### Troubleshooting RenderManager in Unity
-For troubleshooting RenderManager, visit: https://github.com/OSVR/OSVR-Docs/blob/master/Troubleshooting/RenderManager.md#troubleshooting-rendermanager-in-unity.
+One issue users could run into is a "Failed to create RenderManager" error message in the Unity debug console. This could happen if you are trying to run in direct mode, but your machine does not support direct mode. It could also happen if the USB or HDMI cable is unplugged, or there could be an incompatibility with the version of RenderManager in your project and your currently installed graphics drivers.
+
+Follow this guide to troubleshoot RenderManager: https://github.com/OSVR/OSVR-Docs/blob/master/Troubleshooting/RenderManager.md#troubleshooting-rendermanager-in-unity.
 
 ## Quality Settings
 Quality settings will differ per machine/graphics card capabilities. Make sure V Sync Count is set to Don’t Sync. Otherwise, we generally recommend that using as much antialiasing as can be afforded without negatively affecting performance. Disable shadows unless your game mechanics demand it. Use Lightmapping instead of real-time lights. Use occlusion culling.
