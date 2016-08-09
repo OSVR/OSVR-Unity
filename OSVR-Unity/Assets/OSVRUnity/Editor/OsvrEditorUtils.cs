@@ -201,100 +201,58 @@ public class OsvrEditorUtils : EditorWindow
         #region OSVR_TRACKERVIEW
         //Tracker View
         GUILayout.Label("Tracker Viewer", EditorStyles.boldLabel);
-        if (isServerRunning)
+        TrackerViewArguments = EditorGUILayout.TextField("TrackerView arguments", TrackerViewArguments);
+        if (GUILayout.Button("View OSVRTrackerView Readme"))
         {
-            TrackerViewArguments = EditorGUILayout.TextField("TrackerView arguments", TrackerViewArguments);
-            if(GUILayout.Button("View OSVRTrackerView Readme"))
+            Application.OpenURL(OSVR_TRACKERVIEW_README);
+        }
+        bool isTrackerViewRunning = CheckProcessRunning(OSVR_TRACKERVIEW_PROCESS);
+        if (!isTrackerViewRunning)
+        {
+            if (GUILayout.Button("Launch OSVRTrackerView"))
             {
-                Application.OpenURL(OSVR_TRACKERVIEW_README);
-            }
-            bool isTrackerViewRunning = CheckProcessRunning(OSVR_TRACKERVIEW_PROCESS);
-            if (!isTrackerViewRunning)
-            {
-                if (GUILayout.Button("Launch OSVRTrackerView"))
-                {
-                    SaveTrackerViewArguments();
-                    LaunchTrackerView();
-                }
-            }
-            else
-            {
-                if (GUILayout.Button("Shutdown OSVRTrackerView"))
-                {
-                    KillProcess(OSVR_TRACKERVIEW_PROCESS);
-                }
+                SaveTrackerViewArguments();
+                LaunchTrackerView();
             }
         }
         else
         {
-            // Disable the jumping height control if canJump is false:
-            EditorGUI.BeginDisabledGroup(isServerRunning == false);
-            GUILayout.Button("Start osvr_server.exe to enable OSVRTrackerView");
-            EditorGUI.EndDisabledGroup();
+            if (GUILayout.Button("Shutdown OSVRTrackerView"))
+            {
+                KillProcess(OSVR_TRACKERVIEW_PROCESS);
+            }
         }
         #endregion
         #region OSVR_PRINT_TREE
         //Print Tree
         GUILayout.Label("Print Tree", EditorStyles.boldLabel);
-        if (isServerRunning)
+        PrintTreeArguments = EditorGUILayout.TextField("osvr_print_tree arguments", PrintTreeArguments);
+        if (GUILayout.Button("View osvr_print_tree Readme"))
         {
-            PrintTreeArguments = EditorGUILayout.TextField("osvr_print_tree arguments", PrintTreeArguments);
-            if (GUILayout.Button("View osvr_print_tree Readme"))
+            Application.OpenURL(OSVR_PRINTTREE_README);
+        }
+        bool isPrintTreeRunning = CheckProcessRunning(OSVR_PRINTTREE_PROCESS); ;
+        if (!isPrintTreeRunning)
+        {
+            if (GUILayout.Button("Launch osvr_print_tree"))
             {
-                Application.OpenURL(OSVR_PRINTTREE_README);
-            }
-            bool isPrintTreeRunning = CheckProcessRunning(OSVR_PRINTTREE_PROCESS); ;
-            if (!isPrintTreeRunning)
-            {
-                if (GUILayout.Button("Launch osvr_print_tree"))
-                {
-                    LaunchPrintTree();
-                }
-            }
-            else
-            {
-                if (GUILayout.Button("Shut down osvr_print_tree.exe"))
-                {
-                    KillProcess(OSVR_PRINTTREE_PROCESS);
-                }
+                LaunchPrintTree();
             }
         }
         else
         {
-            // Disable the jumping height control if canJump is false:
-            EditorGUI.BeginDisabledGroup(isServerRunning == false);
-            GUILayout.Button("Start osvr_server.exe to enable Print Tree");
-            EditorGUI.EndDisabledGroup();
+            if (GUILayout.Button("Shut down osvr_print_tree.exe"))
+            {
+                KillProcess(OSVR_PRINTTREE_PROCESS);
+            }
         }
         #endregion
         #region RECENTER
         //Recenter
         GUILayout.Label("Recenter", EditorStyles.boldLabel);
-        if (isServerRunning)
+        if (GUILayout.Button("Launch osvr_reset_yaw.exe"))
         {
-            bool isResetYawRunning = CheckProcessRunning(OSVR_RESETYAW_PROCESS);
-            if (!isResetYawRunning)
-            {
-                if (GUILayout.Button("Launch osvr_reset_yaw.exe"))
-                {
-                    LaunchResetYaw();
-                }
-            }
-            else
-            {
-                if (GUILayout.Button("Shut down osvr_reset_yaw.exe"))
-                {
-                    KillProcess(OSVR_RESETYAW_PROCESS);
-                }
-            }
-        }
-        else
-        {
-
-            // Disable the jumping height control if canJump is false:
-            EditorGUI.BeginDisabledGroup(isServerRunning == false);
-            GUILayout.Button("Start osvr_server.exe to recenter HMD");
-            EditorGUI.EndDisabledGroup();
+            LaunchResetYaw();
         }
         #endregion
         #region DIRECT MODE
