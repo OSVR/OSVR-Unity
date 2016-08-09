@@ -30,7 +30,8 @@ public class OsvrEditorUtils : EditorWindow
 {
     private const string OSVR_RUNTIME_DIR = "C:\\Program Files\\OSVR\\Runtime\\bin"; //default Runtime install path
     private const string OSVR_SDK_DIR = "C:\\Program Files\\OSVR\\SDK\\bin"; //default SDK install path
-    private const string OSVR_CONFIG_DIR = "C:\\Program Files\\OSVR\\Runtime\\config"; //default OSVR Configurator Path
+    private const string OSVR_CONFIG_RUNTIME_DIR = "C:\\Program Files\\OSVR\\Runtime\\config"; //Runtime OSVR Configurator Path
+    private const string OSVR_CONFIG_SDK_DIR = "C:\\Program Files\\OSVR\\SDK\\config"; //SDK OSVR Configurator Path
     private const string OSVR_SERVER_FILENAME = "osvr_server.exe"; //default server filename
     private const string OSVR_SERVER_PROCESS = "osvr_server"; //default server filename
     private const string OSVR_SERVER_CONFIG = "\"C:\\Program Files\\OSVR\\Runtime\\bin\\osvr_server_config.json\""; //default server config
@@ -78,7 +79,6 @@ public class OsvrEditorUtils : EditorWindow
     public string OsvrServerDirectory = OSVR_RUNTIME_DIR; //current server directory
     public string OsvrServerFilename = OSVR_SERVER_FILENAME; //current filename of server
     public string OsvrServerArguments = OSVR_SERVER_CONFIG; //current command-line args 
-    public string OsvrConfigDirectory = ""; //current OSVR-Config directory
 
     public string TrackerViewArguments = ""; //current command-line args 
     public string TrackerViewFilename = OSVR_TRACKERVIEW_FILENAME; //current command-line args 
@@ -190,10 +190,8 @@ public class OsvrEditorUtils : EditorWindow
         #endregion
         #region OSVR-CONFIG
         GUILayout.Label("OSVR-Config", EditorStyles.boldLabel);
-        OsvrConfigDirectory = EditorGUILayout.TextField("OSVR-Config Directory", OsvrConfigDirectory);
         if (GUILayout.Button("Launch OSVR-Config Utility"))
         {
-            Save();
             LaunchOSVRConfig();
         }
 
@@ -365,7 +363,6 @@ public class OsvrEditorUtils : EditorWindow
         OsvrServerFilename = EditorPrefs.GetString(PP_OSVR_EXE_KEY, OSVR_SERVER_FILENAME);
         OsvrServerArguments = EditorPrefs.GetString(PP_OSVR_ARGS_KEY, OSVR_SERVER_CONFIG);
         TrackerViewArguments = EditorPrefs.GetString(PP_TRACKERVIEW_ARGS_KEY, "");
-        OsvrConfigDirectory = EditorPrefs.GetString(PP_OSVR_CONFIG_KEY, OSVR_CONFIG_DIR);
     }
 
     //Save server properties in EditorPrefs
@@ -374,7 +371,6 @@ public class OsvrEditorUtils : EditorWindow
         EditorPrefs.SetString(PP_OSVR_DIR_KEY, OsvrServerDirectory);
         EditorPrefs.SetString(PP_OSVR_EXE_KEY, OsvrServerFilename);
         EditorPrefs.SetString(PP_OSVR_ARGS_KEY, OsvrServerArguments);
-        EditorPrefs.SetString(PP_OSVR_CONFIG_KEY, OsvrConfigDirectory);
     }
 
     //Save OSVR Server path to EditorPrefs
@@ -453,17 +449,32 @@ public class OsvrEditorUtils : EditorWindow
     //launch OSVR-Config utility
     private void LaunchOSVRConfig()
     {
-        if(File.Exists(OsvrConfigDirectory + "\\" + OSVR_CONFIG_FILENAME))
+        if(File.Exists(OSVR_CONFIG_RUNTIME_DIR + "\\" + OSVR_CONFIG_FILENAME))
         {
             Process.Start(new ProcessStartInfo
             {
-                WorkingDirectory = OsvrConfigDirectory,
+                WorkingDirectory = OSVR_CONFIG_RUNTIME_DIR,
                 FileName = OSVR_CONFIG_FILENAME,
                 Arguments = "",
                 ErrorDialog = true
             });
         }
-        
+        else if (File.Exists(OSVR_CONFIG_SDK_DIR + "\\" + OSVR_CONFIG_FILENAME))
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                WorkingDirectory = OSVR_CONFIG_SDK_DIR,
+                FileName = OSVR_CONFIG_FILENAME,
+                Arguments = "",
+                ErrorDialog = true
+            });
+        }
+        else
+        {
+            Debug.LogError("[OSVR-Unity] OSVR-Config utility not found in " + OSVR_CONFIG_RUNTIME_DIR + " or " + OSVR_CONFIG_SDK_DIR);
+        }
+
+
     }
 
     //launch OSVRTrackerView.exe
