@@ -36,6 +36,8 @@ public class OsvrEditorUtils : EditorWindow
     private const string OSVR_SERVER_PROCESS = "osvr_server"; //default server filename
     private const string OSVR_SERVER_CONFIG = "\"C:\\Program Files\\OSVR\\Runtime\\bin\\osvr_server_config.json\""; //default server config
     private const string OSVR_CONFIG_FILENAME = "OSVR-Config.exe"; //default server config
+    private const string OSVR_UNITY_VER_X86 = "\\Plugins\\x86\\osvrUnity-ver.txt";
+    private const string OSVR_UNITY_VER_X86_64 = "\\Plugins\\x86_64\\osvrUnity-ver.txt";
 
     //osvr-central
     private const string OSVR_CENTRAL_FILENAME = "osvr_central.exe";
@@ -44,7 +46,6 @@ public class OsvrEditorUtils : EditorWindow
     private const string OSVR_TRACKERVIEW_PROCESS = "OSVRTrackerView";
     private const string OSVR_TRACKERVIEW_FILENAME = "OSVRTrackerView.exe";
     private const string OSVR_CONFIG_PROCESS = "OSVRConfig (32 bit)"; //default server filename
-    private const string OSVR_TRACKERVIEW_README = "https://github.com/OSVR/OSVR-Tracker-Viewer/blob/master/README.md";
     private const string OSVR_GETTINGSTARTED_README = "https://github.com/OSVR/OSVR-Unity/blob/master/GettingStarted.md";
     private const string OSVR_UNITY_SOURCE = "https://github.com/OSVR/OSVR-Unity";
     private const string OSVR_UNITY_RENDERING_SOURCE = "https://github.com/OSVR/OSVR-Unity-Rendering";
@@ -56,12 +57,12 @@ public class OsvrEditorUtils : EditorWindow
     private const string OSVR_SDK_INSTALLER = "http://access.osvr.com/binary/osvr-sdk-installer";
     private const string OSVR_CONFIG_INSTALLER = "http://access.osvr.com/binary/osvr_config";
     private const string OSVR_CONTROL = "https://github.com/OSVR/OSVR-Docs/blob/master/Utilities/OSVRControl.md";
+    private const string OSVR_UNITY_DOWNLOADS = "http://access.osvr.com/binary/osvr-unity";
 
 
     //print tree
     private const string OSVR_PRINTTREE_PROCESS = "osvr_print_tree";
     private const string OSVR_PRINTTREE_FILENAME = "osvr_print_tree.exe";
-    private const string OSVR_PRINTTREE_README = "http://resource.osvr.com/docs/OSVR-Core/OSVRPrintTree.html";
 
     //reset yaw
     private const string OSVR_RESETYAW_PROCESS = "osvr_reset_yaw";
@@ -79,19 +80,17 @@ public class OsvrEditorUtils : EditorWindow
     public string OsvrServerDirectory = OSVR_RUNTIME_DIR; //current server directory
     public string OsvrServerFilename = OSVR_SERVER_FILENAME; //current filename of server
     public string OsvrServerArguments = OSVR_SERVER_CONFIG; //current command-line args 
-
-    public string TrackerViewArguments = ""; //current command-line args 
     public string TrackerViewFilename = OSVR_TRACKERVIEW_FILENAME; //current command-line args 
-
-    public string PrintTreeArguments = ""; //current command-line args 
     public string PrintTreeFilename = OSVR_PRINTTREE_FILENAME; //current command-line args 
+
+    public string OsvrUnityVersion = "";
 
     //OSVR logo
     private Texture2D osvrLogo;
 
     [MenuItem("OSVR/OSVR Utilities")]
     public static void ShowWindow()
-    { 
+    {
         OsvrEditorUtils osvrUtilsWindow = EditorWindow.GetWindow<OsvrEditorUtils>();
         osvrUtilsWindow.Load();
         GUIContent titleContent = new GUIContent("OSVR");
@@ -110,6 +109,7 @@ public class OsvrEditorUtils : EditorWindow
         }
     }
 
+
     void OnEnable()
     {
         var dir = MonoScript.FromScriptableObject(this);
@@ -120,21 +120,25 @@ public class OsvrEditorUtils : EditorWindow
 
     void OnFocus()
     {
+        CheckOSVRUnityVersion();
         CheckServerRunning();
     }
+
 
     void OnLostFocus()
     {
         CheckServerRunning();
     }
 
+
+
     void OnGUI()
     {
         if(osvrLogo != null)
         {
             GUILayout.Label(osvrLogo);
-        }        
-
+        }
+        GUILayout.Label(OsvrUnityVersion, EditorStyles.boldLabel);
         #region OSVR_SERVER
         GUILayout.Label("OSVR Server Settings", EditorStyles.boldLabel);
         OsvrServerDirectory = EditorGUILayout.TextField("OSVR Directory", OsvrServerDirectory);
@@ -199,17 +203,11 @@ public class OsvrEditorUtils : EditorWindow
         #region OSVR_TRACKERVIEW
         //Tracker View
         GUILayout.Label("Tracker Viewer", EditorStyles.boldLabel);
-        TrackerViewArguments = EditorGUILayout.TextField("TrackerView arguments", TrackerViewArguments);
-        if (GUILayout.Button("View OSVRTrackerView Readme"))
-        {
-            Application.OpenURL(OSVR_TRACKERVIEW_README);
-        }
         bool isTrackerViewRunning = CheckProcessRunning(OSVR_TRACKERVIEW_PROCESS);
         if (!isTrackerViewRunning)
         {
             if (GUILayout.Button("Launch OSVRTrackerView"))
             {
-                SaveTrackerViewArguments();
                 LaunchTrackerView();
             }
         }
@@ -224,11 +222,6 @@ public class OsvrEditorUtils : EditorWindow
         #region OSVR_PRINT_TREE
         //Print Tree
         GUILayout.Label("Print Tree", EditorStyles.boldLabel);
-        PrintTreeArguments = EditorGUILayout.TextField("osvr_print_tree arguments", PrintTreeArguments);
-        if (GUILayout.Button("View osvr_print_tree Readme"))
-        {
-            Application.OpenURL(OSVR_PRINTTREE_README);
-        }
         bool isPrintTreeRunning = CheckProcessRunning(OSVR_PRINTTREE_PROCESS); ;
         if (!isPrintTreeRunning)
         {
@@ -314,6 +307,10 @@ public class OsvrEditorUtils : EditorWindow
         {
             Application.OpenURL(OSVR_GETTINGSTARTED_README);
         }
+        if(GUILayout.Button("OSVR-Unity Downloads"))
+        {
+            Application.OpenURL(OSVR_UNITY_DOWNLOADS);
+        }
         if (GUILayout.Button("OSVR-Docs repo"))
         {
             Application.OpenURL(OSVR_DOCS);
@@ -362,7 +359,6 @@ public class OsvrEditorUtils : EditorWindow
         OsvrServerDirectory = EditorPrefs.GetString(PP_OSVR_DIR_KEY, OSVR_RUNTIME_DIR);
         OsvrServerFilename = EditorPrefs.GetString(PP_OSVR_EXE_KEY, OSVR_SERVER_FILENAME);
         OsvrServerArguments = EditorPrefs.GetString(PP_OSVR_ARGS_KEY, OSVR_SERVER_CONFIG);
-        TrackerViewArguments = EditorPrefs.GetString(PP_TRACKERVIEW_ARGS_KEY, "");
     }
 
     //Save server properties in EditorPrefs
@@ -377,12 +373,6 @@ public class OsvrEditorUtils : EditorWindow
     private void SavePath(string p)
     {
         EditorPrefs.SetString(PP_OSVR_DIR_KEY, p);
-    }
-
-    //Save TrackerView command-line args
-    private void SaveTrackerViewArguments()
-    {
-        EditorPrefs.SetString(PP_TRACKERVIEW_ARGS_KEY, TrackerViewArguments);
     }
 
     //Launch osvr_reset_yaw.exe
@@ -404,7 +394,7 @@ public class OsvrEditorUtils : EditorWindow
         {
             WorkingDirectory = OsvrServerDirectory,
             FileName = "cmd.exe",
-            Arguments = "/C osvr_print_tree.exe " + PrintTreeArguments + " & pause",
+            Arguments = "/C osvr_print_tree.exe & pause",
             ErrorDialog = true
         };
 
@@ -484,7 +474,7 @@ public class OsvrEditorUtils : EditorWindow
         {
             WorkingDirectory = OsvrServerDirectory,
             FileName = TrackerViewFilename,
-            Arguments = TrackerViewArguments,
+            Arguments = "",
             ErrorDialog = true
         });
     }
@@ -511,6 +501,39 @@ public class OsvrEditorUtils : EditorWindow
     private bool CheckServerRunning()
     {
         return isServerRunning = CheckProcessRunning(OSVR_SERVER_PROCESS);
+    }
+
+    //check osvrUnity-ver.txt for OSVR-Unity version
+    private void CheckOSVRUnityVersion()
+    {
+        string osvrUnityVerPath = Application.dataPath + OSVR_UNITY_VER_X86;
+        //find version information in osvrUnity-ver.txt
+        if (File.Exists(osvrUnityVerPath))
+        {
+            OsvrUnityVersion = readTextFile(osvrUnityVerPath);
+        }
+        else
+        {
+            //osvrUnity-ver.txt exists in x86 and x86_64 dirs
+            osvrUnityVerPath = Application.dataPath + OSVR_UNITY_VER_X86_64;
+            if (File.Exists(osvrUnityVerPath))
+            {
+                OsvrUnityVersion = readTextFile(osvrUnityVerPath);
+            }
+            else
+            {
+                OsvrUnityVersion = "OSVR-Unity version unknown. Cannot find osvrUnity-ver.txt";
+            }
+        }
+    }
+
+    //Helper function that reads one line from a text file.
+    private string readTextFile(string filePath)
+    {
+        StreamReader sr = new StreamReader(filePath);
+        string firstLine = sr.ReadLine();
+        sr.Close();
+        return firstLine;
     }
 }
 #endif
