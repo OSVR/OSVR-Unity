@@ -76,7 +76,7 @@ public class OsvrEditorUtils : EditorWindow
     private const string PP_OSVR_CONFIG_KEY = "osvr_config_dir"; //EditorPrefs key
 
     private bool isServerRunning = false; //is an osvr_server.exe process running?
-    private bool usingDefaultServer = false; //is an osvr_server.exe process running?
+    private bool usingDefaultServer = false; //is osvr_server.exe in the official SDK install directory?
 
     public string OsvrServerDirectory = ""; //current server directory
     public string OsvrServerFilename = OSVR_SERVER_FILENAME; //current filename of server
@@ -92,7 +92,6 @@ public class OsvrEditorUtils : EditorWindow
     [MenuItem("OSVR/OSVR Utilities")]
     public static void ShowWindow()
     {
-        EditorPrefs.DeleteKey(PP_OSVR_DIR_KEY);
         OsvrEditorUtils osvrUtilsWindow = EditorWindow.GetWindow<OsvrEditorUtils>();
         osvrUtilsWindow.Load();
         GUIContent titleContent = new GUIContent("OSVR");
@@ -107,24 +106,20 @@ public class OsvrEditorUtils : EditorWindow
             if(serverPath.CompareTo(osvrUtilsWindow.GetDefaultPath()) == 0)
             {
                 osvrUtilsWindow.usingDefaultServer = true;
-                Debug.Log("[OSVR-Unity] OSVR SDK default.");
 
             }
             else
             {
                 osvrUtilsWindow.usingDefaultServer = false;
-                Debug.Log("[OSVR-Unity] Warning, saved server path in OSVR Editor Window is not the OSVR SDK default. This may or may not be intended.");
+                Debug.LogWarning("[OSVR-Unity] Warning, saved server path in OSVR Editor Window is not the OSVR SDK default. This may or may not be intended.");
             }
         }
         else
         {
-            Debug.Log("No server, Reverting to default");
+            Debug.Log("[OSVR-Unity] OSVR server not found, reverting to default path.");
             osvrUtilsWindow.OsvrServerDirectory = osvrUtilsWindow.GetDefaultPath();
-            osvrUtilsWindow.SavePath(osvrUtilsWindow.OsvrServerDirectory);
+            osvrUtilsWindow.SaveServerDirectory(osvrUtilsWindow.OsvrServerDirectory);
         }
-
-        
-
     }
 
 
@@ -167,6 +162,10 @@ public class OsvrEditorUtils : EditorWindow
         else
         {
             EditorGUILayout.LabelField("osvr_server.exe is not running.");
+        }
+        if(!usingDefaultServer)
+        {
+            EditorGUILayout.LabelField("Warning, OSVR server directory does not match OSVR_SERVER_ROOT environment variable.");
         }
 
         string serverArgs = EditorGUILayout.TextField("Configuration file", OsvrServerArguments);
@@ -375,7 +374,6 @@ public class OsvrEditorUtils : EditorWindow
     private void Load()
     {
         OsvrServerDirectory = EditorPrefs.GetString(PP_OSVR_DIR_KEY, GetDefaultPath());
-        Debug.Log("LOaded OsvrServerDirectory " + OsvrServerDirectory);
         OsvrServerFilename = EditorPrefs.GetString(PP_OSVR_EXE_KEY, OSVR_SERVER_FILENAME);
         OsvrServerArguments = EditorPrefs.GetString(PP_OSVR_ARGS_KEY, OSVR_SERVER_CONFIG);
     }
@@ -383,14 +381,22 @@ public class OsvrEditorUtils : EditorWindow
     //Save server properties in EditorPrefs
     private void Save()
     {
-        EditorPrefs.SetString(PP_OSVR_DIR_KEY, OsvrServerDirectory);
+        SaveServerDirectory(OsvrServerDirectory);
         EditorPrefs.SetString(PP_OSVR_EXE_KEY, OsvrServerFilename);
         EditorPrefs.SetString(PP_OSVR_ARGS_KEY, OsvrServerArguments);
     }
 
     //Save OSVR Server path to EditorPrefs
-    private void SavePath(string p)
+    private void SaveServerDirectory(string p)
     {
+        if (p.CompareTo(GetDefaultPath()) == 0)
+        {
+            usingDefaultServer = true;
+        }
+        else
+        {
+            usingDefaultServer = false;
+        }
         EditorPrefs.SetString(PP_OSVR_DIR_KEY, p);
     }
     private string GetDefaultPath()
@@ -399,14 +405,13 @@ public class OsvrEditorUtils : EditorWindow
         string defaultPath = Environment.GetEnvironmentVariable(OSVR_SERVER_ROOT);
         if (defaultPath != null)
         {
-            if (Directory.Exists(defaultPath))
+            if (Directory.Exists(defaultPath) && File.Exists(defaultPath + "\\" + OSVR_SERVER_FILENAME))
             {
-                Debug.Log("[OSVR-Unity] USing default. " + defaultPath);
                 return defaultPath;
             }
             else
             {
-                Debug.Log("[OSVR-Unity] OSVR Server directory not found.");
+                Debug.Log("[OSVR-Unity] OSVR Server not found in default SDK path.");
             }
         }
         else
@@ -417,7 +422,7 @@ public class OsvrEditorUtils : EditorWindow
     }
     private string GetPath(string p)
     {
-        return EditorPrefs.GetString(PP_OSVR_DIR_KEY);
+        return EditorPrefs.GetString(PP_OSVR_DIR_KEY, GetDefaultPath());
     }
 
     //Launch osvr_reset_yaw.exe
