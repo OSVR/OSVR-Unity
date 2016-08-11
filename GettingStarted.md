@@ -1,6 +1,6 @@
 # OSVR for Unity Developers
 
-> Last Updated July 28, 2016
+> Last Updated August 11, 2016
 
 ## Why use OSVR?
 
