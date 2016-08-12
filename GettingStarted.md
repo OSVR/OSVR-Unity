@@ -1,6 +1,6 @@
 # OSVR for Unity Developers
 
-> Last Updated July 28, 2016
+> Last Updated August 11, 2016
 
 ## Why use OSVR?
 
@@ -50,6 +50,8 @@ The Tracker View utility (OSVRTrackerView.exe) is helpful for quickly checking i
 ![Tracker View no positional](https://github.com/OSVR/OSVR-Unity/blob/master/images/tracker_view_nopos.png?raw=true)
 
 ## Getting Started with OSVR-Unity
+For an introductory video tutorial, visit: https://youtu.be/xSOq3bOBPxs
+
 Let’s examine the OSVR-Unity plugin. You can view the source code at https://github.com/OSVR/OSVR-Unity. 
 
 **Download the latest OSVR-Unity plugin from: http://access.osvr.com/binary/osvr-unity**
