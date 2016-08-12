@@ -4,6 +4,12 @@ This is an abbreviated changelog for the OSVR Unity Plugin.
 
 Use git for a full changelog.
 ##Recent Changes
+## OSVR Editor Updates
+> 11-August-2016 (commit 2febbb7) v0.6.12
+
+- Updated OSVR-Unity editor window.
+- Added Getting Started tutorial video to docs.
+	
 ## OSVR Editor Utilities
 > 08-July-2016 (commit 7fb855) v0.6.10
 
