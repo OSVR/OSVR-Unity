@@ -249,7 +249,7 @@ public class OsvrEditorUtils : EditorWindow
         }
         else
         {
-            if (GUILayout.Button("Shut down osvr_print_tree.exe"))
+            if (GUILayout.Button("Shut down osvr_print_tree"))
             {
                 KillProcess(OSVR_PRINTTREE_PROCESS);
             }
@@ -258,7 +258,7 @@ public class OsvrEditorUtils : EditorWindow
         #region RECENTER
         //Recenter
         GUILayout.Label("Recenter", EditorStyles.boldLabel);
-        if (GUILayout.Button("Launch osvr_reset_yaw.exe"))
+        if (GUILayout.Button("Launch osvr_reset_yaw"))
         {
             LaunchResetYaw();
         }
