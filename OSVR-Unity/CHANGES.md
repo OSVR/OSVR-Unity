@@ -4,6 +4,11 @@ This is an abbreviated changelog for the OSVR Unity Plugin.
 
 Use git for a full changelog.
 ##Recent Changes
+## OSVR-Unity Version Checker
+> 17-August-2016 (commit 91ec387) v0.6.13
+
+- Updated OSVR-Unity editor window to check for latest OSVR-Unity version.
+
 ## OSVR Editor Updates
 > 11-August-2016 (commit 2febbb7) v0.6.12
 
