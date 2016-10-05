@@ -59,6 +59,7 @@ namespace OSVR
             [HideInInspector]
             public Transform cachedTransform;
             #endregion
+            public bool doubleWide = true;
 
             #region Init
             void Awake()
@@ -168,6 +169,7 @@ namespace OSVR
             {
                 _surfaceCount = surfaceCount;
                 _surfaces = new VRSurface[_surfaceCount];
+                RenderTexture doubleWideRT = null;
                 if (surfaceCount != NUM_SURFACES)
                 {
                     Debug.LogError("[OSVR-Unity] Eye" + _eyeIndex + " has " + surfaceCount + " surfaces, but " +
@@ -216,16 +218,38 @@ namespace OSVR
                         //render manager
                         if (Viewer.DisplayController.UseRenderManager)
                         {
-                            surface.SetViewport(Viewer.DisplayController.RenderManager.GetEyeViewport((int)EyeIndex));
-
-                            //create a RenderTexture for this eye's camera to render into
-                            RenderTexture renderTexture = new RenderTexture(surface.Viewport.Width, surface.Viewport.Height, 24, RenderTextureFormat.Default);
-                            if (QualitySettings.antiAliasing > 0)
+                            if (!doubleWide)
                             {
-                                renderTexture.antiAliasing = QualitySettings.antiAliasing;
+                                surface.SetViewport(Viewer.DisplayController.RenderManager.GetEyeViewport((int)EyeIndex));
+
+                                //create a RenderTexture for this eye's camera to render into
+                                RenderTexture renderTexture = new RenderTexture(surface.Viewport.Width, surface.Viewport.Height, 24, RenderTextureFormat.Default);
+                                if (QualitySettings.antiAliasing > 0)
+                                {
+                                    renderTexture.antiAliasing = QualitySettings.antiAliasing;
+                                }
+                                surface.SetRenderTexture(renderTexture);
                             }
-                            surface.SetRenderTexture(renderTexture);
+                            else
+                            {
+                                if(doubleWideRT == null)
+                                {
+                                    //Set the surfaces viewport from RenderManager
+                                    surface.SetViewport(Viewer.DisplayController.RenderManager.GetEyeViewport((int)EyeIndex));
+                                    doubleWideRT = new RenderTexture(surface.Viewport.Width * 2, surface.Viewport.Height, 24, RenderTextureFormat.Default);
+                                    if (QualitySettings.antiAliasing > 0)
+                                    {
+                                        doubleWideRT.antiAliasing = QualitySettings.antiAliasing;
+                                    }
+                                    surface.SetRenderTexture(doubleWideRT);
+                                }
+                                else
+                                {
+                                    surface.SetRenderTexture(doubleWideRT);
+                                }
+                            }
                         }
+
                     }
                 }
 
@@ -262,18 +286,41 @@ namespace OSVR
                     //render manager
                     if(Viewer.DisplayController.UseRenderManager)
                     {
-                        //Set the surfaces viewport from RenderManager
-                        surface.SetViewport(Viewer.DisplayController.RenderManager.GetEyeViewport((int)EyeIndex));
-
-                        //create a RenderTexture for this eye's camera to render into
-                        RenderTexture renderTexture = new RenderTexture(surface.Viewport.Width, surface.Viewport.Height, 24, RenderTextureFormat.Default);
-                        if (QualitySettings.antiAliasing > 0)
+                        if (!doubleWide)
                         {
-                            renderTexture.antiAliasing = QualitySettings.antiAliasing;
+                            //Set the surfaces viewport from RenderManager
+                            surface.SetViewport(Viewer.DisplayController.RenderManager.GetEyeViewport((int)EyeIndex));
+
+                            //create a RenderTexture for this eye's camera to render into
+                            RenderTexture renderTexture = new RenderTexture(surface.Viewport.Width, surface.Viewport.Height, 24, RenderTextureFormat.Default);
+                            if (QualitySettings.antiAliasing > 0)
+                            {
+                                renderTexture.antiAliasing = QualitySettings.antiAliasing;
+                            }
+                            surface.SetRenderTexture(renderTexture);
                         }
-                        surface.SetRenderTexture(renderTexture);                       
+                        else
+                        {
+                            if (doubleWideRT == null)
+                            {
+                                //Set the surfaces viewport from RenderManager
+                                surface.SetViewport(Viewer.DisplayController.RenderManager.GetEyeViewport((int)EyeIndex));
+                                doubleWideRT = new RenderTexture(surface.Viewport.Width * 2, surface.Viewport.Height, 24, RenderTextureFormat.Default);
+                                if (QualitySettings.antiAliasing > 0)
+                                {
+                                    doubleWideRT.antiAliasing = QualitySettings.antiAliasing;
+                                }
+                                surface.SetRenderTexture(doubleWideRT);
+                            }
+                            else
+                            {
+                                surface.SetRenderTexture(doubleWideRT);
+                            }
+                        }
                     }             
                 }
+
+                
             }
 
             //helper method that copies camera properties from one camera to another
