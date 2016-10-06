@@ -132,14 +132,18 @@ namespace OSVR
 
             //set the render texture that this camera will render into
             //pass the native hardware pointer to the UnityRenderingPlugin for use in RenderManager
-            public void SetRenderTexture(RenderTexture rt)
+            public void SetRenderTexture(RenderTexture rt, bool createBuffer)
             {
                 RenderToTexture = rt;
                 Camera.targetTexture = RenderToTexture;
                 RenderTexture.active = RenderToTexture;
                 
-                //Set the native texture pointer so we can access this texture from the plugin
-                Eye.Viewer.DisplayController.RenderManager.SetEyeColorBuffer(RenderToTexture.GetNativeTexturePtr(), (int)Eye.EyeIndex);
+                if(createBuffer)
+                {
+                    //Set the native texture pointer so we can access this texture from the plugin
+                    Eye.Viewer.DisplayController.RenderManager.SetEyeColorBuffer(RenderToTexture.GetNativeTexturePtr(), (int)Eye.EyeIndex);
+                }
+               
             }
             public RenderTexture GetRenderTexture()
             {

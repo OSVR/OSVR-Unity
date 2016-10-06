@@ -228,7 +228,7 @@ namespace OSVR
                                 {
                                     renderTexture.antiAliasing = QualitySettings.antiAliasing;
                                 }
-                                surface.SetRenderTexture(renderTexture);
+                                surface.SetRenderTexture(renderTexture, true);
                             }
                             else
                             {
@@ -241,11 +241,11 @@ namespace OSVR
                                     {
                                         doubleWideRT.antiAliasing = QualitySettings.antiAliasing;
                                     }
-                                    surface.SetRenderTexture(doubleWideRT);
+                                    surface.SetRenderTexture(doubleWideRT, true);
                                 }
                                 else
                                 {
-                                    surface.SetRenderTexture(doubleWideRT);
+                                    surface.SetRenderTexture(doubleWideRT, false);
                                 }
                             }
                         }
@@ -297,7 +297,7 @@ namespace OSVR
                             {
                                 renderTexture.antiAliasing = QualitySettings.antiAliasing;
                             }
-                            surface.SetRenderTexture(renderTexture);
+                            surface.SetRenderTexture(renderTexture, true);
                         }
                         else
                         {
@@ -310,11 +310,11 @@ namespace OSVR
                                 {
                                     doubleWideRT.antiAliasing = QualitySettings.antiAliasing;
                                 }
-                                surface.SetRenderTexture(doubleWideRT);
+                                surface.SetRenderTexture(doubleWideRT, true);
                             }
                             else
                             {
-                                surface.SetRenderTexture(doubleWideRT);
+                                surface.SetRenderTexture(doubleWideRT, false);
                             }
                         }
                     }             
