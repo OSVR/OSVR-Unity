@@ -60,6 +60,7 @@ namespace OSVR
             private OsvrRenderManager _renderManager;
             private bool _useRenderManager = false; //requires Unity 5.2+ and RenderManager configured osvr server
             public bool UseRenderManager { get { return _useRenderManager; } set { _useRenderManager = value; } }
+            public bool doubleBuffer = true;
 
             public OSVR.ClientKit.DisplayConfig DisplayConfig
             {
@@ -137,7 +138,7 @@ namespace OSVR
                     else
                     {
                         // attempt to create a RenderManager in the plugin                                              
-                        int result = _renderManager.InitRenderManager();
+                        int result = _renderManager.InitRenderManager(doubleBuffer ? 2 : 1);
                         if (result != 0)
                         {
                             Debug.LogError("[OSVR-Unity] Failed to create RenderManager.");
