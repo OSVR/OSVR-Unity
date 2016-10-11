@@ -40,10 +40,9 @@ namespace OSVR
             private uint _surfaceIndex; //index in the eye's VRSurface array
             private VREye _eye; //the eye that this surface controls rendering for
             private OSVR.ClientKit.Viewport _viewport;
+            private RenderTexture[] RenderTextures;
             [HideInInspector]
             public Texture2D PluginTexture;
-            [HideInInspector]
-            public RenderTexture RenderToTexture;
 
             public Camera Camera { get { return _camera; } set { _camera = value; } }
             public uint SurfaceIndex { get { return _surfaceIndex; } set { _surfaceIndex = value; } }
@@ -132,28 +131,32 @@ namespace OSVR
 
             //set the render texture that this camera will render into
             //pass the native hardware pointer to the UnityRenderingPlugin for use in RenderManager
-            public void SetRenderTexture(RenderTexture rt)
+            public void SetRenderTexture(RenderTexture rt, uint bufferIndex)
             {
-                RenderToTexture = rt;
-                Camera.targetTexture = RenderToTexture;
-                RenderTexture.active = RenderToTexture;
-                
+                if(RenderTextures == null)
+                {
+                    RenderTextures = new RenderTexture[Eye.Viewer.DisplayController.doubleBuffer ? 2 : 1];
+                }
+                RenderTextures[bufferIndex] = rt;
+                Camera.targetTexture = RenderTextures[bufferIndex];
+                RenderTexture.active = RenderTextures[bufferIndex];
+
                 //Set the native texture pointer so we can access this texture from the plugin
-                Eye.Viewer.DisplayController.RenderManager.SetEyeColorBuffer(RenderToTexture.GetNativeTexturePtr(), (int)Eye.EyeIndex);
+                Eye.Viewer.DisplayController.RenderManager.SetEyeColorBuffer(RenderTextures[bufferIndex].GetNativeTexturePtr(), (int)Eye.EyeIndex, (int)bufferIndex);
             }
             public RenderTexture GetRenderTexture()
             {
                 return Camera.targetTexture;
             }
-            public void SetActiveRenderTexture()
+            public void SetActiveRenderTexture(uint bufferIndex)
             {
-                RenderTexture.active = RenderToTexture;
+                RenderTexture.active = RenderTextures[bufferIndex];
             }
 
             //Render the camera
-            public void Render()
+            public void Render(uint bufferIndex)
             {
-                Camera.targetTexture = RenderToTexture;
+                Camera.targetTexture = RenderTextures[bufferIndex];
                 Camera.Render();
             }
 
