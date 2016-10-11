@@ -78,7 +78,7 @@ namespace OSVR
             //Create a RenderManager object in the plugin, passing in a ClientContext
             [DllImport(PluginName)]
             private static extern Byte
-                CreateRenderManagerFromUnity(OSVR.ClientKit.SafeClientContextHandle /*OSVR_ClientContext*/ ctx);
+                CreateRenderManagerFromUnity(OSVR.ClientKit.SafeClientContextHandle /*OSVR_ClientContext*/ ctx, int numBuffers);
 
             [DllImport(PluginName)]
             private static extern OSVR.ClientKit.Pose3
@@ -109,7 +109,7 @@ namespace OSVR
             // If so, change the return type here to Byte
             [DllImport(PluginName)]
             private static extern int 
-                SetColorBufferFromUnity(System.IntPtr texturePtr, int eye);
+                SetColorBufferFromUnity(System.IntPtr texturePtr, int eye, int frameNum);
 
             [DllImport(PluginName)]
             private static extern void
@@ -183,7 +183,7 @@ namespace OSVR
             }
 
             //Initialize use of RenderManager via CreateRenderManager call
-            public int InitRenderManager()
+            public int InitRenderManager(int numBuffers)
             {
                 if (_linkDebug)
                 {
@@ -192,7 +192,7 @@ namespace OSVR
                     LinkDebug(functionPointer); // Hook our c++ plugin into Unity's console log.
                 }
 
-                return CreateRenderManager(ClientKit.instance.context);
+                return CreateRenderManager(ClientKit.instance.context, numBuffers);
             }
 
             //Create and Register RenderBuffers in RenderManager
@@ -293,12 +293,12 @@ namespace OSVR
             }
 
             //Call the Unity Rendering Plugin to initialize the RenderManager
-            public int CreateRenderManager(OSVR.ClientKit.ClientContext clientContext)
+            public int CreateRenderManager(OSVR.ClientKit.ClientContext clientContext, int numBuffers)
             {
                 int result;
                 try
                 {
-                    result = CreateRenderManagerFromUnity(clientContext.ContextHandle);
+                    result = CreateRenderManagerFromUnity(clientContext.ContextHandle, numBuffers);
                 }
                 catch (DllNotFoundException e)
                 {
@@ -311,9 +311,9 @@ namespace OSVR
             }
 
             //Pass pointer to eye-camera RenderTexture to the Unity Rendering Plugin
-            public void SetEyeColorBuffer(IntPtr colorBuffer, int eye)
+            public void SetEyeColorBuffer(IntPtr colorBuffer, int eye, int frameNum)
             {               
-                SetColorBufferFromUnity(colorBuffer, eye);
+                SetColorBufferFromUnity(colorBuffer, eye, frameNum);
             }
 
             //Get a pointer to the plugin's rendering function
