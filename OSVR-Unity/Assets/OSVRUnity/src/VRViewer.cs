@@ -130,7 +130,8 @@ namespace OSVR
                         eyeGameObject.transform.rotation = this.transform.rotation;
                         _eyes[eyeIndex] = eye;
                         uint eyeSurfaceCount = DisplayController.DisplayConfig.GetNumSurfacesForViewerEye(ViewerIndex, (byte)eyeIndex);
-                        eye.CreateSurfaces(eyeSurfaceCount);
+                        uint bufferCount = DisplayController.doubleBuffer ? (uint)2 : (uint)1;
+                        eye.CreateSurfaces(eyeSurfaceCount, bufferCount);
                     }
                 }
 
@@ -148,7 +149,8 @@ namespace OSVR
                         _eyes[eyeIndex] = eye;
                         //create the eye's rendering surface
                         uint eyeSurfaceCount = DisplayController.DisplayConfig.GetNumSurfacesForViewerEye(ViewerIndex, (byte)eyeIndex);
-                        eye.CreateSurfaces(eyeSurfaceCount);
+                        uint bufferCount = DisplayController.doubleBuffer ? (uint)2 : (uint)1;
+                        eye.CreateSurfaces(eyeSurfaceCount, bufferCount);
                     }
                     else
                     {
@@ -164,7 +166,8 @@ namespace OSVR
                         eyeGameObject.transform.rotation = this.transform.rotation;
                         _eyes[eyeIndex] = eye;
                         uint eyeSurfaceCount = DisplayController.DisplayConfig.GetNumSurfacesForViewerEye(ViewerIndex, (byte)eyeIndex);
-                        eye.CreateSurfaces(eyeSurfaceCount);
+                        uint bufferCount = DisplayController.doubleBuffer ? (uint)2 : (uint)1;
+                        eye.CreateSurfaces(eyeSurfaceCount, bufferCount);
                     }
                     
                 }

@@ -103,7 +103,7 @@ namespace OSVR
             }
 
             //For each Surface, update viewing parameters and render the surface
-            public void UpdateSurfaces()
+            public void UpdateSurfaces(uint bufferIndex)
             {
                 //for each surface
                 for (uint surfaceIndex = 0; surfaceIndex < SurfaceCount; surfaceIndex++)
@@ -123,7 +123,7 @@ namespace OSVR
                         //get projection matrix from RenderManager and set surface projection matrix
                         surface.SetProjectionMatrix(Viewer.DisplayController.RenderManager.GetEyeProjectionMatrix((int)EyeIndex));
                    
-                        surface.Render();
+                        surface.Render(bufferIndex);
                     }
                     else
                     {
@@ -144,7 +144,7 @@ namespace OSVR
                         surface.SetProjectionMatrix(Math.ConvertMatrix(projMatrix));
 
                         //render the surface
-                        surface.Render();
+                        surface.Render(bufferIndex);
                     }                           
 
                 }
@@ -164,7 +164,7 @@ namespace OSVR
 
             //Create this Eye's VRSurfaces. 
             //Each VRSurface has a camera component which controls rendering for the VREye
-            public void CreateSurfaces(uint surfaceCount)
+            public void CreateSurfaces(uint surfaceCount, uint bufferCount)
             {
                 _surfaceCount = surfaceCount;
                 _surfaces = new VRSurface[_surfaceCount];
@@ -177,6 +177,7 @@ namespace OSVR
 
                 uint surfaceIndex = 0;
                 uint foundSurfaces = 0;
+                uint bufferIndex = 0;
 
                 //Check if there are already VRSurfaces in the hierarchy.
                 //If so, use them instead of creating a new gameobjects
@@ -184,20 +185,69 @@ namespace OSVR
                 foundSurfaces = (uint)eyeSurfaces.Length;
                 if (eyeSurfaces != null && foundSurfaces > 0)
                 {
-                    for (surfaceIndex = 0; surfaceIndex < eyeSurfaces.Length; surfaceIndex++)
+                    for (bufferIndex = 0; bufferIndex < bufferCount; bufferIndex++)
                     {
-                        VRSurface surface = eyeSurfaces[surfaceIndex];
-                        // get the VRSurface gameobject
-                        GameObject surfaceGameObject = surface.gameObject;
-                        surfaceGameObject.name = "VRSurface" + surfaceIndex;
+                        for (surfaceIndex = 0; surfaceIndex < eyeSurfaces.Length; surfaceIndex++)
+                        {
+                            VRSurface surface = eyeSurfaces[surfaceIndex];
+                            // get the VRSurface gameobject
+                            GameObject surfaceGameObject = surface.gameObject;
+                            surfaceGameObject.name = "VRSurface" + surfaceIndex;
+                            surface.Eye = this;
+                            surface.Camera = surfaceGameObject.GetComponent<Camera>(); //VRSurface has camera component by default
+                                                                                       //don't copy from the main camera if the VRSurface already existed before runtime
+                                                                                       //CopyCamera(Viewer.Camera, surface.Camera); //copy camera properties from the "dummy" camera to surface camera
+                            surface.Camera.enabled = false; //disabled so we can control rendering manually
+                            surface.SurfaceIndex = surfaceIndex; //set the surface index
+                            surfaceGameObject.transform.localPosition = Vector3.zero;
+                            surfaceGameObject.transform.rotation = this.transform.rotation;
+                            Surfaces[surfaceIndex] = surface;
+
+                            //distortion
+                            bool useDistortion = Viewer.DisplayController.DisplayConfig.DoesViewerEyeSurfaceWantDistortion(Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex);
+                            if (useDistortion)
+                            {
+                                //@todo figure out which type of distortion to use
+                                //right now, there is only one option, SurfaceRadialDistortion
+                                //get distortion parameters
+                                OSVR.ClientKit.RadialDistortionParameters distortionParameters =
+                                Viewer.DisplayController.DisplayConfig.GetViewerEyeSurfaceRadialDistortion(
+                                Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex);
+                                surface.SetDistortion(distortionParameters);
+                            }
+
+                            //render manager
+                            if (Viewer.DisplayController.UseRenderManager)
+                            {
+                                surface.SetViewport(Viewer.DisplayController.RenderManager.GetEyeViewport((int)EyeIndex));
+
+                                //create a RenderTexture for this eye's camera to render into
+                                RenderTexture renderTexture = new RenderTexture(surface.Viewport.Width, surface.Viewport.Height, 24, RenderTextureFormat.Default);
+                                if (QualitySettings.antiAliasing > 0)
+                                {
+                                    renderTexture.antiAliasing = QualitySettings.antiAliasing;
+                                }
+                                surface.SetRenderTexture(renderTexture, bufferIndex);
+                            }
+                        }
+                    }
+                }
+
+                for (bufferIndex = 0; bufferIndex < bufferCount; bufferIndex++)
+                {
+                    //loop through surfaces because at some point we could support eyes with multiple surfaces
+                    //but this implementation currently supports exactly one
+                    for (; surfaceIndex < surfaceCount; surfaceIndex++)
+                    {
+                        GameObject surfaceGameObject = new GameObject("VRSurface" + surfaceIndex);
+                        VRSurface surface = surfaceGameObject.AddComponent<VRSurface>();
                         surface.Eye = this;
                         surface.Camera = surfaceGameObject.GetComponent<Camera>(); //VRSurface has camera component by default
-                        //don't copy from the main camera if the VRSurface already existed before runtime
-                        //CopyCamera(Viewer.Camera, surface.Camera); //copy camera properties from the "dummy" camera to surface camera
+                        CopyCamera(Viewer.Camera, surface.Camera); //copy camera properties from the "dummy" camera to surface camera
                         surface.Camera.enabled = false; //disabled so we can control rendering manually
                         surface.SurfaceIndex = surfaceIndex; //set the surface index
+                        surfaceGameObject.transform.parent = this.transform; //surface is child of Eye
                         surfaceGameObject.transform.localPosition = Vector3.zero;
-                        surfaceGameObject.transform.rotation = this.transform.rotation;
                         Surfaces[surfaceIndex] = surface;
 
                         //distortion
@@ -209,13 +259,15 @@ namespace OSVR
                             //get distortion parameters
                             OSVR.ClientKit.RadialDistortionParameters distortionParameters =
                             Viewer.DisplayController.DisplayConfig.GetViewerEyeSurfaceRadialDistortion(
-                            Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex);                    
+                            Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex);
+
                             surface.SetDistortion(distortionParameters);
                         }
 
                         //render manager
                         if (Viewer.DisplayController.UseRenderManager)
                         {
+                            //Set the surfaces viewport from RenderManager
                             surface.SetViewport(Viewer.DisplayController.RenderManager.GetEyeViewport((int)EyeIndex));
 
                             //create a RenderTexture for this eye's camera to render into
@@ -224,55 +276,9 @@ namespace OSVR
                             {
                                 renderTexture.antiAliasing = QualitySettings.antiAliasing;
                             }
-                            surface.SetRenderTexture(renderTexture);
+                            surface.SetRenderTexture(renderTexture, bufferIndex);
                         }
                     }
-                }
-
-
-                //loop through surfaces because at some point we could support eyes with multiple surfaces
-                //but this implementation currently supports exactly one
-                for (; surfaceIndex < surfaceCount; surfaceIndex++)
-                {
-                    GameObject surfaceGameObject = new GameObject("VRSurface" + surfaceIndex);
-                    VRSurface surface = surfaceGameObject.AddComponent<VRSurface>();
-                    surface.Eye = this;
-                    surface.Camera = surfaceGameObject.GetComponent<Camera>(); //VRSurface has camera component by default
-                    CopyCamera(Viewer.Camera, surface.Camera); //copy camera properties from the "dummy" camera to surface camera
-                    surface.Camera.enabled = false; //disabled so we can control rendering manually
-                    surface.SurfaceIndex = surfaceIndex; //set the surface index
-                    surfaceGameObject.transform.parent = this.transform; //surface is child of Eye
-                    surfaceGameObject.transform.localPosition = Vector3.zero;
-                    Surfaces[surfaceIndex] = surface;
-
-                    //distortion
-                    bool useDistortion = Viewer.DisplayController.DisplayConfig.DoesViewerEyeSurfaceWantDistortion(Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex);
-                    if(useDistortion)
-                    {
-                        //@todo figure out which type of distortion to use
-                        //right now, there is only one option, SurfaceRadialDistortion
-                        //get distortion parameters
-                        OSVR.ClientKit.RadialDistortionParameters distortionParameters =
-                        Viewer.DisplayController.DisplayConfig.GetViewerEyeSurfaceRadialDistortion(
-                        Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex);
-
-                        surface.SetDistortion(distortionParameters);
-                    }    
-                    
-                    //render manager
-                    if(Viewer.DisplayController.UseRenderManager)
-                    {
-                        //Set the surfaces viewport from RenderManager
-                        surface.SetViewport(Viewer.DisplayController.RenderManager.GetEyeViewport((int)EyeIndex));
-
-                        //create a RenderTexture for this eye's camera to render into
-                        RenderTexture renderTexture = new RenderTexture(surface.Viewport.Width, surface.Viewport.Height, 24, RenderTextureFormat.Default);
-                        if (QualitySettings.antiAliasing > 0)
-                        {
-                            renderTexture.antiAliasing = QualitySettings.antiAliasing;
-                        }
-                        surface.SetRenderTexture(renderTexture);                       
-                    }             
                 }
             }
 
