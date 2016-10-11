@@ -58,6 +58,7 @@ namespace OSVR
             private bool _disabledCamera = true;
             private bool _hmdConnectionError = false;
             private Rect _emptyViewport = new Rect(0, 0, 0, 0);
+            private long _renderCount = 0;
 			private IEnumerator _endOfFrameCoroutine;
 
             #endregion
@@ -69,6 +70,7 @@ namespace OSVR
 
             void Init()
             {
+                _renderCount = 0;
 				if (_camera == null)
 				{
 					_camera = GetComponent<Camera>();
@@ -217,7 +219,15 @@ namespace OSVR
                         
 
                     // update the eye's surfaces, includes call to Render
-                    eye.UpdateSurfaces();                   
+                    if(DisplayController.doubleBuffer)
+                    {
+                        eye.UpdateSurfaces((uint)_renderCount % 2);
+
+                    }
+                    else
+                    {
+                        eye.UpdateSurfaces(0);
+                    }
                 }
             }
 
@@ -263,6 +273,7 @@ namespace OSVR
                     // each viewer updates its eye poses, viewports, projection matrices
                     UpdateEyes();
 
+                    _renderCount++;
                 }
                 else
                 {
