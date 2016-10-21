@@ -193,7 +193,7 @@ Quality settings will differ per machine/graphics card capabilities. Make sure V
 ![OSVR-Unity Quality Settings](https://github.com/OSVR/OSVR-Unity/blob/master/images/osvr_unity_quality.png?raw=true)
 
 ## Player Settings
-Generally, use Static and Dynamic batching to reduce draw calls. Note that the “Virtual Reality Supported” checkbox does not need to be checked, since Unity currently only supports Oculus and GearVR with this feature. Leaving it checked should not impact OSVR performance, but you will see a “[VRDevice] Initialization of device oculus failed” message that can be ignored.
+Generally, use Static and Dynamic batching to reduce draw calls. Note that the “Virtual Reality Supported” checkbox does not need to be checked, since OSVR is not a native Unity VR platform. Leaving it checked should not impact OSVR performance, but you may see a message like “[VRDevice] Initialization of device oculus failed” which can be ignored.
 
 ![OSVR-Unity Player Settings](https://github.com/OSVR/OSVR-Unity/blob/master/images/osvr_unity_player.png?raw=true)
 
@@ -204,8 +204,7 @@ Make sure your project is set to build for Android:
 
 ![OSVR-Unity Android Build](https://github.com/OSVR/OSVR-Unity/blob/master/images/osvr_unity_androidbuild.png?raw=true)
 
-Before launching the app on an Android device, you'll need to run the OSVR-AndroidServerLauncher app first. Please visit this page for more information: https://github.com/OSVR/OSVR-AndroidServerLauncher
+Before launching the app on an Android device, you'll need to run the OSVR-AndroidServerLauncher app first. Please visit this page for more information (.apk available in the Releases section): https://github.com/OSVR/OSVR-AndroidServerLauncher
 
-An example Android app can be downloaded from the Releases section of OSVR-Unity-Palace-Demo: https://github.com/OSVR/OSVR-Unity-Palace-Demo/releases.
+An example Android app can be downloaded from the Releases section of OSVR-Unity-Palace-Demo: https://github.com/OSVR/OSVR-Unity-Palace-Demo/releases/tag/v0.6.4.23-android.
 
-You will still need to follow the instructions linked above to push the OSVR-AndroidServerLauncher app to the phone with adb. Since the Palace scene is not optimized for mobile, the example app consists of the simpler OSVRDemo2.unity scene. There is a separate branch in that repo for the Android build in order to better organize the releases, but there aren't any code changes from the master branch. Some Project and Quality settings differ.
