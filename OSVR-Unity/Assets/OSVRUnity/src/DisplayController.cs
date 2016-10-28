@@ -97,14 +97,13 @@ namespace OSVR
             }
 
             void SetupApplicationSettings()
-            {
-                //VR should never timeout the screen:
-                Screen.sleepTimeout = SleepTimeout.NeverSleep;
-
-                //Set the framerate
-                //@todo get this value from OSVR, not a const value
-                //Performance note: Developers should try setting Time.fixedTimestep to 1/Application.targetFrameRate
-                //Application.targetFrameRate = TARGET_FRAME_RATE;
+            {             
+                //Set the framerate and performance settings
+                Application.targetFrameRate = -1;
+                Application.runInBackground = true;
+                QualitySettings.vSyncCount = 0;
+                QualitySettings.maxQueuedFrames = -1; //limit the number of frames queued up to be rendered, reducing latency
+                Screen.sleepTimeout = SleepTimeout.NeverSleep;  //VR should never timeout the screen:
             }
 
             // Setup RenderManager for DirectMode or non-DirectMode rendering.
