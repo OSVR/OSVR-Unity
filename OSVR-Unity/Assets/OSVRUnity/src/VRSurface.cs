@@ -157,6 +157,17 @@ namespace OSVR
                 Camera.Render();
             }
 
+            void OnRenderImage(RenderTexture source, RenderTexture destination)
+            {
+                //blit to the active RenderTexture
+                Graphics.Blit(source, destination);
+                //if mirror mode is enabled, right-eye-only blit to the Unity game window
+                if (Eye.Viewer.DisplayController.UseRenderManager && Eye.Viewer.DisplayController.showDirectModePreview && Eye.EyeIndex == 1)
+                {
+                    Graphics.Blit(source, null as RenderTexture);
+                }
+            }
+
             public void ClearRenderTarget()
             {
                 if (RenderTexture.active != null)
