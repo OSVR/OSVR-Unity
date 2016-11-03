@@ -3,6 +3,6 @@
 --- !u!5 &1
 TimeManager:
   m_ObjectHideFlags: 0
-  Fixed Timestep: .0166666657
-  Maximum Allowed Timestep: .0166666657
+  Fixed Timestep: 0.01111111
+  Maximum Allowed Timestep: 0.01111111
   m_TimeScale: 1
