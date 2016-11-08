@@ -4,6 +4,13 @@ This is an abbreviated changelog for the OSVR Unity Plugin.
 
 Use git for a full changelog.
 ##Recent Changes
+## Performance improvements, Update to Unity 5.4
+> 08-November-2016 (commit 1bbf717) v0.6.16
+
+- Added calls to GL.Flush() (Unity 5.4+ only), yielding significant performance gains.
+- Updated default Project Settings to Unity 5.4
+- Updated fixed Timestep to 90 Hz
+
 ## OSVR-Unity Version Checker
 > 17-August-2016 (commit 2046db) v0.6.14
 
