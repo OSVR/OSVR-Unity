@@ -155,6 +155,11 @@ namespace OSVR
             {
                 Camera.targetTexture = RenderToTexture;
                 Camera.Render();
+                //Sends queued-up commands in the driver's command buffer to the GPU.
+                //only accessible in Unity 5.4+ API
+#if !(UNITY_5_3 || UNITY_5_2 || UNITY_5_1 || UNITY_5_0 || UNITY_4_7 || UNITY_4_6)
+                GL.Flush();
+#endif
             }
 
             public void ClearRenderTarget()
