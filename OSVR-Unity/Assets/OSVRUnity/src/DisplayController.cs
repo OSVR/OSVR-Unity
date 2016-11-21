@@ -262,9 +262,9 @@ namespace OSVR
                         GameObject vrViewer = viewer.gameObject;
                         vrViewer.name = "VRViewer" + viewerIndex; //change its name to VRViewer0
                         //@todo optionally add components                      
-                        if (vrViewer.GetComponent<AudioListener>() == null)
+                        if (FindObjectOfType<AudioListener>() == null)
                         {
-                            vrViewer.AddComponent<AudioListener>(); //add an audio listener
+                            vrViewer.AddComponent<AudioListener>(); // add an audio listener if there are none in the scene
                         }
                         viewer.DisplayController = this; //pass DisplayController to Viewers  
                         viewer.ViewerIndex = viewerIndex; //set the viewer's index                         
@@ -288,9 +288,9 @@ namespace OSVR
                 {
                     // create a VRViewer
                     GameObject vrViewer = new GameObject("VRViewer" + viewerIndex);
-                    if (vrViewer.GetComponent<AudioListener>() == null)
+                    if (FindObjectOfType<AudioListener>() == null)
                     {
-                        vrViewer.AddComponent<AudioListener>(); //add an audio listener
+                        vrViewer.AddComponent<AudioListener>(); //add an audio listener if there are none in the scene
                     }
 
                     VRViewer vrViewerComponent = vrViewer.AddComponent<VRViewer>();
