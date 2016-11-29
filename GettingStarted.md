@@ -140,17 +140,20 @@ You can see the game view mirrors the HDK display because the “Show Direct Mod
 ![OSVR-Unity Direct Mode Preview](https://github.com/OSVR/OSVR-Unity/blob/master/images/osvr_unity_directmode_preview.png?raw=true)
 
 ### Troubleshooting RenderManager in Unity
-One issue users could run into is a "Failed to create RenderManager" error message in the Unity debug console. This could happen if you are trying to run in direct mode, but your machine does not support direct mode. It could also happen if the USB or HDMI cable is unplugged, or there could be an incompatibility with the version of RenderManager in your project and your currently installed graphics drivers.
+One issue users could run into is a "Failed to create RenderManager" error message in the Unity debug console. This could happen if you are trying to run in direct mode, but your machine does not support direct mode. It could also happen if the USB or HDMI cable is unplugged, or there could be an incompatibility with the version of RenderManager in your project and your currently installed graphics drivers. 
 
-Here are some general troubleshooting steps for fixing "Failed to create RenderManager" and other common issues:
+Users experiencing direct mode issues with HDK2 firmware 1.97 or below should update their firmware wto avoid most of the issues below.
+Use OSVR Control to change firmware: http://sensics.com/software/OSVRControl-SW/publish.htm
+
+Here are some general troubleshooting steps for fixing "Failed to create RenderManager" and other common issues, many of which have been fixed via firmware updates after v1.97:
 - Update to the latest RenderManager DLLs which are included with the Unity packages here: http://access.osvr.com/binary/osvr-unity
 - Use a known-working configuration file with orientation only. See the "Recommended OSVR Server Configs" section above.
 - Update your graphics card drivers.
 - HDK must be in direct mode already for a game to work in direct mode, it won't switch to direct mode automatically based on the configuration. The same goes for extended mode. Use EnableOSVRDirectMode.exe and DisableOSVRDirectMode.exe for switching between direct and extended mode. You know if you're in direct mode if the HDK disappears from Windows display settings.
 - Run the RenderManager examples included with the SDK, such as RenderManagerD3DExample3D.exe. If these examples don't work, neither will RenderManager in Unity.
-- If the RenderManager examples work but nothing displays (you keep seeing "Rendering at 90fps..." messages but no image), try switching to extended mode, power cycle (unplug the power and HMD from beltbox, wait a few seconds, replug), then switch back to direct mode.
-- If USB disconnects between direct mode sessions, power cycle. If it happens frequently, try a different firmware (1.01 or 1.97). Use OSVR Control to change firmware: http://sensics.com/software/OSVRControl-SW/publish.htm
-- With firmware 1.97, you can avoid the USB disconnect issue by keeping OSVR Control open and connected to the COM Port. This is the recommended option for now.
+- If the RenderManager examples "work" but nothing displays (you keep seeing "Rendering at 90fps..." messages but no image in RenderManagerD3DPresentExample3d.exe), try switching to extended mode, power cycle (unplug the power and HMD from beltbox, wait a few seconds, replug), then switch back to direct mode.
+- If USB disconnects between direct mode sessions, power cycle. If it happens frequently, make sure you have updated the HDK2 firmware to a version newer than 1.97.
+
 
 Follow this guide for more RenderManager troubleshooting: https://github.com/OSVR/OSVR-Docs/blob/master/Troubleshooting/RenderManager.md#troubleshooting-rendermanager-in-unity.
 
