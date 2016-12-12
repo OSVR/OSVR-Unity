@@ -196,7 +196,10 @@ Quality settings will differ per machine/graphics card capabilities. Make sure V
 ![OSVR-Unity Quality Settings](https://github.com/OSVR/OSVR-Unity/blob/master/images/osvr_unity_quality.png?raw=true)
 
 ## Player Settings
-Generally, use Static and Dynamic batching to reduce draw calls. Note that the “Virtual Reality Supported” checkbox does not need to be checked, since OSVR is not a native Unity VR platform. Leaving it checked should not impact OSVR performance, but you may see a message like “[VRDevice] Initialization of device oculus failed” which can be ignored.
+The “Virtual Reality Supported” checkbox does not need to be checked, since OSVR is not a native Unity VR platform. If you are supporting multiple VR SDKs and need to check the "Virtual Reality Supported", make sure to add "None" for OSVR support. You can launch your OSVR game with the command-line option:
+```
+MyGame.exe -vrmode none 
+```
 
 ![OSVR-Unity Player Settings](https://github.com/OSVR/OSVR-Unity/blob/master/images/osvr_unity_player.png?raw=true)
 
