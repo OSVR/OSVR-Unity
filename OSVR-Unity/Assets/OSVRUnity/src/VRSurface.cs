@@ -26,6 +26,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using System.Collections;
 using System.Runtime.InteropServices;
+using System;
 
 namespace OSVR
 {
@@ -48,7 +49,7 @@ namespace OSVR
             public Camera Camera { get { return _camera; } set { _camera = value; } }
             public uint SurfaceIndex { get { return _surfaceIndex; } set { _surfaceIndex = value; } }
             public VREye Eye { get { return _eye; } set { _eye = value; } }
-            public OSVR.ClientKit.Viewport Viewport { get { return _viewport;} set {_viewport = value;} }
+            public OSVR.ClientKit.Viewport Viewport { get { return _viewport; } set { _viewport = value; } }
 
             [HideInInspector]
             public K1RadialDistortion DistortionEffect
@@ -137,9 +138,9 @@ namespace OSVR
                 RenderToTexture = rt;
                 Camera.targetTexture = RenderToTexture;
                 RenderTexture.active = RenderToTexture;
-                
+
                 //Set the native texture pointer so we can access this texture from the plugin
-                Eye.Viewer.DisplayController.RenderManager.SetEyeColorBuffer(RenderToTexture.GetNativeTexturePtr(), (int)Eye.EyeIndex);
+                Eye.Viewer.DisplayController.RenderManager.SetEyeColorBuffer(RenderToTexture.GetNativeTexturePtr(), (Byte)Eye.EyeIndex);
             }
             public RenderTexture GetRenderTexture()
             {

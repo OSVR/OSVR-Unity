@@ -72,7 +72,7 @@ namespace OSVR
 
             //Create and Register RenderBuffers
             [DllImport(PluginName)]
-            private static extern Byte 
+            private static extern Byte
                 ConstructRenderBuffers();
 
             //Create a RenderManager object in the plugin, passing in a ClientContext
@@ -82,11 +82,11 @@ namespace OSVR
 
             [DllImport(PluginName)]
             private static extern OSVR.ClientKit.Pose3
-                GetEyePose(int eye);
+                GetEyePose(Byte eye);
 
             [DllImport(PluginName)]
             private static extern OSVR_ProjectionMatrix
-                GetProjectionMatrix(int eye);
+                GetProjectionMatrix(Byte eye);
 
             //get the render event function that we'll call every frame via GL.IssuePluginEvent
             [DllImport(PluginName)]
@@ -95,7 +95,7 @@ namespace OSVR
 
             [DllImport(PluginName)]
             private static extern OSVR_ViewportDescription
-                GetViewport(int eye);
+                GetViewport(Byte eye);
 
             // Allow for calling into the debug console from C++
             [DllImport(PluginName)]
@@ -108,8 +108,8 @@ namespace OSVR
             // @todo native code may change the return type to OSVR_ReturnCode.
             // If so, change the return type here to Byte
             [DllImport(PluginName)]
-            private static extern int 
-                SetColorBufferFromUnity(System.IntPtr texturePtr, int eye);
+            private static extern int
+                SetColorBufferFromUnity(System.IntPtr texturePtr, Byte eye);
 
             [DllImport(PluginName)]
             private static extern void
@@ -236,16 +236,16 @@ namespace OSVR
             }
 
             //Get the pose of a given eye from RenderManager
-            public OSVR.ClientKit.Pose3 GetRenderManagerEyePose(int eye)
+            public OSVR.ClientKit.Pose3 GetRenderManagerEyePose(Byte eye)
             {
                 return GetEyePose(eye);
             }
 
             //Get the viewport of a given eye from RenderManager
-            public OSVR.ClientKit.Viewport GetEyeViewport(int eye)
+            public OSVR.ClientKit.Viewport GetEyeViewport(Byte eye)
             {
                 OSVR.ClientKit.Viewport v = new OSVR.ClientKit.Viewport();
-                OSVR_ViewportDescription viewportDescription = GetViewport(eye);
+                OSVR_ViewportDescription viewportDescription = GetViewport((Byte)eye);
                 v.Left = (int)viewportDescription.left;
                 v.Bottom = (int)viewportDescription.lower;
                 v.Width = (int)viewportDescription.width;
@@ -254,17 +254,22 @@ namespace OSVR
             }
 
             //Get the projection matrix of a given eye from RenderManager
-            public Matrix4x4 GetEyeProjectionMatrix(int eye)
+            public Matrix4x4 GetEyeProjectionMatrix(Byte eye)
             {
-                OSVR_ProjectionMatrix pm = GetProjectionMatrix(eye);
+                OSVR_ProjectionMatrix pm = GetProjectionMatrix((Byte)eye);
                 return PerspectiveOffCenter((float)pm.left, (float)pm.right, (float)pm.bottom, (float)pm.top, (float)pm.nearClip, (float)pm.farClip);
-                
+
             }
 
             //Returns a Unity Matrix4x4 from the provided boundaries
             //from http://docs.unity3d.com/ScriptReference/Camera-projectionMatrix.html
             static Matrix4x4 PerspectiveOffCenter(float left, float right, float bottom, float top, float near, float far)
             {
+                if (right - left == 0 || top - bottom == 0 || far - near == 0)
+                {
+                    Debug.LogError("Aborting Projection Matrix calculation to avoid DivideByZero error.");
+                    return new Matrix4x4();
+                }
                 float x = 2.0F * near / (right - left);
                 float y = 2.0F * near / (top - bottom);
                 float a = (right + left) / (right - left);
@@ -303,16 +308,16 @@ namespace OSVR
                 catch (DllNotFoundException e)
                 {
                     result = -1;
-                    Debug.LogError("[OSVR-Unity] Could not load "  + e.Message +
-                        "\nosvrUnityRenderingPlugin.dll, or one of its dependencies, is missing from the project " + 
+                    Debug.LogError("[OSVR-Unity] Could not load " + e.Message +
+                        "\nosvrUnityRenderingPlugin.dll, or one of its dependencies, is missing from the project " +
                         "or architecture doesn't match.\n");
                 }
                 return result;
             }
 
             //Pass pointer to eye-camera RenderTexture to the Unity Rendering Plugin
-            public void SetEyeColorBuffer(IntPtr colorBuffer, int eye)
-            {               
+            public void SetEyeColorBuffer(IntPtr colorBuffer, Byte eye)
+            {
                 SetColorBufferFromUnity(colorBuffer, eye);
             }
 
