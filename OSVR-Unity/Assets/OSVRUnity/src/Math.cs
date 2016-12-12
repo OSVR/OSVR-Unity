@@ -81,6 +81,11 @@ namespace OSVR
             {
                 //Unity expects normalized coordinates, not pixel coordinates
                 //@todo below assumes left and right eyes split the screen in half horizontally
+                if(viewport.Width == 0 || viewport.Height == 0)
+                {
+                    Debug.LogError("[OSVR-Unity] Viewport width/height is 0. Avoiding divide by zero error, returning default viewport.");
+                    return new Rect(0, 0, 0.5f, 1);
+                }
                 return new Rect(viewport.Left / viewport.Width, viewport.Bottom / viewport.Height, viewport.Width / viewport.Width, 1);
             }
 
