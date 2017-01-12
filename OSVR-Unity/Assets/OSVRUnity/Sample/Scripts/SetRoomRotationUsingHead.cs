@@ -39,7 +39,7 @@ namespace OSVR
                 _displayController = FindObjectOfType<DisplayController>();
             }
 
-            void FixedUpdate()
+            void Update()
             {
                 if (Input.GetKeyDown(setRoomRotationKey))
                 {                   
