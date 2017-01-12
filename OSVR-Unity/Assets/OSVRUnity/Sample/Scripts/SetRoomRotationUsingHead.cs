@@ -50,7 +50,10 @@ namespace OSVR
                     }
                     else
                     {
-                        _clientKit.context.SetRoomRotationUsingHead();
+                        if(_clientKit.context.CheckStatus())
+                        {
+                            _clientKit.context.SetRoomRotationUsingHead();
+                        }
                     }
                 }
                 if (Input.GetKeyDown(clearRoomRotationKey))
