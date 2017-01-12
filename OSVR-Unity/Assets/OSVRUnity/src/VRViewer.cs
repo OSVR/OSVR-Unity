@@ -183,22 +183,7 @@ namespace OSVR
 
             //Update the pose of each eye, then update and render each eye's surfaces
             public void UpdateEyes()
-            {
-                if (DisplayController.UseRenderManager)
-                {
-                    //Update RenderInfo
-#if UNITY_5_2 || UNITY_5_3 || UNITY_5_4 || UNITY_5_5 || UNITY_5_6
-                    GL.IssuePluginEvent(DisplayController.RenderManager.GetRenderEventFunction(), OsvrRenderManager.UPDATE_RENDERINFO_EVENT);
-#else
-                    Debug.LogError("[OSVR-Unity] GL.IssuePluginEvent failed. This version of Unity cannot support RenderManager.");
-                    DisplayController.UseRenderManager = false;
-#endif
-                }
-                else
-                {
-                    DisplayController.UpdateClient();
-                }
-                    
+            {                   
                 for (uint eyeIndex = 0; eyeIndex < EyeCount; eyeIndex++)
                 {                   
                     //update the eye pose
@@ -293,6 +278,7 @@ namespace OSVR
                     {
                         // Issue a RenderEvent, which copies Unity RenderTextures to RenderManager buffers
 #if UNITY_5_2 || UNITY_5_3 || UNITY_5_4 || UNITY_5_5 || UNITY_5_6
+                        GL.IssuePluginEvent(DisplayController.RenderManager.GetRenderEventFunction(), OsvrRenderManager.UPDATE_RENDERINFO_EVENT);
                         GL.Viewport(_emptyViewport);
                         GL.Clear(false, true, Camera.backgroundColor);                      
                         GL.IssuePluginEvent(DisplayController.RenderManager.GetRenderEventFunction(), OsvrRenderManager.RENDER_EVENT); 
@@ -305,6 +291,10 @@ namespace OSVR
                         Debug.LogError("[OSVR-Unity] GL.IssuePluginEvent failed. This version of Unity cannot support RenderManager.");
                         DisplayController.UseRenderManager = false;
 #endif
+                    }
+                    else
+                    {
+                        DisplayController.UpdateClient();
                     }
                     //if we disabled the dummy camera, enable it here
                     if (_disabledCamera)
