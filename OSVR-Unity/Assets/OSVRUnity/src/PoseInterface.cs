@@ -40,7 +40,14 @@ namespace OSVR
                 {
                     adapter = new PoseAdapter(
                         OSVR.ClientKit.PoseInterface.GetInterface(ClientKit.instance.context, usedPath));
+                    adapter.StateChanged += adapter_StateChanged;
                 }
+            }
+
+            void adapter_StateChanged(object sender, OSVR.ClientKit.TimeValue timestamp, int sensor, Pose3 report)
+            {
+                transform.localPosition = report.Position;
+                transform.localRotation = report.Rotation;
             }
 
             protected override void Stop()
@@ -50,16 +57,6 @@ namespace OSVR
                 {
                     adapter.Dispose();
                     adapter = null;
-                }
-            }
-
-            void Update()
-            {
-                if (this.adapter != null)
-                {
-                    var state = this.adapter.GetState();
-                    transform.localPosition = state.Value.Position;
-                    transform.localRotation = state.Value.Rotation;
                 }
             }
 

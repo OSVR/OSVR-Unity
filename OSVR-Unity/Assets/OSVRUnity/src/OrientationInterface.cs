@@ -41,7 +41,13 @@ namespace OSVR
                 {
                     adapter = new OrientationAdapter(
                         OSVR.ClientKit.OrientationInterface.GetInterface(ClientKit.instance.context, usedPath));
+                    adapter.StateChanged += adapter_StateChanged;
                 }
+            }
+
+            void adapter_StateChanged(object sender, OSVR.ClientKit.TimeValue timestamp, int sensor, Quaternion report)
+            {
+                transform.localRotation = report;
             }
 
             protected override void Stop()
@@ -51,15 +57,6 @@ namespace OSVR
                 {
                     adapter.Dispose();
                     adapter = null;
-                }
-            }
-
-            void Update()
-            {
-                if (this.adapter != null)
-                {
-                    var state = this.adapter.GetState();
-                    transform.localRotation = state.Value;
                 }
             }
 
