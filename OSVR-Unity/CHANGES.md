@@ -4,6 +4,16 @@ This is an abbreviated changelog for the OSVR Unity Plugin.
 
 Use git for a full changelog.
 ##Recent Changes
+## Plugins folder moved, Unity 5.6 beta
+> 30-March-2017 (commit 7d231f1) v0.6.16.4
+
+- Moved Plugins folder inside /Assets/OSVRUnity/
+
+> 11-January-2017 (commit 2be5412) v0.6.16.3
+
+- Fixes crash when server isn't running and user tries to call SetRoomRotationUsingHead.
+- Adds Unity 5.6 beta support
+
 ## Performance improvements, Update to Unity 5.4
 > 08-November-2016 (commit 1bbf717) v0.6.16
 
