@@ -3,7 +3,7 @@
 del osvr-android-ndk.tar.bz2
 del osvr-android-ndk.tar
 
-set DEST=OSVR-Unity\Assets\Plugins\Android\libs\armeabi-v7a
+set DEST=OSVR-Unity\Assets\OSVRUnity\Plugins\Android\libs\armeabi-v7a
 move /Y Android\NDK\osvr\builds\armeabi-v7a\lib\libcrystax.so %DEST%
 move /Y Android\NDK\osvr\builds\armeabi-v7a\lib\libgnustl_shared.so %DEST%
 move /Y Android\NDK\osvr\builds\armeabi-v7a\lib\libjsoncpp.so %DEST%
