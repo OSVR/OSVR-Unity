@@ -43,7 +43,6 @@ namespace OSVR
         //*/
         public class DisplayController : MonoBehaviour
         {
-
             public const uint NUM_VIEWERS = 1;
             private const int TARGET_FRAME_RATE = 60; //@todo get from OSVR
 
@@ -282,6 +281,8 @@ namespace OSVR
                     }
                 }
 
+                var distortionParams = GetDistortionParams();
+
                 // loop through viewers because at some point we could support multiple viewers
                 // but this implementation currently supports exactly one
                 for (; viewerIndex < _viewerCount; viewerIndex++)
@@ -301,10 +302,59 @@ namespace OSVR
                     _viewers[viewerIndex] = vrViewerComponent;
                     vrViewer.tag = "MainCamera";
 
+                    if (!_useRenderManager && viewerIndex < distortionParams.Length)
+                    {
+                        var disto = vrViewer.gameObject.AddComponent<OsvrDistortion>();
+                        disto.K1Red = distortionParams[viewerIndex].x;
+                        disto.K1Green = distortionParams[viewerIndex].y;
+                        disto.K1Blue = distortionParams[viewerIndex].z;
+                    }
+
                     // create Viewer's VREyes
                     uint eyeCount = (uint)_displayConfig.GetNumEyesForViewer(viewerIndex); //get the number of eyes for this viewer
                     vrViewerComponent.CreateEyes(eyeCount);
                 }
+            }
+
+            private Vector3[] GetDistortionParams()
+            {
+                var numViewers = _displayConfig.GetNumViewers();
+                var distortionParams = new Vector3[2];
+
+                if (numViewers != 1)
+                    throw new UnityException("[OSVR] Only one viewer supported.");
+
+                for (uint viewer = 0; viewer < numViewers; viewer++)
+                {
+                    var numEyes = _displayConfig.GetNumEyesForViewer(viewer);
+                    if (numEyes != 2)
+                        throw new UnityException("[OSVR] Two eyes are required, not less, not more.");
+
+                    for (byte eye = 0; eye < numEyes; eye++)
+                    {
+                        var numSurfaces = _displayConfig.GetNumSurfacesForViewerEye(viewer, eye);
+                        if (numSurfaces != 1)
+                            throw new UnityException("[OSVR] A surface is required.");
+
+                        for (uint surface = 0; surface < numSurfaces; surface++)
+                        {
+                            var distortionCorrectionRequired = _displayConfig.DoesViewerEyeSurfaceWantDistortion(viewer, eye, surface);
+                            if (distortionCorrectionRequired)
+                            {
+                                var radialDistortionPriority = _displayConfig.GetViewerEyeSurfaceRadialDistortionPriority(viewer, eye, surface);
+                                if (radialDistortionPriority >= 0)
+                                {
+                                    var dist = _displayConfig.GetViewerEyeSurfaceRadialDistortion(viewer, eye, surface);
+                                    distortionParams[eye].x = (float)dist.k1.x;
+                                    distortionParams[eye].y = (float)dist.k1.y;
+                                    distortionParams[eye].z = (float)dist.k1.z;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return distortionParams;
             }
 
             void Update()
