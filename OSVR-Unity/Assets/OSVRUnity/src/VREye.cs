@@ -40,8 +40,8 @@ namespace OSVR
             private VRSurface[] _surfaces; //the surfaces associated with this eye
             private uint _surfaceCount;
             private uint _eyeIndex;
-            
-            
+
+
             #endregion
             #region Public Variables  
             public uint EyeIndex
@@ -49,7 +49,7 @@ namespace OSVR
                 get { return _eyeIndex; }
                 set { _eyeIndex = value; }
             }
-            public VRSurface[] Surfaces { get { return _surfaces; } } 
+            public VRSurface[] Surfaces { get { return _surfaces; } }
             public uint SurfaceCount { get { return _surfaceCount; } }
             public VRViewer Viewer
             {
@@ -75,7 +75,7 @@ namespace OSVR
             {
                 //cache:
                 cachedTransform = transform;
-            }         
+            }
             #endregion
 
             // Updates the position and rotation of the eye
@@ -122,7 +122,7 @@ namespace OSVR
 
                         //get projection matrix from RenderManager and set surface projection matrix
                         surface.SetProjectionMatrix(Viewer.DisplayController.RenderManager.GetEyeProjectionMatrix((int)EyeIndex));
-                   
+
                         surface.Render();
                     }
                     else
@@ -145,7 +145,7 @@ namespace OSVR
 
                         //render the surface
                         surface.Render();
-                    }                           
+                    }
 
                 }
             }
@@ -209,7 +209,7 @@ namespace OSVR
                             //get distortion parameters
                             OSVR.ClientKit.RadialDistortionParameters distortionParameters =
                             Viewer.DisplayController.DisplayConfig.GetViewerEyeSurfaceRadialDistortion(
-                            Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex);                    
+                            Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex);
                             surface.SetDistortion(distortionParameters);
                         }
 
@@ -229,6 +229,8 @@ namespace OSVR
                     }
                 }
 
+                var displayController = FindObjectOfType<DisplayController>();
+
 
                 //loop through surfaces because at some point we could support eyes with multiple surfaces
                 //but this implementation currently supports exactly one
@@ -247,20 +249,31 @@ namespace OSVR
 
                     //distortion
                     bool useDistortion = Viewer.DisplayController.DisplayConfig.DoesViewerEyeSurfaceWantDistortion(Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex);
-                    if(useDistortion)
+                    useDistortion |= !displayController.UseRenderManager;
+
+                    if (useDistortion)
                     {
                         //@todo figure out which type of distortion to use
                         //right now, there is only one option, SurfaceRadialDistortion
                         //get distortion parameters
-                        OSVR.ClientKit.RadialDistortionParameters distortionParameters =
-                        Viewer.DisplayController.DisplayConfig.GetViewerEyeSurfaceRadialDistortion(
-                        Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex);
+                        OSVR.ClientKit.RadialDistortionParameters distortionParameters;
+
+                        try
+                        {
+                            distortionParameters = Viewer.DisplayController.DisplayConfig.GetViewerEyeSurfaceRadialDistortion(Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex);
+                        }
+                        catch (Exception ex)
+                        {
+                            // The previous call fails, so we use the minimal distortion parameters to ensure a better experience.
+                            distortionParameters.centerOfProjection = new OSVR.ClientKit.Vec2() { x = 0.5, y = 0.5 };
+                            distortionParameters.k1 = new OSVR.ClientKit.Vec3() { x = 0.25, y = 0.25, z = 0.25 };
+                        }
 
                         surface.SetDistortion(distortionParameters);
-                    }    
-                    
+                    }
+
                     //render manager
-                    if(Viewer.DisplayController.UseRenderManager)
+                    if (Viewer.DisplayController.UseRenderManager)
                     {
                         //Set the surfaces viewport from RenderManager
                         surface.SetViewport(Viewer.DisplayController.RenderManager.GetEyeViewport((int)EyeIndex));
@@ -271,8 +284,8 @@ namespace OSVR
                         {
                             renderTexture.antiAliasing = QualitySettings.antiAliasing;
                         }
-                        surface.SetRenderTexture(renderTexture);                       
-                    }             
+                        surface.SetRenderTexture(renderTexture);
+                    }
                 }
             }
 
@@ -284,7 +297,7 @@ namespace OSVR
                 destCamera.CopyFrom(srcCamera);
                 destCamera.depth = 0;
                 //@todo Copy other components attached to the DisplayController?
-            }           
+            }
         }
     }
 }
