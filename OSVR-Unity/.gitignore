@@ -5,6 +5,7 @@
 /Assets/Plugins/x86/*
 /Assets/Plugins/x86_64/*
 /Assets/Plugins/Android/**/*
+/Assets/OSVRUnity/Plugins/*
 
 # Don't commit your UnityVS stuff
 /Assets/UnityVS.meta
