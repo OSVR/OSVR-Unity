@@ -70,8 +70,6 @@ namespace OSVR
             public VRViewer[] Viewers { get { return _viewers; } }
             public uint ViewerCount { get { return _viewerCount; } }
             public OsvrRenderManager RenderManager { get { return _renderManager; } }
-            [Tooltip("Renders an extra camera to show what the HMD user sees while in Direct Mode. Comes at a framerate cost until this feature becomes part of RenderManager.")]
-            public bool showDirectModePreview = false; //should the monitor show what the user sees in the HMD?
 
             public uint TotalDisplayWidth
             {
