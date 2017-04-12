@@ -5,11 +5,11 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 400508}
-  - 20: {fileID: 2000508}
-  - 114: {fileID: 11400508}
+  - component: {fileID: 400508}
+  - component: {fileID: 2000508}
+  - component: {fileID: 11400508}
   m_Layer: 0
   m_Name: VRViewer0
   m_TagString: MainCamera
@@ -22,10 +22,11 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 431736}
-  - 114: {fileID: 11463916}
+  - component: {fileID: 431736}
+  - component: {fileID: 11463916}
+  - component: {fileID: 114784643541613048}
   m_Layer: 0
   m_Name: VRDisplayTracked
   m_TagString: Untagged
@@ -38,10 +39,10 @@ GameObject:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 461702}
-  - 114: {fileID: 11461702}
+  - component: {fileID: 461702}
+  - component: {fileID: 11461702}
   m_Layer: 0
   m_Name: VREye0
   m_TagString: Untagged
@@ -54,11 +55,11 @@ GameObject:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 461704}
-  - 20: {fileID: 2061704}
-  - 114: {fileID: 11461704}
+  - component: {fileID: 461704}
+  - component: {fileID: 2061704}
+  - component: {fileID: 11461704}
   m_Layer: 0
   m_Name: VRSurface0
   m_TagString: Untagged
@@ -79,6 +80,7 @@ Transform:
   - {fileID: 461702}
   m_Father: {fileID: 431736}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &431736
 Transform:
   m_ObjectHideFlags: 1
@@ -92,6 +94,7 @@ Transform:
   - {fileID: 400508}
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &461702
 Transform:
   m_ObjectHideFlags: 1
@@ -105,6 +108,7 @@ Transform:
   - {fileID: 461704}
   m_Father: {fileID: 400508}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &461704
 Transform:
   m_ObjectHideFlags: 1
@@ -117,6 +121,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 461702}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &2000508
 Camera:
   m_ObjectHideFlags: 1
@@ -245,3 +250,17 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 131736}
   m_IsPrefabParent: 1
+--- !u!114 &114784643541613048
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 131736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3bd92c411e0576c4aad0b30645a3d4c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fixAspectRatio: 1
+  mirrorCamera: {fileID: 0}
+  fillTexture: {fileID: 0}
