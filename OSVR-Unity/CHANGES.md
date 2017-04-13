@@ -4,6 +4,11 @@ This is an abbreviated changelog for the OSVR Unity Plugin.
 
 Use git for a full changelog.
 ##Recent Changes
+## Improved Direct Mode mirror
+> 12-April-2017 (commit 61264af) v0.6.17
+
+- Added OsvrMirrorDisplay.cs for faster display mirroring. Performance impact now neglible.
+
 ## Plugins folder moved, Unity 5.6 beta
 > 30-March-2017 (commit 7d231f1) v0.6.16.4
 
