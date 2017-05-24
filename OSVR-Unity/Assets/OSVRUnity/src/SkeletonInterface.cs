@@ -35,14 +35,27 @@ namespace OSVR
         public class SkeletonInterface : InterfaceGameObjectBase
         {
             PoseAdapter adapter;
+
+            enum PostRotationType
+            {
+                None,
+                PostRotateInverseForwardNormal,  //for fitting to a rigged 3d model
+                PostRotateEuler //rotate by euler angles, set in editor
+
+            }
             [SerializeField]
-            private Vector3 modelForwardDir; //for a set of hands, this represents the direction the fingers are pointing
+            PostRotationType postRotateType = PostRotationType.None;
+
+            //for a set of hands, this represents the direction the fingers are pointing
+            //used with PostRotateInverseForwardNormal
             [SerializeField]
-            private Vector3 modelNormalDir; //for a set of hands, this represents the palm facing direction
+            private Vector3 modelForwardDir;
+
+            //for a set of hands, this represents the palm facing direction
+            //used with PostRotateEuler
             [SerializeField]
-            private bool applyPostRotation = true; //for fitting to a rigged 3d model. If false, this class is identical to PoseInterface
-            [SerializeField]
-            private bool applyPostRotateEuler = true; //add a post rotation by multiplying by postRotateEuler, instead of using the forward and normal dirs
+            private Vector3 modelNormalDir;
+
             [SerializeField]
             private Vector3 postRotateEuler;
 
@@ -73,28 +86,18 @@ namespace OSVR
                     var state = this.adapter.GetState();
                     transform.localPosition = state.Value.Position;
 
-                    //apply a post-rotation
-                    if (applyPostRotation)
+                    switch(postRotateType)
                     {
-                        //if applyPostRotateEuler is true, apply the editor-defined postRotateEuler
-                        if (applyPostRotateEuler)
-                        {
+                        case PostRotationType.None:
+                            transform.localRotation = state.Value.Rotation;
+                            break;
+                        case PostRotationType.PostRotateEuler:
                             transform.localRotation = state.Value.Rotation *= Quaternion.Euler(postRotateEuler);
-
-                        }
-                        else
-                        {
+                            break;
+                        case PostRotationType.PostRotateInverseForwardNormal:
                             //a post-rotation based on model forward and normal directions may be desired if the poses are being used with a rigged 3d model
                             transform.localRotation = state.Value.Rotation * Quaternion.Inverse(Quaternion.LookRotation(modelForwardDir, -modelNormalDir));
-
-                        }
-
-                    }
-                    else
-                    {
-                        //no post-rotate
-                        transform.localRotation = state.Value.Rotation;
-
+                            break;
                     }
                 }
             }

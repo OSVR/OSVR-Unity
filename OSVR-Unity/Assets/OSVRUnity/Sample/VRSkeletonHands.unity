@@ -221,6 +221,336 @@ Prefab:
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 114000013555703958, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000014225530128, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000012690221024, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000014171526934, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000012531497950, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000012895378832, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010891986100, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000013436284426, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000013940094282, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010638787640, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000013475304478, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010051288422, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000011609145774, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000011728218546, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000013841487904, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010767950198, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000014052257124, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000012817548970, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000012413541550, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000013555703958, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateEuler.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000014225530128, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateEuler.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000012690221024, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateEuler.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000014171526934, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateEuler.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000012531497950, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateEuler.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000012895378832, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateEuler.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010891986100, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateEuler.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000013436284426, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateEuler.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000013940094282, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateEuler.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010638787640, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateEuler.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000013475304478, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateEuler.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010051288422, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateEuler.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000011609145774, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateEuler.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000011728218546, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateEuler.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000013841487904, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateEuler.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010767950198, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateEuler.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000014052257124, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateEuler.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000012817548970, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateEuler.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000012413541550, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateEuler.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000014119906180, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateEuler.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010235749118, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateEuler.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010492434942, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateEuler.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000012728751384, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010129980514, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000011555750786, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010912904878, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000012613902916, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000011947123700, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000013739505390, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010799239080, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010496799814, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000012458427774, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000011061851914, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000013973303254, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010102085312, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000012882858100, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000013293572532, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000013689905704, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000012325743002, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010631533206, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000011326349916, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000014168340482, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000013467015732, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000013887986454, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000014119906180, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010235749118, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010492434942, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4,
+        type: 2}
+      propertyPath: postRotateType
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1f3323679d16e9b41b36ba9fb3e3e1b4, type: 2}
   m_IsPrefabParent: 0
