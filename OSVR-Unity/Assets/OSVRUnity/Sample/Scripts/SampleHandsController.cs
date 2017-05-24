@@ -13,13 +13,13 @@ public class SampleHandsController : MonoBehaviour {
 		if(Input.GetKeyDown(KeyCode.RightArrow))
         {
             leftHandObjectsManager.SetCurrentIndex(leftHandObjectsManager.CurrentIndex + 1);
-            rightHandObjectsManager.SetCurrentIndex(leftHandObjectsManager.CurrentIndex + 1);
+            rightHandObjectsManager.SetCurrentIndex(rightHandObjectsManager.CurrentIndex + 1);
 
         }
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
             leftHandObjectsManager.SetCurrentIndex(leftHandObjectsManager.CurrentIndex - 1);
-            rightHandObjectsManager.SetCurrentIndex(leftHandObjectsManager.CurrentIndex - 1);
+            rightHandObjectsManager.SetCurrentIndex(rightHandObjectsManager.CurrentIndex - 1);
 
         }
     }
@@ -29,12 +29,12 @@ public class SampleHandsController : MonoBehaviour {
         if (GUILayout.Button("Next Hands (right arrow)"))
         {
             leftHandObjectsManager.SetCurrentIndex(leftHandObjectsManager.CurrentIndex + 1);
-            rightHandObjectsManager.SetCurrentIndex(leftHandObjectsManager.CurrentIndex + 1);
+            rightHandObjectsManager.SetCurrentIndex(rightHandObjectsManager.CurrentIndex + 1);
         }
         if (GUILayout.Button("Prev Hands (left arrow)"))
         {
             leftHandObjectsManager.SetCurrentIndex(leftHandObjectsManager.CurrentIndex - 1);
-            rightHandObjectsManager.SetCurrentIndex(leftHandObjectsManager.CurrentIndex - 1);
+            rightHandObjectsManager.SetCurrentIndex(rightHandObjectsManager.CurrentIndex - 1);
         }
     }
 }
