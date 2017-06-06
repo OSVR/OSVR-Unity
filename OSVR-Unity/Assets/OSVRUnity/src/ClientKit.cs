@@ -30,7 +30,7 @@ namespace OSVR
             public string AppID;
 
             private OSVR.ClientKit.ClientContext _contextObject;
-#if UNITY_STANDALONE_WIN
+#if UNITY_STANDALONE_WIN || UNITY_ANDROID
             private OSVR.ClientKit.ServerAutoStarter _serverAutoStarter;
 
             public bool autoStartServer = true;
@@ -96,9 +96,17 @@ namespace OSVR
                     _contextObject = new OSVR.ClientKit.ClientContext(AppID, 0);                  
                 }
 
+
 #if UNITY_STANDALONE_WIN
-                if(_serverAutoStarter == null && autoStartServer)
+                if (_serverAutoStarter == null && autoStartServer)
                 {
+                    _serverAutoStarter = new OSVR.ClientKit.ServerAutoStarter();
+                }
+#elif UNITY_ANDROID
+                if (_serverAutoStarter == null && autoStartServer)
+                {
+
+                    LoadOsvrAndroidLibraries();
                     _serverAutoStarter = new OSVR.ClientKit.ServerAutoStarter();
                 }
 #endif
@@ -161,7 +169,7 @@ namespace OSVR
             }
 			
             void Stop()
-        {
+            {
                 // Only stop the main instance, since it is the only one that
                 // ever actually starts-up.
                 if (this == instance)
@@ -171,8 +179,8 @@ namespace OSVR
                         Debug.Log("[OSVR-Unity] Shutting down OSVR.");
                         _contextObject.Dispose();
                         _contextObject = null;
-#if UNITY_STANDALONE_WIN
-                        if(_serverAutoStarter != null)
+#if UNITY_STANDALONE_WIN || UNITY_ANDROID
+                        if (_serverAutoStarter != null)
                         {
                             _serverAutoStarter.Dispose();
                             _serverAutoStarter = null;
@@ -195,6 +203,19 @@ namespace OSVR
             void OnApplicationQuit()
             {
                 Stop();
+            }
+
+            //load OSVR-Android libraries via JNI
+            //@todo hardcoded names
+            private void LoadOsvrAndroidLibraries()
+            {
+                using (AndroidJavaClass javaClass = new AndroidJavaClass("org.osvr.osvrunityandroid.MainActivity"))
+                {
+                    using (AndroidJavaObject activity = javaClass.GetStatic<AndroidJavaObject>("ctx"))
+                    {
+                        activity.Call("loadLibraries");
+                    }
+                }
             }
         }
     }
