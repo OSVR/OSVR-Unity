@@ -43,7 +43,6 @@ namespace OSVR
         //*/
         public class DisplayController : MonoBehaviour
         {
-
             public const uint NUM_VIEWERS = 1;
             private const int TARGET_FRAME_RATE = 60; //@todo get from OSVR
 
