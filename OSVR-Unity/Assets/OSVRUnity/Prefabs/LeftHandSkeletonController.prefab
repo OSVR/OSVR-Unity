@@ -3851,10 +3851,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_middle1
+  postRotateType: 0
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 0
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 0, y: 0, z: 0}
 --- !u!114 &114000010111026994
 MonoBehaviour:
@@ -3868,10 +3867,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_middle2
+  postRotateType: 2
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 1
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 90, y: 0, z: 0}
 --- !u!114 &114000010314922378
 MonoBehaviour:
@@ -3885,10 +3883,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_middle0
+  postRotateType: 2
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 1
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 90, y: 0, z: 0}
 --- !u!114 &114000010326780102
 MonoBehaviour:
@@ -3902,10 +3899,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_index1
+  postRotateType: 2
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 1
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 90, y: 0, z: 0}
 --- !u!114 &114000010604117500
 MonoBehaviour:
@@ -3919,10 +3915,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_elbow
+  postRotateType: 2
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 1
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 90, y: 0, z: 0}
 --- !u!114 &114000010632671486
 MonoBehaviour:
@@ -3936,10 +3931,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_ring2
+  postRotateType: 2
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 1
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 90, y: 0, z: 0}
 --- !u!114 &114000010678844710
 MonoBehaviour:
@@ -3953,10 +3947,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_index2
+  postRotateType: 2
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 1
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 90, y: 0, z: 0}
 --- !u!114 &114000010755107804
 MonoBehaviour:
@@ -3970,10 +3963,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_ring2
+  postRotateType: 0
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 0
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 0, y: 0, z: 0}
 --- !u!114 &114000010859479672
 MonoBehaviour:
@@ -3987,10 +3979,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_middle3
+  postRotateType: 2
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 1
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 90, y: 0, z: 0}
 --- !u!114 &114000010953315400
 MonoBehaviour:
@@ -4004,10 +3995,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_wrist
+  postRotateType: 2
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 1
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 90, y: 0, z: 0}
 --- !u!114 &114000011042539538
 MonoBehaviour:
@@ -4021,10 +4011,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_middle2
+  postRotateType: 0
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 0
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 0, y: 0, z: 0}
 --- !u!114 &114000011104605166
 MonoBehaviour:
@@ -4038,10 +4027,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_wrist
+  postRotateType: 0
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 0
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 0, y: 0, z: 0}
 --- !u!114 &114000011112840758
 MonoBehaviour:
@@ -4055,10 +4043,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_middle3
+  postRotateType: 0
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 0
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 0, y: 0, z: 0}
 --- !u!114 &114000011260888106
 MonoBehaviour:
@@ -4072,10 +4059,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_elbow
+  postRotateType: 0
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 0
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 0, y: 0, z: 0}
 --- !u!114 &114000011598588858
 MonoBehaviour:
@@ -4089,10 +4075,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_ring0
+  postRotateType: 2
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 1
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 90, y: 0, z: 0}
 --- !u!114 &114000011716833630
 MonoBehaviour:
@@ -4106,10 +4091,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/hands/left
+  postRotateType: 0
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 0
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 0, y: 0, z: 0}
 --- !u!114 &114000011747860834
 MonoBehaviour:
@@ -4123,10 +4107,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_ring3
+  postRotateType: 0
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 0
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 0, y: 0, z: 0}
 --- !u!114 &114000011806665608
 MonoBehaviour:
@@ -4140,10 +4123,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_index0
+  postRotateType: 0
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 0
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 0, y: 0, z: 0}
 --- !u!114 &114000011935394420
 MonoBehaviour:
@@ -4157,10 +4139,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_ring3
+  postRotateType: 2
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 1
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 90, y: 0, z: 0}
 --- !u!114 &114000011971854538
 MonoBehaviour:
@@ -4174,10 +4155,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_ring0
+  postRotateType: 0
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 0
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 0, y: 0, z: 0}
 --- !u!114 &114000012032121974
 MonoBehaviour:
@@ -4191,10 +4171,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_pinky2
+  postRotateType: 0
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 0
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 0, y: 0, z: 0}
 --- !u!114 &114000012084467448
 MonoBehaviour:
@@ -4208,10 +4187,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_thumb2
+  postRotateType: 2
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 1
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 90, y: 0, z: 0}
 --- !u!114 &114000012159864072
 MonoBehaviour:
@@ -4225,10 +4203,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_index3
+  postRotateType: 2
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 1
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 90, y: 0, z: 0}
 --- !u!114 &114000012193878306
 MonoBehaviour:
@@ -4242,10 +4219,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_thumb2
+  postRotateType: 0
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 0
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 0, y: 0, z: 0}
 --- !u!114 &114000012302068340
 MonoBehaviour:
@@ -4259,10 +4235,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_pinky1
+  postRotateType: 0
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 0
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 0, y: 0, z: 0}
 --- !u!114 &114000012410416778
 MonoBehaviour:
@@ -4276,10 +4251,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_index1
+  postRotateType: 0
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 0
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 0, y: 0, z: 0}
 --- !u!114 &114000012617379528
 MonoBehaviour:
@@ -4293,10 +4267,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_thumb1
+  postRotateType: 2
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 1
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 90, y: 0, z: 0}
 --- !u!114 &114000012722309018
 MonoBehaviour:
@@ -4310,10 +4283,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_pinky1
+  postRotateType: 2
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 1
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 90, y: 0, z: 0}
 --- !u!114 &114000012757537908
 MonoBehaviour:
@@ -4327,10 +4299,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_index2
+  postRotateType: 0
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 0
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 0, y: 0, z: 0}
 --- !u!114 &114000012846678626
 MonoBehaviour:
@@ -4344,10 +4315,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_index3
+  postRotateType: 0
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 0
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 0, y: 0, z: 0}
 --- !u!114 &114000012858523090
 MonoBehaviour:
@@ -4361,10 +4331,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_pinky3
+  postRotateType: 2
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 1
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 90, y: 0, z: 0}
 --- !u!114 &114000012864274378
 MonoBehaviour:
@@ -4395,10 +4364,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_thumb1
+  postRotateType: 0
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 0
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 0, y: 0, z: 0}
 --- !u!114 &114000013096247788
 MonoBehaviour:
@@ -4412,10 +4380,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_middle0
+  postRotateType: 0
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 0
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 0, y: 0, z: 0}
 --- !u!114 &114000013113541730
 MonoBehaviour:
@@ -4429,10 +4396,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_thumb3
+  postRotateType: 2
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 1
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 90, y: 0, z: 0}
 --- !u!114 &114000013136055712
 MonoBehaviour:
@@ -4446,10 +4412,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_pinky0
+  postRotateType: 2
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 1
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 90, y: 0, z: 0}
 --- !u!114 &114000013241009292
 MonoBehaviour:
@@ -4463,10 +4428,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/hands/left
+  postRotateType: 2
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 1
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 90, y: 0, z: 0}
 --- !u!114 &114000013282070946
 MonoBehaviour:
@@ -4480,10 +4444,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_pinky3
+  postRotateType: 0
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 0
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 0, y: 0, z: 0}
 --- !u!114 &114000013405096896
 MonoBehaviour:
@@ -4497,10 +4460,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_index0
+  postRotateType: 2
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 1
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 90, y: 0, z: 0}
 --- !u!114 &114000013581904466
 MonoBehaviour:
@@ -4514,10 +4476,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_ring1
+  postRotateType: 2
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 1
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 90, y: 0, z: 0}
 --- !u!114 &114000013829669196
 MonoBehaviour:
@@ -4543,10 +4504,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_pinky2
+  postRotateType: 2
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 1
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 90, y: 0, z: 0}
 --- !u!114 &114000013917844390
 MonoBehaviour:
@@ -4560,10 +4520,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_pinky0
+  postRotateType: 0
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 0
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 0, y: 0, z: 0}
 --- !u!114 &114000014092144552
 MonoBehaviour:
@@ -4577,10 +4536,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_ring1
+  postRotateType: 0
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 0
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 0, y: 0, z: 0}
 --- !u!114 &114000014208766224
 MonoBehaviour:
@@ -4594,10 +4552,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_middle1
+  postRotateType: 2
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 1
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 90, y: 0, z: 0}
 --- !u!114 &114000014276206820
 MonoBehaviour:
@@ -4611,10 +4568,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: /me/skeleton/joints/l_thumb3
+  postRotateType: 0
   modelForwardDir: {x: 0, y: 0, z: 0}
   modelNormalDir: {x: 0, y: 0, z: 0}
-  applyPostRotation: 0
-  applyPostRotateEuler: 1
   postRotateEuler: {x: 0, y: 0, z: 0}
 --- !u!135 &135000010020017560
 SphereCollider:
