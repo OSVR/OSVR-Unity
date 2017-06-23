@@ -26,6 +26,8 @@ namespace OSVR
     {
         public class ClientKit : MonoBehaviour
         {
+            private const string OSVR_JAVA_CLASS_PATH = "org.osvr.osvrunityjni.OsvrJNIWrapper";
+
             [Tooltip("A string uniquely identifying your application, in reverse domain-name format.")]
             public string AppID;
 
@@ -205,18 +207,20 @@ namespace OSVR
                 Stop();
             }
 
+#if UNITY_ANDROID
             //load OSVR-Android libraries via JNI
-            //@todo hardcoded names
             private void LoadOsvrAndroidLibraries()
             {
-                using (AndroidJavaClass javaClass = new AndroidJavaClass("org.osvr.osvrunityandroid.MainActivity"))
+                //get the OSVR JNI-Wrapper Java class
+                AndroidJavaObject javaClass = new AndroidJavaObject(OSVR_JAVA_CLASS_PATH);
+                if (javaClass != null)
                 {
-                    using (AndroidJavaObject activity = javaClass.GetStatic<AndroidJavaObject>("ctx"))
-                    {
-                        activity.Call("loadLibraries");
-                    }
+                    //initialize and load OSVR libraries
+                    javaClass.Call("init", new object[0]);
+                    javaClass.Call("loadLibraries");
                 }
             }
+#endif
         }
     }
 }
