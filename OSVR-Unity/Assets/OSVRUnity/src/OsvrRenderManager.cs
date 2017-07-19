@@ -70,6 +70,21 @@ namespace OSVR
             private static readonly IntPtr functionPointer = Marshal.GetFunctionPointerForDelegate(debugLog);
             private static void DebugWrapper(string log) { Debug.Log(log); }
 
+#if UNITY_METRO
+            private static Byte ConstructRenderBuffers() { return 0; }
+            private static Byte CreateRenderManagerFromUnity(OSVR.ClientKit.SafeClientContextHandle ctx) { return 0; }
+            private static OSVR.ClientKit.Pose3 GetEyePose(int eye) { return new OSVR.ClientKit.Pose3(); }
+            private static OSVR_ProjectionMatrix GetProjectionMatrix(int eye) { return new OSVR_ProjectionMatrix(); }
+            private static IntPtr GetRenderEventFunc() { return IntPtr.Zero; }
+            private static OSVR_ViewportDescription GetViewport(int eye) { return new OSVR_ViewportDescription(); }
+            private static void LinkDebug([MarshalAs(UnmanagedType.FunctionPtr)]IntPtr debugCal) { }
+            private static int SetColorBufferFromUnity(System.IntPtr texturePtr, int eye) { return 0; }
+            private static void SetFarClipDistance(double farClipPlaneDistance) { }
+            private static void SetIPD(double ipdMeters) { }
+            private static void SetNearClipDistance(double nearClipPlaneDistance) { }
+            private static void ShutdownRenderManager() { }
+#else
+
             //Create and Register RenderBuffers
             [DllImport(PluginName)]
             private static extern Byte 
@@ -126,6 +141,8 @@ namespace OSVR
             [DllImport(PluginName)]
             private static extern void
                 ShutdownRenderManager();
+
+#endif
 
             // UnityPluginLoad is not needed
             // UnityPluginUnload is not needed
@@ -220,7 +237,7 @@ namespace OSVR
             //"Recenter" based on current head orientation
             public void SetRoomRotationUsingHead()
             {
-#if UNITY_5_2 || UNITY_5_3 || UNITY_5_4 || UNITY_5_5 || UNITY_5_6
+#if UNITY_5_2 || UNITY_5_3 || UNITY_5_4 || UNITY_5_5 || UNITY_5_6 || UNITY_2017
                 ClientKit.instance.context.SetRoomRotationUsingHead();
                 GL.IssuePluginEvent(GetRenderEventFunc(), 3);
 #endif
@@ -229,7 +246,7 @@ namespace OSVR
             //Clear the room-to-world transform, undo a call to SetRoomRotationUsingHead
             public void ClearRoomToWorldTransform()
             {
-#if UNITY_5_2 || UNITY_5_3 || UNITY_5_4 || UNITY_5_5 || UNITY_5_6
+#if UNITY_5_2 || UNITY_5_3 || UNITY_5_4 || UNITY_5_5 || UNITY_5_6 || UNITY_2017
                 ClientKit.instance.context.ClearRoomToWorldTransform();
                 GL.IssuePluginEvent(GetRenderEventFunc(), 4);
 #endif
