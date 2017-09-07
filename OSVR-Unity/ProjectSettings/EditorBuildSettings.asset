@@ -7,7 +7,13 @@ EditorBuildSettings:
   m_Scenes:
   - enabled: 0
     path: Assets/OSVRUnity/Sample/minigame.unity
+    guid: 86d3a4cc2c6296c428e9eeadb1c606d8
   - enabled: 0
     path: Assets/OSVRUnity/Sample/Demo/Scenes/OSVRDemo.unity
-  - enabled: 1
+    guid: 99f1451fd7f464366bbc467c7d3198ae
+  - enabled: 0
     path: Assets/OSVRUnity/Sample/Demo/Scenes/OSVRDemo2.unity
+    guid: 96b86aa09e1b8de4f8586aa7cb8827b0
+  - enabled: 1
+    path: Assets/OSVRUnity/Sample/Demo/Scenes/OSVR-UnityVR-Demo.unity
+    guid: f19d76c0eab0e1a44ad74d990e62a110
