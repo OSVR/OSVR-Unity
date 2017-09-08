@@ -49,12 +49,12 @@ public class OsvrUnityNativeVR : MonoBehaviour {
     void OnEnable()
     {
         _endOfFrameCoroutine = EndOfFrame();
-        StartCoroutine(_endOfFrameCoroutine);
+       // StartCoroutine(_endOfFrameCoroutine);
     }
 
     void OnDisable()
     {
-        StopCoroutine(_endOfFrameCoroutine);
+        //StopCoroutine(_endOfFrameCoroutine);
     }
     void Awake()
     {
@@ -78,7 +78,7 @@ public class OsvrUnityNativeVR : MonoBehaviour {
         VRDevice.DisableAutoVRCameraTracking(_camera, true);
         VRSettings.showDeviceView = false;
 
-       // Application.targetFrameRate = 90;
+        //Application.targetFrameRate = 90;
           Application.targetFrameRate = -1;
           Application.runInBackground = true;
           QualitySettings.vSyncCount = 0;
@@ -251,6 +251,8 @@ public class OsvrUnityNativeVR : MonoBehaviour {
     void LateUpdate()
     {
         UpdateHeadPose();
+        GL.IssuePluginEvent(RenderManager.GetRenderEventFunction(), OsvrRenderManager.RENDER_EVENT);
+
     }
 
     private void SetProjectionMatrix()
@@ -319,7 +321,6 @@ public class OsvrUnityNativeVR : MonoBehaviour {
                         Debug.LogError("[OSVR-Unity] GL.IssuePluginEvent failed. This version of Unity cannot support RenderManager.");
                         DisplayController.UseRenderManager = false;
 #endif
-                GL.Flush();
             }
         }
     }
