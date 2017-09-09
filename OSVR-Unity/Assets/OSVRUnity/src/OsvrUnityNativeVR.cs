@@ -1,9 +1,35 @@
-﻿using OSVR.Unity;
+﻿/// OsvrUnityNativeVR.cs
+///
+/// http://sensics.com/osvr
+///
+/// <copyright>
+/// Copyright 2017 Sensics, Inc.
+///
+/// Licensed under the Apache License, Version 2.0 (the "License");
+/// you may not use this file except in compliance with the License.
+/// You may obtain a copy of the License at
+///
+///     http://www.apache.org/licenses/LICENSE-2.0
+///
+/// Unless required by applicable law or agreed to in writing, software
+/// distributed under the License is distributed on an "AS IS" BASIS,
+/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+/// See the License for the specific language governing permissions and
+/// limitations under the License.
+/// </copyright>
+/// 
+
+/* This script connects Unity's VR support to OSVR-Unity and OSVR-RenderManager, so that OSVR-Unity applications can benefit from
+ * single-pass rendering and otherr optimiztions. To use it, attach this script to a gameobject with a camera. In Player Settings,
+ * check the box for "Virtual Realty Supported" and choose the "Split Stereo Display (non-head-mounted)" option. Choose single-pass
+ * or multi-pass for the stereo rendering method.
+ * This is not intended to be used in the same scene with  DisplayController/VRViewer/VREye/VRSurface. It only depends on ClientKit.cs
+ * to be in the scene.
+*/
+using OSVR.Unity;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.VR;
-using System;
 
 [RequireComponent(typeof(Camera))]
 public class OsvrUnityNativeVR : MonoBehaviour {
@@ -23,8 +49,6 @@ public class OsvrUnityNativeVR : MonoBehaviour {
     //variables for controlling use of osvrUnityRenderingPlugin.dll which enables DirectMode
     private OsvrRenderManager _renderManager;
     private bool _renderManagerConfigFound = false;
-
-    private IEnumerator _endOfFrameCoroutine;
 
 
     public OSVR.ClientKit.DisplayConfig DisplayConfig
@@ -48,13 +72,11 @@ public class OsvrUnityNativeVR : MonoBehaviour {
 
     void OnEnable()
     {
-        _endOfFrameCoroutine = EndOfFrame();
-       // StartCoroutine(_endOfFrameCoroutine);
     }
 
     void OnDisable()
     {
-        //StopCoroutine(_endOfFrameCoroutine);
+        ExitRenderManager();
     }
     void Awake()
     {
@@ -234,7 +256,7 @@ public class OsvrUnityNativeVR : MonoBehaviour {
     }
 
 
-    void Update()
+    void LateUpdate()
     {
         // sometimes it takes a few frames to get a DisplayConfig from ClientKit
         // keep trying until we have initialized
@@ -242,21 +264,16 @@ public class OsvrUnityNativeVR : MonoBehaviour {
         {
             Init();
         }
-        else if(_renderManagerConfigFound && _renderManager != null)
+        else
         {
-          GL.IssuePluginEvent(RenderManager.GetRenderEventFunction(), OsvrRenderManager.UPDATE_RENDERINFO_EVENT);
-        }
-    }
-
-    void LateUpdate()
-    {
-        UpdateHeadPose();
-        GL.IssuePluginEvent(RenderManager.GetRenderEventFunction(), OsvrRenderManager.RENDER_EVENT);
-
+            GL.IssuePluginEvent(RenderManager.GetRenderEventFunction(), OsvrRenderManager.UPDATE_RENDERINFO_EVENT);
+            UpdateHeadPose();
+            GL.IssuePluginEvent(RenderManager.GetRenderEventFunction(), OsvrRenderManager.RENDER_EVENT);
+        }        
     }
 
     private void SetProjectionMatrix()
-    {
+    { 
         Matrix4x4 matrix0 = RenderManager.GetEyeProjectionMatrix(0);
        // Matrix4x4 matrix1 = RenderManager.GetEyeProjectionMatrix(1);
 
@@ -303,27 +320,6 @@ public class OsvrUnityNativeVR : MonoBehaviour {
         }
     }
 
-    // This couroutine is called every frame.
-    IEnumerator EndOfFrame()
-    {
-        while (true)
-        {
-            yield return new WaitForEndOfFrame();
-            if (CheckDisplayStartup())
-            {
-                // Issue a RenderEvent, which copies Unity RenderTextures to RenderManager buffers
-                // RenderManager supported on unity 5.2+
-#if !(UNITY_5_1 || UNIT_5_0 || UNITY_4_7 || UNITY_4_6)
-                // GL.Viewport(_emptyViewport);
-                // GL.Clear(false, true, Camera.backgroundColor);
-                GL.IssuePluginEvent(RenderManager.GetRenderEventFunction(), OsvrRenderManager.RENDER_EVENT);
-#else
-                        Debug.LogError("[OSVR-Unity] GL.IssuePluginEvent failed. This version of Unity cannot support RenderManager.");
-                        DisplayController.UseRenderManager = false;
-#endif
-            }
-        }
-    }
     /*
     private void OnGUI()
     {
