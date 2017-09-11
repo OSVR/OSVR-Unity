@@ -94,7 +94,9 @@ public class OsvrUnityNativeVR : MonoBehaviour {
     void SetVRAppSettings()
     {
         //Disable autovr camera tracking since the camera's transform is set by RenderManager poses. 
-        VRDevice.DisableAutoVRCameraTracking(_camera, true);
+#if UNITY_2017
+                VRDevice.DisableAutoVRCameraTracking(_camera, true);
+#endif
         VRSettings.showDeviceView = false;
 
         //Application.targetFrameRate = 90;
