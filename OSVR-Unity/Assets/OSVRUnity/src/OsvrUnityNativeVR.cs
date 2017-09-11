@@ -261,7 +261,7 @@ public class OsvrUnityNativeVR : MonoBehaviour {
         {
             Init();
         }
-        else if(RenderManager != null && _renderManagerConfigFound)
+        else if(_displayConfigInitialized && RenderManager != null && _renderManagerConfigFound)
         {
             GL.IssuePluginEvent(RenderManager.GetRenderEventFunction(), OsvrRenderManager.UPDATE_RENDERINFO_EVENT);
             UpdateHeadPose();
