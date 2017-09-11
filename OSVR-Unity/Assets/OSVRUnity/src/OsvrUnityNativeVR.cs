@@ -70,9 +70,6 @@ public class OsvrUnityNativeVR : MonoBehaviour {
         set { _totalSurfaceHeight = value; }
     }
 
-    void OnEnable()
-    {
-    }
 
     void OnDisable()
     {
@@ -264,7 +261,7 @@ public class OsvrUnityNativeVR : MonoBehaviour {
         {
             Init();
         }
-        else
+        else if(RenderManager != null && _renderManagerConfigFound)
         {
             GL.IssuePluginEvent(RenderManager.GetRenderEventFunction(), OsvrRenderManager.UPDATE_RENDERINFO_EVENT);
             UpdateHeadPose();
