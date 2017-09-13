@@ -122,7 +122,6 @@ namespace OSVR
                     Debug.LogError("[OSVR-Unity] OsvrUnityNativeVR requires a ClientKit object in the scene.");
                 }
 
-                SetVRAppSettings();
             }
 
             //setup and VR, Application, Player, Quality, and Screen settings
@@ -130,7 +129,11 @@ namespace OSVR
             {
                 //Disable autovr camera tracking since the camera's transform is set by RenderManager poses. 
 #if UNITY_2017
-                VRDevice.DisableAutoVRCameraTracking(_camera0, true);
+                if(_clientKit.context.CheckStatus())
+                {
+                    VRDevice.DisableAutoVRCameraTracking(_camera0, true);
+                }
+
 #endif
                 VRSettings.showDeviceView = false;
 
@@ -200,6 +203,7 @@ namespace OSVR
                     }
                     return;
                 }
+                SetVRAppSettings();
 
                 _displayConfig = _clientKit.context.GetDisplayConfig();
                 if (_displayConfig == null)
