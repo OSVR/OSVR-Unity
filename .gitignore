@@ -189,3 +189,4 @@ OSVR-Unity-Dist/
 *.unitypackage
 
 Managed-OSVR-Unity/
+OSVR-Unity/.vs/

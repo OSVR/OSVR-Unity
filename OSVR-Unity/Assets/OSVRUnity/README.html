@@ -1,7 +1,5 @@
 <h1>OSVR-Unity README</h1>
 
-<blockquote><p><em>This is an Alpha Release, and probably not entirely idiomatic for Unity. Check back for updates often.</em></p></blockquote>
-
 <h2>Documentation</h2>
 
 <p>For links to details, documentation, and support, visit the repository on github: https://github.com/OSVR/OSVR-Unity#readme</p>
@@ -14,14 +12,13 @@
 <li>Unity 4 Free version will not use distortion as this is a Pro-only feature. You will get a warning that you can ignore and continue to use OSVR without distortion. OSVR plugins will still work with Unity 4 Free.</li>
 </ul>
 
-
 <h2>Basic Principles and Files</h2>
 
 <p>On a machine where you're running an OSVR-Unity application, you need to run an OSVR server, part of the OSVR-Core builds. For convenience, a 32-bit OSVR Server install is bundled in the OSVR-Unity snapshot archives. <a href="mailto:support@osvr.org">Contact us</a> if you need help.</p>
 
 <p>The <code>OSVR-Unity.unitypackage</code> package should contain the x86 and x86_64 binary plugins, the compiled Managed-OSVR wrapper, the OSVRUnity scripts (in the <code>Assets</code> directory), and a directory of prefabs. Import this package into your project.</p>
 
-<p>There is also a few sample/demo applications included, ranging from fairly sparse environments also used for development of the code/prefabs, to a high-detail demo.</p>
+<p>There are also a few sample/demo scenes included.</p>
 
 <h3>ClientKit object</h3>
 
@@ -39,7 +36,6 @@
 <li>Adding an <code>OSVR.Unity.InterfaceGameObject</code> script component, in which you can specify the path. There is a prefab for this.</li>
 <li>Adding your own script component (which should inherit from <code>OSVR.Unity.InterfaceBase</code> instead of <code>MonoBehaviour</code> for simplest usage) that uses the <code>InterfaceGameObject</code> to register a callback.</li>
 </ul>
-
 
 <p>Examples for buttons and analog triggers are included in the <code>minigame</code> scene.</p>
 
