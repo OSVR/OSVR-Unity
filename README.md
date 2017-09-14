@@ -15,9 +15,7 @@ The Unity integration is based on the [Managed-OSVR][] .NET binding for OSVR, wh
 ## OSVR-RenderManager Support
 OSVR-Unity uses the OSVR-RenderManager library for direct-mode rendering, lens correction, timewarp, etc.. [OSVR-RenderManager](https://github.com/sensics/OSVR-RenderManager) is a separate, Unity-independent project that is used in other applications/engines. The project which bridges between OSVR-Unity and OSVR-RenderManger is [OSVR-Unity-Rendering](https://github.com/OSVR/OSVR-Unity-Rendering), which uses the Unity low-level [native plugin interface](https://docs.unity3d.com/Manual/NativePluginInterface.html).
 
-These libraries are copied over to the Plugins directory in our CI build, and are not included in the source. 
-
-## Android 
+These libraries are copied over to the Plugins directory in our CI build, and are not included in the source.
 
 ## OSVR Unity Integration
 [Step-by-step getting started guide](https://github.com/OSVR/OSVR-Unity/blob/master/GettingStarted.md)
