@@ -100,6 +100,10 @@ This prefab provides very similar controls to the Unity first-person controller 
 
 That covers the basics! There are examples of tracked controllers, eyetrackers, and locomotion in other example scenes (see TrackerView.unity). If you want to enable features like positional tracking and Direct Mode rendering, that all happens in the server configuration file.
 
+## Unity Native VR Supported
+The **OSVR-UnityVR-Demo.unity** uses a prefab which harnesses Unity's split-screen stereo VR rendering. Use the OsvrStereoCameraParent prefab instead of VRDisplayTracked if you want to use the Unity native VR SDK. This is the fastest rendering path.
+If you run this scene, make sure "Virtual Reality Supported" is checked in Player Settings, and Split-Screen Stereo (non head-mounted) is selected as the SDK.
+
 ## RenderManager and Unity-Rendering Plugin
 RenderManager provides a number of additional functions in support of VR rendering. It adds features such as Direct Mode support, distortion correction, client-side predictive tracking, asynchronous time warp, overfill, and oversampling. For a more information about OSVR-RenderManager, including an overview of configuration options, visit: https://github.com/sensics/OSVR-RenderManager
 
@@ -204,13 +208,112 @@ MyGame.exe -vrmode none
 ![OSVR-Unity Player Settings](https://github.com/OSVR/OSVR-Unity/blob/master/images/osvr_unity_player.png?raw=true)
 
 ## Building for Android
-Building an OSVR Android app requires libraries from https://github.com/OSVR/OSVR-Android-SDK. As of OSVR-Unity-v0.6.4-37 build number 317, these are included by default in the OSVRUnity plugin.
+The libraries required for building for Android are included in the OSVR-Unity source. These will eventually be migrated out of the OSVR-Unity repo when the CI build is updated and will copy them for us when the unitypackage is created.
 
-Make sure your project is set to build for Android:
+### Server Config File
+Copy a file named **osvr_server_config.json** to _/sdcard/osvr/_.
+The contents of osvr_server_config.json should match your display. Here is a server config for a Samsung Galaxy S6:
+<details>
+  <summary>Click to expand osvr_server_config.json</summary>
+  
+```json
+{
+  "display": {
+    "meta": {
+      "schemaVersion": 1
+    },
+    "hmd": {
+      "device": {
+        "vendor": "Samsung",
+        "model": "Galaxy S6",
+        "num_displays": 1,
+        "Version": "1.1",
+        "Note": "Samsung Galaxy S6"
+      },
+      "field_of_view": {
+        "monocular_horizontal": 90,
+        "monocular_vertical": 101.25,
+        "overlap_percent": 100,
+        "pitch_tilt": 0
+      },
+      "resolutions": [
+        {
+          "width": 2560,
+          "height": 1440,
+          "video_inputs": 1,
+          "display_mode": "horz_side_by_side",
+          "swap_eyes": 0
+        }
+      ],
+      "distortion": {
+        "distance_scale_x": 1,
+        "distance_scale_y": 1,
+        "polynomial_coeffs_red": [0, 1, -1.74, 5.15, -1.27, -2.23 ],
+        "polynomial_coeffs_green": [0, 1, -1.74, 5.15, -1.27, -2.23 ],
+        "polynomial_coeffs_blue": [0, 1, -1.74, 5.15, -1.27, -2.23 ]
+      },
+      "rendering": {
+        "right_roll": 0,
+        "left_roll": 0
+      },
+      "eyes": [
+        {
+          "center_proj_x": 0.5,
+          "center_proj_y": 0.5,
+          "rotate_180": 0
+        },
+        {
+          "center_proj_x": 0.5,
+          "center_proj_y": 0.5,
+          "rotate_180": 0
+        }
+      ]
+    }
+  },
+  "renderManagerConfig": {
+    "meta": {
+      "schemaVersion": 1
+    },
+    "renderManagerConfig": {
+      "directModeEnabled": false,
+      "directDisplayIndex": 0,
+      "directHighPriorityEnabled": false,
+      "numBuffers": 2,
+      "verticalSyncEnabled": false,
+      "verticalSyncBlockRenderingEnabled": false,
+      "renderOverfillFactor": 1.0,
+      "window": {
+        "title": "OSVR",
+        "fullScreenEnabled": false,
+        "xPosition": 0,
+        "yPosition": 0
+      },
+      "display": {
+        "rotation": 0,
+        "bitsPerColor": 8
+      },
+      "timeWarp": {
+        "enabled": true,
+        "asynchronous": false,
+        "maxMsBeforeVSync": 5
+      }
+    }
+  },
+  "plugins": [
+    "com_osvr_android_sensorTracker"
+  ]
+}
+```
+</details>
 
-![OSVR-Unity Android Build](https://github.com/OSVR/OSVR-Unity/blob/master/images/osvr_unity_androidbuild.png?raw=true)
+### Server Autostart
+The current default path relies on the server autostart feature. Check the "server autotostart" flag on the ClientKit prefab for Android builds. See the OSVR-UnityVR-Android-Demo.unity scene. If the server fails to start, you'll see a black screen, have no tracking, or the application could crash.
 
-Before launching the app on an Android device, you'll need to run the OSVR-AndroidServerLauncher app first. Please visit this page for more information (.apk available in the Releases section): https://github.com/OSVR/OSVR-AndroidServerLauncher
+### Disable Mirror Mode
+If you target is a phone display and not an HMD, you'll want to disable the OsvrMirrorDisplay component in your scene.
 
-An example Android app can be downloaded from the Releases section of OSVR-Unity-Palace-Demo: https://github.com/OSVR/OSVR-Unity-Palace-Demo/releases/tag/v0.6.4.23-android.
+### Player Settings
+Note that you'll need Write Access to the External SD Card, and Internet Access set to Required. The following player settings have been tested to work with Unity 2017.1.0f3 and Unity 5.6.1f1:
+
+![OSVR-Unity Android Player Settings](https://github.com/OSVR/OSVR-Unity/blob/master/images/unity_2017_android_playersettings?raw=true)
 
