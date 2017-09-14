@@ -30,6 +30,7 @@ using OSVR.Unity;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.VR;
+using System;
 
 namespace OSVR
 {
@@ -213,6 +214,7 @@ namespace OSVR
                 _displayConfigInitialized = true;
 
                 InitRenderManager();
+                SetupStereoCamerarig();
                 SetResolution();
                 CreateRenderTextures();
 
@@ -222,6 +224,44 @@ namespace OSVR
                     RenderManager.ConstructBuffers();
                 }
                 SetRenderParams();
+            }
+
+            /* 
+             * We currently are only able to set the projection matrix of each eye with a two camera setup, via camera.projectionMatrix.
+            * For configurations where the projection matrix for each eye is identical, we use the one-camera setup.
+            * For configs where the proj matrices are different per eye, we use the two camera setup
+            * This may be due to camera.SetStereoProjectionMatrix(...) not working as expected.
+            * 
+            * This function switches from a one-camera to a two-camera setup when the one-camera setup won't 
+            * produce a correct stereo pair work with the display.
+            */
+            private void SetupStereoCamerarig()
+            {
+                if (stereoRigSetup == StereoRigSetup.OneCameraBothEyes)
+                {
+                    //check if the projection matrices are the same
+                    //@todo is this the best way to tell if the COP are off-axis?
+                    Matrix4x4 matrix0 = RenderManager.GetEyeProjectionMatrix(0);
+                    Matrix4x4 matrix1 = RenderManager.GetEyeProjectionMatrix(1);
+
+                    if (matrix0 != matrix1)
+                    {
+                        Debug.Log("[OSVR-Unity] Stereo projection matrices not identical, switching to two-camera stereo setup.");
+                        stereoRigSetup = StereoRigSetup.TwoCameras;
+                        //rename this gameobject and call it the left camera
+                        this.transform.name = "OsvrStereoCameraLeft";
+                        //create a new gameobject for the right eye camera
+                        GameObject rightEyeGO = new GameObject("OsvrStereoCameraRight");
+                        rightEyeGO.transform.parent = this.transform.parent;
+                        rightEyeGO.transform.localPosition = Vector3.zero;
+                        Camera rightEyeCamera = rightEyeGO.AddComponent<Camera>();
+                        rightEyeCamera.CopyFrom(_camera0);
+                        rightEyeCamera.stereoTargetEye = StereoTargetEyeMask.Right;
+                        _camera1 = rightEyeCamera;
+                        _camera1CachedTransform = _camera1.transform;
+                    }
+                }            
+
             }
 
             private void SetRenderScale()
@@ -359,13 +399,16 @@ namespace OSVR
                 {
                     Matrix4x4 matrix0 = RenderManager.GetEyeProjectionMatrix(0);
                     _camera0.projectionMatrix = matrix0;
+                    Debug.Log("Proj Matrix0 is " + matrix0);
 
                     //@todo I thought this should achieve the same result as the line above, but it doesn't work that way
                     // _camera0.SetStereoProjectionMatrix(Camera.StereoscopicEye.Left, matrix0);
                     //_camera0.SetStereoProjectionMatrix(Camera.StereoscopicEye.Right, matrix0);
 
                     //this doesn't work as expected, either
-                    //Matrix4x4 matrix1 = RenderManager.GetEyeProjectionMatrix(1);
+                    Matrix4x4 matrix1 = RenderManager.GetEyeProjectionMatrix(1);
+                    Debug.Log("Proj Matrix1 is " + matrix1);
+
                     // _camera0.SetStereoProjectionMatrix(Camera.StereoscopicEye.Left, matrix0);
                     //_camera0.SetStereoProjectionMatrix(Camera.StereoscopicEye.Right, matrix1);
                 }

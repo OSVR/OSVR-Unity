@@ -36,7 +36,7 @@ GameObject:
   - component: {fileID: 4839622335705766}
   - component: {fileID: 20733303748520414}
   m_Layer: 0
-  m_Name: OsvrUnityStereoCameraRight
+  m_Name: OsvrStereoCameraRight
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -54,7 +54,7 @@ GameObject:
   - component: {fileID: 114270932664363700}
   - component: {fileID: 114035403864906678}
   m_Layer: 0
-  m_Name: OsvrUnityStereoCameraLeft
+  m_Name: OsvrStereoCameraLeft
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

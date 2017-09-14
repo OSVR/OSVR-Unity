@@ -119,7 +119,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stereoRigSetup: 0
-  _camera0: {fileID: 0}
+  _camera0: {fileID: 20391246137811948}
   _camera1: {fileID: 0}
   StereoTargetRenderTexture0: {fileID: 0}
   StereoTargetRenderTexture1: {fileID: 0}
