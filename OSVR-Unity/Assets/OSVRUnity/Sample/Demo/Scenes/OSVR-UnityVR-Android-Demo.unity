@@ -550,7 +550,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11436198, guid: 0b82dd794175b304a87805e4b38fbe84, type: 2}
       propertyPath: autoStartServer
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0b82dd794175b304a87805e4b38fbe84, type: 2}
@@ -597,7 +597,7 @@ Prefab:
     - target: {fileID: 114942285832163604, guid: 8e57e3c8e2a715f4d970247716df86c7,
         type: 2}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 8e57e3c8e2a715f4d970247716df86c7, type: 2}

@@ -399,15 +399,15 @@ namespace OSVR
                 {
                     Matrix4x4 matrix0 = RenderManager.GetEyeProjectionMatrix(0);
                     _camera0.projectionMatrix = matrix0;
-                    Debug.Log("Proj Matrix0 is " + matrix0);
+                    //Debug.Log("Proj Matrix0 is " + matrix0);
 
                     //@todo I thought this should achieve the same result as the line above, but it doesn't work that way
                     // _camera0.SetStereoProjectionMatrix(Camera.StereoscopicEye.Left, matrix0);
                     //_camera0.SetStereoProjectionMatrix(Camera.StereoscopicEye.Right, matrix0);
 
                     //this doesn't work as expected, either
-                    Matrix4x4 matrix1 = RenderManager.GetEyeProjectionMatrix(1);
-                    Debug.Log("Proj Matrix1 is " + matrix1);
+                    //Matrix4x4 matrix1 = RenderManager.GetEyeProjectionMatrix(1);
+                    //Debug.Log("Proj Matrix1 is " + matrix1);
 
                     // _camera0.SetStereoProjectionMatrix(Camera.StereoscopicEye.Left, matrix0);
                     //_camera0.SetStereoProjectionMatrix(Camera.StereoscopicEye.Right, matrix1);
