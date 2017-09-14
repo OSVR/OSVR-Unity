@@ -4,6 +4,12 @@ This is an abbreviated changelog for the OSVR Unity Plugin.
 
 Use git for a full changelog.
 ##Recent Changes
+## Unity Native VR Support
+> 14-September-2017 (commit 1f0800b) v0.7
+
+- Added OsvrUnityNativeVR.cs and OSVR-UnityVR-Demo.unity which uses Unity's native VR SDK to render to direct mode.
+- Added libraries necessary for building for Android.
+
 ## Improved Direct Mode mirror
 > 12-April-2017 (commit 61264af) v0.6.17
 
