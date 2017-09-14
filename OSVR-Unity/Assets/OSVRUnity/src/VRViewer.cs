@@ -59,6 +59,7 @@ namespace OSVR
             private bool _hmdConnectionError = false;
             private Rect _emptyViewport = new Rect(0, 0, 0, 0);
 			private IEnumerator _endOfFrameCoroutine;
+            private WaitForEndOfFrame _waitForEndOfFrame;
 
             #endregion
 
@@ -78,8 +79,8 @@ namespace OSVR
 					{
 						DisplayController = FindObjectOfType<DisplayController>();
 					}
-					
-					_endOfFrameCoroutine = EndOfFrame();
+                    _waitForEndOfFrame = new WaitForEndOfFrame();
+                    _endOfFrameCoroutine = EndOfFrame();
 				}
             }
 
@@ -289,7 +290,7 @@ namespace OSVR
             {
                 while (true)
                 {                  
-                    yield return new WaitForEndOfFrame();
+                    yield return _waitForEndOfFrame;
                     if (DisplayController.UseRenderManager && DisplayController.CheckDisplayStartup())
                     {
                         // Issue a RenderEvent, which copies Unity RenderTextures to RenderManager buffers

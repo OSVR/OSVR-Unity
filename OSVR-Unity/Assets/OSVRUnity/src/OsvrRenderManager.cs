@@ -333,8 +333,12 @@ namespace OSVR
             public bool IsRenderManagerSupported()
             {
                 bool support = true;
-#if UNITY_ANDROID
-                Debug.Log("[OSVR-Unity] RenderManager not yet supported on Android.");
+#if UNITY_OSX
+                Debug.Log("[OSVR-Unity] RenderManager not yet supported on OSX.");
+                support = false;
+#endif
+#if UNITY_LINUX
+                Debug.Log("[OSVR-Unity] RenderManager not yet supported on Linuc.");
                 support = false;
 #endif
                 if (!SystemInfo.graphicsDeviceVersion.Contains("OpenGL") && !SystemInfo.graphicsDeviceVersion.Contains("Direct3D 11"))
