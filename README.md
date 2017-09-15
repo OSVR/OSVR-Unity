@@ -12,6 +12,11 @@ The Unity integration is based on the [Managed-OSVR][] .NET binding for OSVR, wh
 
 [Managed-OSVR]: https://github.com/OSVR/Managed-OSVR
 
+## OSVR-RenderManager Support
+OSVR-Unity uses the OSVR-RenderManager library for direct-mode rendering, lens correction, timewarp, etc.. [OSVR-RenderManager](https://github.com/sensics/OSVR-RenderManager) is a separate, Unity-independent project that is used in other applications/engines. The project which bridges between OSVR-Unity and OSVR-RenderManger is [OSVR-Unity-Rendering](https://github.com/OSVR/OSVR-Unity-Rendering), which uses the Unity low-level [native plugin interface](https://docs.unity3d.com/Manual/NativePluginInterface.html).
+
+These libraries are copied over to the Plugins directory in our CI build, and are not included in the source.
+
 ## OSVR Unity Integration
 [Step-by-step getting started guide](https://github.com/OSVR/OSVR-Unity/blob/master/GettingStarted.md)
 
@@ -21,7 +26,7 @@ The development "project" for Unity is in the `OSVR-Unity` directory. We are cur
 
 The `OSVR-Unity` directory contains its own [README](OSVR-Unity/README.md) with some basic documentation that is shipped with the built version, as well as a [CHANGES](OSVR-Unity/CHANGES.md) file (also shipped with builds) that should be updated when changes that affect consumers of this project (users of the plugin) are made.
 
-Note that if you're looking at the source, you'll need to download and import the Managed-OSVR project artifacts, see below.
+Note that if you're looking at the source OSVR-Unity project and not an imported unitypackage, you'll need to download and import the Managed-OSVR and OSVR-RenderManager project artifacts. The quickest way to obtain the necessary dlls may be to download and import the Plugins folder(s) from the latest [binary snapshot](http://access.osvr.com/binary/osvr-unity). If you're building Managed-OSVR from source as well, see below.
 
 ## Development Information
 When the `build-for-unity.cmd` script in [Managed-OSVR][] is run (by the CI or a human), it generates a tree with `Managed-OSVR-Unity` as the root directory.

@@ -220,7 +220,7 @@ namespace OSVR
             //"Recenter" based on current head orientation
             public void SetRoomRotationUsingHead()
             {
-#if UNITY_5_2 || UNITY_5_3 || UNITY_5_4 || UNITY_5_5 || UNITY_5_6
+#if UNITY_5_2 || UNITY_5_3 || UNITY_5_4 || UNITY_5_5 || UNITY_5_6 || UNITY_2017
                 ClientKit.instance.context.SetRoomRotationUsingHead();
                 GL.IssuePluginEvent(GetRenderEventFunc(), 3);
 #endif
@@ -229,7 +229,7 @@ namespace OSVR
             //Clear the room-to-world transform, undo a call to SetRoomRotationUsingHead
             public void ClearRoomToWorldTransform()
             {
-#if UNITY_5_2 || UNITY_5_3 || UNITY_5_4 || UNITY_5_5 || UNITY_5_6
+#if UNITY_5_2 || UNITY_5_3 || UNITY_5_4 || UNITY_5_5 || UNITY_5_6 || UNITY_2017
                 ClientKit.instance.context.ClearRoomToWorldTransform();
                 GL.IssuePluginEvent(GetRenderEventFunc(), 4);
 #endif
@@ -333,8 +333,12 @@ namespace OSVR
             public bool IsRenderManagerSupported()
             {
                 bool support = true;
-#if UNITY_ANDROID
-                Debug.Log("[OSVR-Unity] RenderManager not yet supported on Android.");
+#if UNITY_OSX
+                Debug.Log("[OSVR-Unity] RenderManager not yet supported on OSX.");
+                support = false;
+#endif
+#if UNITY_LINUX
+                Debug.Log("[OSVR-Unity] RenderManager not yet supported on Linuc.");
                 support = false;
 #endif
                 if (!SystemInfo.graphicsDeviceVersion.Contains("OpenGL") && !SystemInfo.graphicsDeviceVersion.Contains("Direct3D 11"))
