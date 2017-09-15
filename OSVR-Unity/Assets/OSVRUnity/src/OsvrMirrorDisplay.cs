@@ -77,6 +77,10 @@ namespace OSVR
 
             private void OnGUI()
             {
+                if(mirrorCamera == null || mirrorCamera.targetTexture == null)
+                {
+                    return;
+                }
                 if (Event.current.type.Equals(EventType.Repaint))
                 {
                     RefreshRectangles();
