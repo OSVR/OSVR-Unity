@@ -90,6 +90,7 @@ public class OsvrEditorUtils : EditorWindow
 
     //OSVR logo
     private Texture2D osvrLogo;
+    private Vector2 scrollPos;
 
     [MenuItem("OSVR/OSVR Utilities")]
     public static void ShowWindow()
@@ -156,6 +157,10 @@ public class OsvrEditorUtils : EditorWindow
         {
             GUILayout.Label(osvrLogo);
         }
+        EditorGUILayout.BeginVertical();
+        scrollPos =
+            EditorGUILayout.BeginScrollView(scrollPos);
+
         GUILayout.Label(currentOsvrUnityVersion, EditorStyles.boldLabel);
         if(!checkedForUpdate)
         {
@@ -389,6 +394,9 @@ public class OsvrEditorUtils : EditorWindow
             Application.OpenURL(OSVR_CONTROL);
         }
         #endregion
+        EditorGUILayout.EndScrollView();
+        EditorGUILayout.EndVertical();
+
     }
 
     //Load server properties from EditorPrefs
