@@ -4,6 +4,11 @@ This is an abbreviated changelog for the OSVR Unity Plugin.
 
 Use git for a full changelog.
 ##Recent Changes
+## Skeleton Interface
+> 15-September-2017 (commit f81832) v0.8
+- Adds prefabs for HMD with tracked hands.
+- Adds new VRSkeletonHands.unity scene.
+
 ## Unity Native VR Support
 > 14-September-2017 (commit 1f0800b) v0.7
 
