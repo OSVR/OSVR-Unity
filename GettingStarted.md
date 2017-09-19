@@ -1,13 +1,10 @@
 # OSVR for Unity Developers
 
-> Last Updated November 29, 2016
+> Last Updated September 18, 2017
 
 ## Why use OSVR?
 
-Open-source Virtual Reality (OSVR) is an open-source software platform for VR/AR applications. It provides abstraction layers for VR devices and peripherals so that a game developer can support many different VR devices with one SDK, rather than maintaining a separate SDK for each supported device. 
-OSVR provides interfaces – pipes of data – as opposed to an API tied to a specific piece of hardware. If you want hand position, for example, OSVR will give you hand position regardless of whether the data comes from a Microsoft Kinect, Razer Hydra, or Leap Motion. 
-Game developers can focus on what they want to do with the data, as opposed to how to obtain it.
-
+Open-source Virtual Reality (OSVR) is an open-source software platform for VR/AR applications. It provides abstraction layers for VR devices and peripherals so that a game developer can support many different VR devices with one SDK, rather than maintaining a separate SDK for each supported device. OSVR provides generic interfaces which can be thought of like pipes of data between applications and hardware. Data is accessible to applications developers via a ["semantic path"](https://osvr.github.io/presentations/20150419-osvr-software-framework-path-tree/) naming system similar to URLs. An OSVR server plugin specifies which paths it is supplying data for, while OSVR client applications looks for data at the semantic paths it cares about. For example, OSVR server plugins for Leap Motion and Razer Hydra send hand positional tracking data to the semantic paths **/me/hands/left** and **/me/hands/right**. The OSVR application looks for pose data at those named paths, oblivious to what hardware is connected.
 For a more complete introduction to OSVR, please visit: http://osvr.github.io/whitepapers/introduction_to_osvr/
 
 The rest of this document assumes you're ready to start developing VR applications in Unity with the OSVR-Unity plugin.
@@ -48,6 +45,15 @@ The Tracker View utility (OSVRTrackerView.exe) is helpful for quickly checking i
 ![Tracker View no positional](https://github.com/OSVR/OSVR-Unity/blob/master/images/tracker_view_nopos.png?raw=true)
 
 ## Getting Started with OSVR-Unity
+### Unity Native VR Support
+As of September 18, 2017, the plugin includes experimental support for Unity's native VR SDK. This means that instead of using the **DisplayController** and **VRDisplayTracked** prefabs (described below) for rendering, instead we can enable Unity's VR Support and Single-Pass rendering path, rendering both eyes with the same camera. This is a major optimization over the two-camera setup OSVR-Unity has used previously. It is recommended to use this new rendering path if possible.
+
+The **OSVR-UnityVR-Demo.unity** scene demonstrates the new **OsvrStereoCamera** prefab which uses Unity’s split-screen stereo VR rendering. To use this rendering path, make sure “Virtual Reality Supported” is checked in Player Settings, and Split-Screen Stereo (non head-mounted) is selected as the SDK.
+
+![OSVR-Unity Player Settings](https://github.com/OSVR/OSVR-Unity/blob/master/images/osvr_unity_player.png?raw=true)
+
+Note that when using this rendering path, you won't using any of the DisplayController, VRViewer, VREye, or VRSurface prefabs described below.
+### Tutorials and Resources
 For an introductory video tutorial, visit: https://youtu.be/xSOq3bOBPxs
 
 Let’s examine the OSVR-Unity plugin. You can view the source code at https://github.com/OSVR/OSVR-Unity. 
@@ -99,10 +105,6 @@ The **SetRoomRotationUsingHead** script “recenters” the room when a key is p
 This prefab provides very similar controls to the Unity first-person controller scripts. Mouse-look can be controlled with the “M” key, by default.
 
 That covers the basics! There are examples of tracked controllers, eyetrackers, and locomotion in other example scenes (see TrackerView.unity). If you want to enable features like positional tracking and Direct Mode rendering, that all happens in the server configuration file.
-
-## Unity Native VR Supported
-The **OSVR-UnityVR-Demo.unity** uses a prefab which harnesses Unity's split-screen stereo VR rendering. Use the OsvrStereoCameraParent prefab instead of VRDisplayTracked if you want to use the Unity native VR SDK. This is the fastest rendering path.
-If you run this scene, make sure "Virtual Reality Supported" is checked in Player Settings, and Split-Screen Stereo (non head-mounted) is selected as the SDK.
 
 ## RenderManager and Unity-Rendering Plugin
 RenderManager provides a number of additional functions in support of VR rendering. It adds features such as Direct Mode support, distortion correction, client-side predictive tracking, asynchronous time warp, overfill, and oversampling. For a more information about OSVR-RenderManager, including an overview of configuration options, visit: https://github.com/sensics/OSVR-RenderManager
@@ -200,12 +202,10 @@ Quality settings will differ per machine/graphics card capabilities. Make sure V
 ![OSVR-Unity Quality Settings](https://github.com/OSVR/OSVR-Unity/blob/master/images/osvr_unity_quality.png?raw=true)
 
 ## Player Settings
-The “Virtual Reality Supported” checkbox does not need to be checked, since OSVR is not a native Unity VR platform. If you are supporting multiple VR SDKs and need to check the "Virtual Reality Supported", make sure to add "None" for OSVR support. You can launch your OSVR game with the command-line option:
+As of September 18, 2017, there is experimental support for Unity's native VR rendering. If you're using the **OsvrStereoCamera** prefab, the “Virtual Reality Supported” option in Player Settings should be enabled. If you're using **DisplayController** and **VRViewer** prefabs instead, either disable the “Virtual Reality Supported” option in Player Settings, or add "None". You can launch your OSVR game with the command-line option:
 ```
 MyGame.exe -vrmode none 
 ```
-
-![OSVR-Unity Player Settings](https://github.com/OSVR/OSVR-Unity/blob/master/images/osvr_unity_player.png?raw=true)
 
 ## Building for Android
 The libraries required for building for Android are included in the OSVR-Unity source. These will eventually be migrated out of the OSVR-Unity repo when the CI build is updated and will copy them for us when the unitypackage is created.

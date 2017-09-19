@@ -181,6 +181,7 @@ namespace OSVR
                         {
                             Debug.LogError("[OSVR-Unity] Failed to create RenderManager.");
                             _renderManagerConfigFound = false;
+                            VRSettings.enabled = false; //disable VR mode
                         }
                     }
                 }
@@ -214,6 +215,10 @@ namespace OSVR
                 _displayConfigInitialized = true;
 
                 InitRenderManager();
+                if (!_renderManagerConfigFound || RenderManager == null)
+                {
+                    return;
+                }
                 SetupStereoCamerarig();
                 SetResolution();
                 CreateRenderTextures();
