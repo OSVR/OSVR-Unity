@@ -101,7 +101,7 @@ PlayerSettings:
   preloadedAssets: []
   metroEnableIndependentInputSource: 0
   xboxOneDisableKinectGpuReservation: 0
-  singlePassStereoRendering: 0
+  singlePassStereoRendering: 1
   protectGraphicsMemory: 1
   AndroidBundleVersionCode: 1
   AndroidMinSdkVersion: 24
@@ -517,7 +517,7 @@ PlayerSettings:
   PSP2::VR::enabledDevices: []
   SamsungTV::VR::enabledDevices: []
   Standalone::VR::enabledDevices:
-  - Oculus
+  - split
   Tizen::VR::enabledDevices: []
   WebGL::VR::enabledDevices: []
   WebPlayer::VR::enabledDevices: []
