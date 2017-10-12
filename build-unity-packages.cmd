@@ -3,7 +3,7 @@ cd /d %~dp0
 rem Check to make sure we've actually copied over at least something that could be the OSVR and Managed-OSVR binaries.
 if not exist OSVR-Unity\Assets\OSVRUnity\Plugins\x86\*.dll exit /B 1
 
-"C:\Program Files (x86)\Unity\Editor\Unity.exe" -quit -batchmode -projectPath "%~dp0OSVR-Unity" -logFile "%~dp0unity.log" -executeMethod OSVRUnityBuild.build
+"C:\Program Files\Unity\Editor\Unity.exe" -quit -batchmode -projectPath "%~dp0OSVR-Unity" -logFile "%~dp0unity.log" -executeMethod OSVRUnityBuild.build
 type "%~dp0unity.log"
 
 rem Fail the build if we didn't get a unitypackage out.
