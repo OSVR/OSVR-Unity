@@ -315,5 +315,5 @@ If you target is a phone display and not an HMD, you'll want to disable the Osvr
 ### Player Settings
 Note that you'll need Write Access to the External SD Card, and Internet Access set to Required. The following player settings have been tested to work with Unity 2017.1.0f3 and Unity 5.6.1f1:
 
-![OSVR-Unity Android Player Settings](https://github.com/OSVR/OSVR-Unity/blob/master/images/unity_2017_android_playersettings?raw=true)
+![OSVR-Unity Android Player Settings](https://github.com/OSVR/OSVR-Unity/blob/master/images/unity_2017_android_playersettings.png?raw=true)
 
