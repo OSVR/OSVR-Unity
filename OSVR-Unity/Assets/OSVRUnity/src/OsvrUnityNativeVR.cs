@@ -398,12 +398,26 @@ namespace OSVR
                 }
             }
 
+            //Set each Unity camera's projectionMatrix
+            //Projetion Matrices come from RenderManager
             private void SetProjectionMatrix()
             {
-                if(stereoRigSetup == StereoRigSetup.OneCameraBothEyes)
+                //use near and far clipping plane values from the Unity inspector
+                float nearPlane = _camera0.nearClipPlane;
+                float farPlane = _camera0.farClipPlane;
+
+                //modify the matrix with near and far clipping planes
+                float c = (farPlane + nearPlane) / (farPlane - nearPlane);
+                float d = -nearPlane * (1.0f + c);
+
+                if (stereoRigSetup == StereoRigSetup.OneCameraBothEyes)
                 {
                     Matrix4x4 matrix0 = RenderManager.GetEyeProjectionMatrix(0);
+
+                    matrix0[2, 2] = -c;
+                    matrix0[2, 3] = d;
                     _camera0.projectionMatrix = matrix0;
+
                     //Debug.Log("Proj Matrix0 is " + matrix0);
 
                     //@todo I thought this should achieve the same result as the line above, but it doesn't work that way
@@ -420,7 +434,11 @@ namespace OSVR
                 else
                 {
                     Matrix4x4 matrix0 = RenderManager.GetEyeProjectionMatrix(0);
+                    matrix0[2, 2] = -c;
+                    matrix0[2, 3] = d;
                     Matrix4x4 matrix1 = RenderManager.GetEyeProjectionMatrix(1);
+                    matrix1[2, 2] = -c;
+                    matrix1[2, 3] = d;
                     _camera0.projectionMatrix = matrix0;
                     _camera1.projectionMatrix = matrix1;
 
@@ -429,6 +447,7 @@ namespace OSVR
                     //_camera1.SetStereoProjectionMatrix(Camera.StereoscopicEye.Right, matrix1);
                 }
             }
+
 
             // Updates the position and rotation of the eye
             // Optionally, update the viewer associated with this eye
