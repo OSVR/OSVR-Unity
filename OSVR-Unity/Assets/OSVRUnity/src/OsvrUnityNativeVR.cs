@@ -89,11 +89,7 @@ namespace OSVR
                 set { _totalSurfaceHeight = value; }
             }
 
-
-            void OnDisable()
-            {
-                ExitRenderManager();
-            }
+       
             void Awake()
             {
                 _camera0 = GetComponent<Camera>();
@@ -523,6 +519,11 @@ namespace OSVR
                 {
                     RenderManager.ExitRenderManager();
                 }
+            }
+
+            void OnApplicationQuit()
+            {
+                ExitRenderManager();
             }
 
             /*
