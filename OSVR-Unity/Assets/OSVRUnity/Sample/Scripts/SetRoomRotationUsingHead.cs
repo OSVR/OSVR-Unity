@@ -32,25 +32,31 @@ namespace OSVR
             public KeyCode clearRoomRotationKey = KeyCode.U;
             private ClientKit _clientKit;
             private DisplayController _displayController;
+            private OsvrUnityNativeVR _vrController;
 
             void Awake()
             {
                 _clientKit = ClientKit.instance;
                 _displayController = FindObjectOfType<DisplayController>();
+                _vrController = FindObjectOfType<OsvrUnityNativeVR>();
             }
 
             void Update()
             {
                 if (Input.GetKeyDown(setRoomRotationKey))
-                {                   
-                    
+                {
+
                     if (_displayController != null && _displayController.UseRenderManager)
                     {
                         _displayController.RenderManager.SetRoomRotationUsingHead();
                     }
+                    else if (_vrController != null && _vrController.RenderManager != null)
+                    {
+                        _vrController.RenderManager.SetRoomRotationUsingHead();
+                    }
                     else
                     {
-                        if(_clientKit.context.CheckStatus())
+                        if (_clientKit.context.CheckStatus())
                         {
                             _clientKit.context.SetRoomRotationUsingHead();
                         }
@@ -61,6 +67,10 @@ namespace OSVR
                     if (_displayController != null && _displayController.UseRenderManager)
                     {
                         _displayController.RenderManager.ClearRoomToWorldTransform();
+                    }
+                    else if (_vrController != null && _vrController.RenderManager != null)
+                    {
+                        _vrController.RenderManager.ClearRoomToWorldTransform();
                     }
                     else
                     {
