@@ -109,7 +109,7 @@ namespace OSVR
             // If so, change the return type here to Byte
             [DllImport(PluginName)]
             private static extern int 
-                SetColorBufferFromUnity(System.IntPtr texturePtr, int eye);
+                SetColorBufferFromUnity(System.IntPtr texturePtr, int eye, int frame);
 
             [DllImport(PluginName)]
             private static extern void
@@ -130,7 +130,7 @@ namespace OSVR
             // UnityPluginLoad is not needed
             // UnityPluginUnload is not needed
 
-            private bool _linkDebug = false; //causes crash on exit if true, only enable for debugging
+            private bool _linkDebug = true; //causes crash on exit if true, only enable for debugging
 
             //persistent singleton
             private static OsvrRenderManager _instance;
@@ -311,9 +311,9 @@ namespace OSVR
             }
 
             //Pass pointer to eye-camera RenderTexture to the Unity Rendering Plugin
-            public void SetEyeColorBuffer(IntPtr colorBuffer, int eye)
+            public void SetEyeColorBuffer(IntPtr colorBuffer, int eye, int frame)
             {               
-                SetColorBufferFromUnity(colorBuffer, eye);
+                SetColorBufferFromUnity(colorBuffer, eye, frame);
             }
 
             //Get a pointer to the plugin's rendering function

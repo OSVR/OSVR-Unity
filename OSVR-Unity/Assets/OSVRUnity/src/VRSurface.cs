@@ -139,7 +139,7 @@ namespace OSVR
                 RenderTexture.active = RenderToTexture;
                 
                 //Set the native texture pointer so we can access this texture from the plugin
-                Eye.Viewer.DisplayController.RenderManager.SetEyeColorBuffer(RenderToTexture.GetNativeTexturePtr(), (int)Eye.EyeIndex);
+                Eye.Viewer.DisplayController.RenderManager.SetEyeColorBuffer(RenderToTexture.GetNativeTexturePtr(), (int)Eye.EyeIndex, 0);
             }
             public RenderTexture GetRenderTexture()
             {

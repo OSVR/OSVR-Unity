@@ -331,8 +331,10 @@ namespace OSVR
                     RenderTexture.active = StereoTargetRenderTexture0;
 
                     //Set the native texture pointer so we can access this texture from the plugin
-                    RenderManager.SetEyeColorBuffer(renderTexture.GetNativeTexturePtr(), 0);
-                    RenderManager.SetEyeColorBuffer(renderTexture.GetNativeTexturePtr(), 1);
+                    RenderManager.SetEyeColorBuffer(renderTexture.GetNativeTexturePtr(), 0, 0);
+                    RenderManager.SetEyeColorBuffer(renderTexture.GetNativeTexturePtr(), 1, 0);
+                    RenderManager.SetEyeColorBuffer(renderTexture.GetNativeTexturePtr(), 0, 1);
+                    RenderManager.SetEyeColorBuffer(renderTexture.GetNativeTexturePtr(), 1, 1);
                 }
                 else //two-camera setup
                 {
@@ -363,8 +365,10 @@ namespace OSVR
 
                     //set rendermanager color buffers
                     //Set the native texture pointer so we can access this texture from the plugin
-                    RenderManager.SetEyeColorBuffer(renderTexture0.GetNativeTexturePtr(), 0);
-                    RenderManager.SetEyeColorBuffer(renderTexture1.GetNativeTexturePtr(), 1);
+                    RenderManager.SetEyeColorBuffer(renderTexture0.GetNativeTexturePtr(), 0, 0);
+                    RenderManager.SetEyeColorBuffer(renderTexture1.GetNativeTexturePtr(), 1, 0);
+                    RenderManager.SetEyeColorBuffer(renderTexture0.GetNativeTexturePtr(), 0, 1);
+                    RenderManager.SetEyeColorBuffer(renderTexture1.GetNativeTexturePtr(), 1, 1);
                 }
 
             }
