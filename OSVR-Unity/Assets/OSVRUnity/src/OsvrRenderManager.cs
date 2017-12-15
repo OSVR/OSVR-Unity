@@ -130,7 +130,7 @@ namespace OSVR
             // UnityPluginLoad is not needed
             // UnityPluginUnload is not needed
 
-            private bool _linkDebug = true; //causes crash on exit if true, only enable for debugging
+            private bool _linkDebug = false; //causes crash on exit if true, only enable for debugging
 
             //persistent singleton
             private static OsvrRenderManager _instance;

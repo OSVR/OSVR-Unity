@@ -28,6 +28,7 @@
 */
 using OSVR.Unity;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.VR;
 using System;
@@ -39,6 +40,13 @@ namespace OSVR
         [RequireComponent(typeof(Camera))]
         public class OsvrUnityNativeVR : MonoBehaviour
         {
+            private const int NUM_RENDERBUFFERS = 2;
+            private const int LEFT_EYE = 0;
+            private const int RIGHT_EYE = 1;
+            private const int LEFT_EYE_BUFFER_2 = 2;
+            private const int RIGHT_EYE_BUFFER_2 = 3;
+            private const int FIRST_BUFFER = 0;
+            private const int SECOND_BUFFER = 1;
 
             public enum StereoRigSetup
             {
@@ -46,21 +54,17 @@ namespace OSVR
                 TwoCameras
             };
             public StereoRigSetup stereoRigSetup = StereoRigSetup.OneCameraBothEyes;
-            public Camera _camera0; //the main camera in a one-camera setup, or the left eye in a two-camera setup
-            public Camera _camera1; //null in a one-camera setup, or the right eye in a two-camera setup
+             public Camera _camera0; //the main camera in a one-camera setup, or the left eye in a two-camera setup
+             public Camera _camera1; //null in a one-camera setup, or the right eye in a two-camera setup
 
-            private Transform _camera0CachedTransform;
-            private Transform _camera1CachedTransform;
+             private Transform _camera0CachedTransform;
+             private Transform _camera1CachedTransform;
 
-            [HideInInspector]
-            public RenderTexture StereoTargetRenderTexture0;
-            [HideInInspector]
-            public RenderTexture StereoTargetRenderTexture1;
+            private RenderTexture StereoTargetRenderTextureLeft;
+            private RenderTexture StereoTargetRenderTextureRight;
+            private RenderTexture StereoTargetRenderTextureLeft_buffer2;
+            private RenderTexture StereoTargetRenderTextureRight_buffer2;
 
-            [HideInInspector]
-            public RenderTexture StereoTargetRenderTexture0_buffer2;
-            [HideInInspector]
-            public RenderTexture StereoTargetRenderTexture1_buffer2;
 
             private ClientKit _clientKit;
             private OSVR.ClientKit.DisplayConfig _displayConfig;
@@ -73,8 +77,6 @@ namespace OSVR
             //variables for controlling use of osvrUnityRenderingPlugin.dll which enables DirectMode
             private OsvrRenderManager _renderManager;
             private bool _renderManagerConfigFound = false;
-            // private IEnumerator _endOfFrameCoroutine;
-            // private WaitForEndOfFrame _waitForEndOfFrame;
 
             public OSVR.ClientKit.DisplayConfig DisplayConfig
             {
@@ -95,8 +97,7 @@ namespace OSVR
                 set { _totalSurfaceHeight = value; }
             }
 
-            private int numBuffers = 2;
-            private int iteration = 1;
+            private int frameCount = 0;
 
             void Awake()
             {
@@ -234,24 +235,8 @@ namespace OSVR
                 }
                 SetRenderParams();
 
-                //  _waitForEndOfFrame = new WaitForEndOfFrame();
-                //  _endOfFrameCoroutine = EndOfFrame();
-
-                //  StartCoroutine(_endOfFrameCoroutine);
             }
-            // This couroutine is called every frame.
-            /*  IEnumerator EndOfFrame()
-              {
-                  while (true)
-                  {
-                      yield return _waitForEndOfFrame;
-                      if(_displayConfigInitialized && RenderManager != null && _renderManagerConfigFound)
-                      {
-                          SwapRenderTextures();
 
-                      }
-                  }
-              }*/
             /* 
              * We currently are only able to set the projection matrix of each eye with a two camera setup, via camera.projectionMatrix.
             * For configurations where the projection matrix for each eye is identical, we use the one-camera setup.
@@ -344,24 +329,22 @@ namespace OSVR
             {
                 if (stereoRigSetup == StereoRigSetup.OneCameraBothEyes)
                 {
-
-
                     //create a RenderTexture for this eye's camera to render into
                     RenderTexture renderTexture = new RenderTexture((int)TotalDisplayWidth, (int)TotalDisplayHeight, 24, RenderTextureFormat.Default);
                     if (QualitySettings.antiAliasing > 0)
                     {
                         renderTexture.antiAliasing = QualitySettings.antiAliasing;
                     }
-                    StereoTargetRenderTexture0 = renderTexture;
-                    StereoTargetRenderTexture0.Create();
-                    _camera0.targetTexture = StereoTargetRenderTexture0;
+                    StereoTargetRenderTextureLeft = renderTexture;
+                    StereoTargetRenderTextureLeft.Create();
+                    _camera0.targetTexture = StereoTargetRenderTextureLeft;
                     //  RenderTexture.active = StereoTargetRenderTexture0;
 
                     //Set the native texture pointer so we can access this texture from the plugin
                     RenderManager.SetEyeColorBuffer(renderTexture.GetNativeTexturePtr(), 0, 0);
                     RenderManager.SetEyeColorBuffer(renderTexture.GetNativeTexturePtr(), 1, 0);
 
-                    if (numBuffers == 2)
+                    if (NUM_RENDERBUFFERS == 2)
                     {
                         //create a RenderTexture for this eye's camera to render into
                         RenderTexture rt2 = new RenderTexture((int)TotalDisplayWidth, (int)TotalDisplayHeight, 24, RenderTextureFormat.Default);
@@ -369,15 +352,15 @@ namespace OSVR
                         {
                             rt2.antiAliasing = QualitySettings.antiAliasing;
                         }
-                        StereoTargetRenderTexture0_buffer2 = rt2;
-                        StereoTargetRenderTexture0_buffer2.Create();
+                        StereoTargetRenderTextureLeft_buffer2 = rt2;
+                        StereoTargetRenderTextureLeft_buffer2.Create();
                         // RenderTexture.active = StereoTargetRenderTexture0_buffer2;
 
                         RenderManager.SetEyeColorBuffer(rt2.GetNativeTexturePtr(), 0, 1);
                         RenderManager.SetEyeColorBuffer(rt2.GetNativeTexturePtr(), 1, 1);
                         //make the first target active
 
-                        RenderTexture.active = StereoTargetRenderTexture0;
+                        RenderTexture.active = StereoTargetRenderTextureLeft;
 
 
                     }
@@ -395,9 +378,9 @@ namespace OSVR
                     {
                         renderTexture0.antiAliasing = QualitySettings.antiAliasing;
                     }
-                    StereoTargetRenderTexture0 = renderTexture0;
-                    StereoTargetRenderTexture0.Create();
-                    _camera0.targetTexture = StereoTargetRenderTexture0;
+                    StereoTargetRenderTextureLeft = renderTexture0;
+                    StereoTargetRenderTextureLeft.Create();
+                    _camera0.targetTexture = StereoTargetRenderTextureLeft;
 
                    
 
@@ -410,9 +393,9 @@ namespace OSVR
                     {
                         renderTexture1.antiAliasing = QualitySettings.antiAliasing;
                     }
-                    StereoTargetRenderTexture1 = renderTexture1;
-                    StereoTargetRenderTexture1.Create();
-                    _camera1.targetTexture = StereoTargetRenderTexture1;
+                    StereoTargetRenderTextureRight = renderTexture1;
+                    StereoTargetRenderTextureRight.Create();
+                    _camera1.targetTexture = StereoTargetRenderTextureRight;
 
                     //set rendermanager color buffers
                     //Set the native texture pointer so we can access this texture from the plugin
@@ -421,7 +404,7 @@ namespace OSVR
                     RenderManager.SetEyeColorBuffer(renderTexture0.GetNativeTexturePtr(), 0, 0);
                     RenderManager.SetEyeColorBuffer(renderTexture1.GetNativeTexturePtr(), 1, 0);
 
-                    if(numBuffers == 2)
+                    if(NUM_RENDERBUFFERS == 2)
                     {
                         //create a RenderTexture for this eye's camera to render into
                         RenderTexture renderTexture0_b2 = new RenderTexture(leftEyeViewport.Width, leftEyeViewport.Height, 24, RenderTextureFormat.Default);
@@ -429,8 +412,8 @@ namespace OSVR
                         {
                             renderTexture0_b2.antiAliasing = QualitySettings.antiAliasing;
                         }
-                        StereoTargetRenderTexture0_buffer2 = renderTexture0_b2;
-                        StereoTargetRenderTexture0_buffer2.Create();
+                        StereoTargetRenderTextureLeft_buffer2 = renderTexture0_b2;
+                        StereoTargetRenderTextureLeft_buffer2.Create();
 
 
 
@@ -440,8 +423,8 @@ namespace OSVR
                         {
                             renderTexture1_b2.antiAliasing = QualitySettings.antiAliasing;
                         }
-                        StereoTargetRenderTexture1_buffer2 = renderTexture1_b2;
-                        StereoTargetRenderTexture1_buffer2.Create();
+                        StereoTargetRenderTextureRight_buffer2 = renderTexture1_b2;
+                        StereoTargetRenderTextureRight_buffer2.Create();
 
                         //set rendermanager color buffers
                         //Set the native texture pointer so we can access this texture from the plugin
@@ -450,7 +433,7 @@ namespace OSVR
                         //Set the native texture pointer so we can access this texture from the plugin
                         RenderManager.SetEyeColorBuffer(renderTexture1_b2.GetNativeTexturePtr(), 1, 1);
 
-                        RenderTexture.active = StereoTargetRenderTexture0;
+                        RenderTexture.active = StereoTargetRenderTextureLeft;
 
                     }
 
@@ -459,30 +442,25 @@ namespace OSVR
 
             }
 
-            /* void Update()
-             {
-                 SwapRenderTextures();
-             }*/
-
             void SwapRenderTextures()
             {
-                int frame = iteration % 2;
+                int frame = frameCount % 2;
                 if (stereoRigSetup == StereoRigSetup.OneCameraBothEyes)
                 {
                     RenderTexture buff;
                     if (frame == 0)
                     {
-                        buff = StereoTargetRenderTexture0;
+                        buff = StereoTargetRenderTextureLeft;
                         //  RenderTexture.active = StereoTargetRenderTexture0;
-                        _camera0.targetTexture = StereoTargetRenderTexture0;
+                        _camera0.targetTexture = StereoTargetRenderTextureLeft;
 
 
                     }
                     else
                     {
-                        buff = StereoTargetRenderTexture0_buffer2;
+                        buff = StereoTargetRenderTextureLeft_buffer2;
                         //  RenderTexture.active = StereoTargetRenderTexture0_buffer2;
-                        _camera0.targetTexture = StereoTargetRenderTexture0_buffer2;
+                        _camera0.targetTexture = StereoTargetRenderTextureLeft_buffer2;
 
                     }
                 }
@@ -492,27 +470,26 @@ namespace OSVR
                     RenderTexture buff1;
                     if (frame == 0)
                     {
-                        buff0 = StereoTargetRenderTexture0;
-                        _camera0.targetTexture = StereoTargetRenderTexture0;
+                        buff0 = StereoTargetRenderTextureLeft;
+                        _camera0.targetTexture = StereoTargetRenderTextureLeft;
 
-                        buff1 = StereoTargetRenderTexture1;
-                        _camera1.targetTexture = StereoTargetRenderTexture1;
+                        buff1 = StereoTargetRenderTextureRight;
+                        _camera1.targetTexture = StereoTargetRenderTextureRight;
 
 
                     }
                     else
                     {
-                        buff0 = StereoTargetRenderTexture0_buffer2;
-                        _camera0.targetTexture = StereoTargetRenderTexture0_buffer2;
+                        buff0 = StereoTargetRenderTextureLeft_buffer2;
+                        _camera0.targetTexture = StereoTargetRenderTextureLeft_buffer2;
 
-                        buff1 = StereoTargetRenderTexture1_buffer2;
-                        _camera1.targetTexture = StereoTargetRenderTexture1_buffer2;
+                        buff1 = StereoTargetRenderTextureRight_buffer2;
+                        _camera1.targetTexture = StereoTargetRenderTextureRight_buffer2;
 
                     }
                 }
-                //  RenderManager.SetEyeColorBuffer(buff.GetNativeTexturePtr(), 0);
-                //   RenderManager.SetEyeColorBuffer(buff.GetNativeTexturePtr(), 1);
-                iteration++;
+
+                frameCount++;
             }
 
             void OnPreCull()
