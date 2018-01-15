@@ -40,8 +40,8 @@ namespace OSVR
             private VRSurface[] _surfaces; //the surfaces associated with this eye
             private uint _surfaceCount;
             private uint _eyeIndex;
-            
-            
+
+
             #endregion
             #region Public Variables  
             public uint EyeIndex
@@ -49,7 +49,7 @@ namespace OSVR
                 get { return _eyeIndex; }
                 set { _eyeIndex = value; }
             }
-            public VRSurface[] Surfaces { get { return _surfaces; } } 
+            public VRSurface[] Surfaces { get { return _surfaces; } }
             public uint SurfaceCount { get { return _surfaceCount; } }
             public VRViewer Viewer
             {
@@ -75,7 +75,7 @@ namespace OSVR
             {
                 //cache:
                 cachedTransform = transform;
-            }         
+            }
             #endregion
 
             // Updates the position and rotation of the eye
@@ -117,23 +117,23 @@ namespace OSVR
                     //get viewport from ClientKit and set surface viewport
                     if (Viewer.DisplayController.UseRenderManager)
                     {
-                        viewport = Viewer.DisplayController.RenderManager.GetEyeViewport((int)EyeIndex);
+                        viewport = Viewer.DisplayController.RenderManager.GetEyeViewport((Byte)EyeIndex);
                         surface.SetViewportRect(Math.ConvertViewportRenderManager(viewport));
 
                         //get projection matrix from RenderManager and set surface projection matrix
-                        surface.SetProjectionMatrix(Viewer.DisplayController.RenderManager.GetEyeProjectionMatrix((int)EyeIndex));
-                   
+                        surface.SetProjectionMatrix(Viewer.DisplayController.RenderManager.GetEyeProjectionMatrix((Byte)EyeIndex));
+
                         surface.Render();
                     }
                     else
                     {
                         //get viewport from ClientKit and set surface viewport
                         viewport = Viewer.DisplayController.DisplayConfig.GetRelativeViewportForViewerEyeSurface(
-                            Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex);
+                            Viewer.ViewerIndex, (Byte)_eyeIndex, surfaceIndex);
 
-                        int displayInputIndex = Viewer.DisplayController.DisplayConfig.GetViewerEyeSurfaceDisplayInputIndex(Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex);
+                        int displayInputIndex = Viewer.DisplayController.DisplayConfig.GetViewerEyeSurfaceDisplayInputIndex(Viewer.ViewerIndex, (Byte)_eyeIndex, surfaceIndex);
                         int numDisplayInputs = Viewer.DisplayController.DisplayConfig.GetNumDisplayInputs();
-                        surface.SetViewportRect(Math.ConvertViewport(viewport, Viewer.DisplayController.DisplayConfig.GetDisplayDimensions((byte)displayInputIndex),
+                        surface.SetViewportRect(Math.ConvertViewport(viewport, Viewer.DisplayController.DisplayConfig.GetDisplayDimensions((Byte)displayInputIndex),
                             numDisplayInputs, (int)_eyeIndex, (int)Viewer.DisplayController.TotalDisplayWidth));
 
                         //get projection matrix from ClientKit and set surface projection matrix
@@ -145,7 +145,7 @@ namespace OSVR
 
                         //render the surface
                         surface.Render();
-                    }                           
+                    }
 
                 }
             }
@@ -209,14 +209,14 @@ namespace OSVR
                             //get distortion parameters
                             OSVR.ClientKit.RadialDistortionParameters distortionParameters =
                             Viewer.DisplayController.DisplayConfig.GetViewerEyeSurfaceRadialDistortion(
-                            Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex);                    
+                            Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex);
                             surface.SetDistortion(distortionParameters);
                         }
 
                         //render manager
                         if (Viewer.DisplayController.UseRenderManager)
                         {
-                            surface.SetViewport(Viewer.DisplayController.RenderManager.GetEyeViewport((int)EyeIndex));
+                            surface.SetViewport(Viewer.DisplayController.RenderManager.GetEyeViewport((Byte)EyeIndex));
 
                             //create a RenderTexture for this eye's camera to render into
                             RenderTexture renderTexture = new RenderTexture(surface.Viewport.Width, surface.Viewport.Height, 24, RenderTextureFormat.Default);
@@ -247,7 +247,7 @@ namespace OSVR
 
                     //distortion
                     bool useDistortion = Viewer.DisplayController.DisplayConfig.DoesViewerEyeSurfaceWantDistortion(Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex);
-                    if(useDistortion)
+                    if (useDistortion)
                     {
                         //@todo figure out which type of distortion to use
                         //right now, there is only one option, SurfaceRadialDistortion
@@ -257,13 +257,13 @@ namespace OSVR
                         Viewer.ViewerIndex, (byte)_eyeIndex, surfaceIndex);
 
                         surface.SetDistortion(distortionParameters);
-                    }    
-                    
+                    }
+
                     //render manager
-                    if(Viewer.DisplayController.UseRenderManager)
+                    if (Viewer.DisplayController.UseRenderManager)
                     {
                         //Set the surfaces viewport from RenderManager
-                        surface.SetViewport(Viewer.DisplayController.RenderManager.GetEyeViewport((int)EyeIndex));
+                        surface.SetViewport(Viewer.DisplayController.RenderManager.GetEyeViewport((Byte)EyeIndex));
 
                         //create a RenderTexture for this eye's camera to render into
                         RenderTexture renderTexture = new RenderTexture(surface.Viewport.Width, surface.Viewport.Height, 24, RenderTextureFormat.Default);
@@ -271,8 +271,8 @@ namespace OSVR
                         {
                             renderTexture.antiAliasing = QualitySettings.antiAliasing;
                         }
-                        surface.SetRenderTexture(renderTexture);                       
-                    }             
+                        surface.SetRenderTexture(renderTexture);
+                    }
                 }
             }
 
@@ -284,7 +284,7 @@ namespace OSVR
                 destCamera.CopyFrom(srcCamera);
                 destCamera.depth = 0;
                 //@todo Copy other components attached to the DisplayController?
-            }           
+            }
         }
     }
 }
