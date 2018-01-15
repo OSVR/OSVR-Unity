@@ -221,7 +221,7 @@ namespace OSVR
             /// <param name="report">Tracker pose report</param>
             private void PoseMatrixCb(System.IntPtr userdata, ref OSVR.ClientKit.TimeValue timestamp, ref OSVR.ClientKit.PoseReport report)
             {
-                Matrix4x4 matPose = Math.ConvertPose(report.pose);
+                Matrix4x4 matPose = Math.ConvertPoseToMatrix(report.pose);
                 if (null != poseMatrixCallbacks)
                 {
                     poseMatrixCallbacks(path, matPose);
