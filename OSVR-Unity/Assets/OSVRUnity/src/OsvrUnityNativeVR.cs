@@ -127,6 +127,7 @@ namespace OSVR
                 {
                     Debug.LogError("[OSVR-Unity] OsvrUnityNativeVR requires a ClientKit object in the scene.");
                 }
+                CreateRenderManager();
 
             }
 
@@ -154,7 +155,7 @@ namespace OSVR
             // Setup RenderManager for DirectMode or non-DirectMode rendering.
             // Checks to make sure Unity version and Graphics API are supported, 
             // and that a RenderManager config file is being used.
-            void InitRenderManager()
+            void CreateRenderManager()
             {
                 //check if we are configured to use RenderManager or not
                 string renderManagerPath = _clientKit.context.getStringParameter("/renderManagerConfig");
@@ -181,13 +182,16 @@ namespace OSVR
                     else
                     {
                         // attempt to create a RenderManager in the plugin                                              
-                        int result = _renderManager.InitRenderManager();
+                        /*int result = _renderManager.InitRenderManager();
                         if (result != 0)
                         {
                             Debug.LogError("[OSVR-Unity] Failed to create RenderManager.");
                             _renderManagerConfigFound = false;
                             VRSettings.enabled = false; //disable VR mode
-                        }
+                        }*/
+
+                        GL.IssuePluginEvent(RenderManager.GetRenderEventFunction(), OsvrRenderManager.CREATE_RENDERMANAGER_EVENT);
+
                     }
                 }
                 else
@@ -198,7 +202,7 @@ namespace OSVR
 
             // Get a DisplayConfig object from the server via ClientKit.
             // Setup stereo rendering with DisplayConfig data.
-            void Init()
+            IEnumerator Init()
             {
                 //get the DisplayConfig object from ClientKit
                 if (_clientKit == null || _clientKit.context == null)
@@ -208,31 +212,36 @@ namespace OSVR
                         Debug.LogError("[OSVR-Unity] ClientContext is null. Can't setup display.");
                         _osvrClientKitError = true;
                     }
-                    return;
+                    yield return null;
                 }
                 SetVRAppSettings();
 
                 _displayConfig = _clientKit.context.GetDisplayConfig();
                 if (_displayConfig == null)
                 {
-                    return;
+                    yield return null;
                 }
                 _displayConfigInitialized = true;
 
-                InitRenderManager();
+              //  InitRenderManager();
                 if (!_renderManagerConfigFound || RenderManager == null)
                 {
-                    return;
+                    yield return null;
                 }
-                SetupStereoCamerarig();
+
+                //@todo figure out why the function below crashes with multithreading
+               // SetupStereoCamerarig();
+
                 SetResolution();
                 CreateRenderTextures();
 
                 //create RenderBuffers in RenderManager
                 if (_renderManagerConfigFound && RenderManager != null)
                 {
-                    RenderManager.ConstructBuffers();
+                    GL.IssuePluginEvent(RenderManager.GetRenderEventFunction(), OsvrRenderManager.CREATE_RENDERBUFFERS_EVENT);
+                    // RenderManager.ConstructBuffers();
                 }
+
                 SetRenderParams();
 
             }
@@ -508,7 +517,7 @@ namespace OSVR
                 // keep trying until we have initialized
                 if (!_displayConfigInitialized)
                 {
-                    Init();
+                    StartCoroutine(Init());
                 }
                 else if (_displayConfigInitialized && RenderManager != null && _renderManagerConfigFound)
                 {
@@ -639,6 +648,7 @@ namespace OSVR
                 _camera0CachedTransform.localRotation = Quaternion.Inverse(slerpedRot);
                 Vector3 invPos = -pos;
                 _camera0CachedTransform.localPosition = Quaternion.Inverse(slerpedRot) * invPos;
+
             }
 
             public bool CheckDisplayStartup()

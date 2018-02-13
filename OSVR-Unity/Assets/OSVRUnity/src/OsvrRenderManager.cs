@@ -59,9 +59,15 @@ namespace OSVR
                 public double height;   //< Last pixel on the right of the viewport in pixels
             }
 
-            public const int RENDER_EVENT = 0;
-            public const int SHUTDOWN_EVENT = 1;
+            public const int CREATE_RENDERMANAGER_EVENT = 0;
+            public const int CREATE_RENDERBUFFERS_EVENT = 1;
             public const int UPDATE_RENDERINFO_EVENT = 2;
+            public const int RENDER_EVENT = 3;
+            public const int RESET_YAW_EVENT = 4;
+            public const int SET_ROOM_ROTATION_EVENT = 5;
+            public const int CLEAR_ROOM_ROTATION_EVENT = 6;
+            public const int SHUTDOWN_RENDERMANAGER_EVENT = 7;
+
             private const string PluginName = "osvrUnityRenderingPlugin";
 
             [UnmanagedFunctionPointer(CallingConvention.Winapi)]
@@ -73,7 +79,7 @@ namespace OSVR
             //Create and Register RenderBuffers
             [DllImport(PluginName)]
             private static extern Byte 
-                ConstructRenderBuffers();
+                CreateRenderBuffers();
 
             //Create a RenderManager object in the plugin, passing in a ClientContext
             [DllImport(PluginName)]
@@ -199,7 +205,7 @@ namespace OSVR
             //Called after RM is created and after Unity RenderTexture's are created and assigned via SetEyeColorBuffer
             public int ConstructBuffers()
             {
-                return ConstructRenderBuffers();
+                return CreateRenderBuffers();
             }
 
             public void SetNearClippingPlaneDistance(float near)
@@ -222,7 +228,7 @@ namespace OSVR
             {
 #if UNITY_5_2 || UNITY_5_3 || UNITY_5_4 || UNITY_5_5 || UNITY_5_6 || UNITY_2017
                 ClientKit.instance.context.SetRoomRotationUsingHead();
-                GL.IssuePluginEvent(GetRenderEventFunc(), 3);
+                GL.IssuePluginEvent(GetRenderEventFunc(), SET_ROOM_ROTATION_EVENT);
 #endif
             }
 
@@ -231,7 +237,7 @@ namespace OSVR
             {
 #if UNITY_5_2 || UNITY_5_3 || UNITY_5_4 || UNITY_5_5 || UNITY_5_6 || UNITY_2017
                 ClientKit.instance.context.ClearRoomToWorldTransform();
-                GL.IssuePluginEvent(GetRenderEventFunc(), 4);
+                GL.IssuePluginEvent(GetRenderEventFunc(), CLEAR_ROOM_ROTATION_EVENT);
 #endif
             }
 
