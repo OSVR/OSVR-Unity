@@ -203,7 +203,7 @@ namespace OSVR
 
             //Create and Register RenderBuffers in RenderManager
             //Called after RM is created and after Unity RenderTexture's are created and assigned via SetEyeColorBuffer
-            public int ConstructBuffers()
+            public int CreateBuffers()
             {
                 return CreateRenderBuffers();
             }

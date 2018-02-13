@@ -181,16 +181,19 @@ namespace OSVR
                     }
                     else
                     {
+#if UNITY_ANDROID
+                        //we have to create RenderManager on the rendering thread on Android, but not on Windows
+                        GL.IssuePluginEvent(RenderManager.GetRenderEventFunction(), OsvrRenderManager.CREATE_RENDERMANAGER_EVENT);
+#else
                         // attempt to create a RenderManager in the plugin                                              
-                        /*int result = _renderManager.InitRenderManager();
+                        int result = _renderManager.InitRenderManager();
                         if (result != 0)
                         {
                             Debug.LogError("[OSVR-Unity] Failed to create RenderManager.");
                             _renderManagerConfigFound = false;
                             VRSettings.enabled = false; //disable VR mode
-                        }*/
-
-                        GL.IssuePluginEvent(RenderManager.GetRenderEventFunction(), OsvrRenderManager.CREATE_RENDERMANAGER_EVENT);
+                        }
+#endif
 
                     }
                 }
@@ -223,14 +226,15 @@ namespace OSVR
                 }
                 _displayConfigInitialized = true;
 
-              //  InitRenderManager();
                 if (!_renderManagerConfigFound || RenderManager == null)
                 {
                     yield return null;
                 }
 
-                //@todo figure out why the function below crashes with multithreading
-               // SetupStereoCamerarig();
+#if !UNITY_ANDROID
+                //@todo figure out why the function below crashes with Android multithreading
+                 SetupStereoCamerarig();
+#endif
 
                 SetResolution();
                 CreateRenderTextures();
@@ -238,8 +242,13 @@ namespace OSVR
                 //create RenderBuffers in RenderManager
                 if (_renderManagerConfigFound && RenderManager != null)
                 {
+#if UNITY_ANDROID
+                    //we have to create renderbufffers on the rendering thread on Android, but not on Windows
                     GL.IssuePluginEvent(RenderManager.GetRenderEventFunction(), OsvrRenderManager.CREATE_RENDERBUFFERS_EVENT);
-                    // RenderManager.ConstructBuffers();
+#else
+                    RenderManager.CreateBuffers();
+#endif
+
                 }
 
                 SetRenderParams();
