@@ -132,12 +132,12 @@ namespace OSVR
                     if (!_osvrServerError)
                     {
                         _osvrServerError = true;
-                        Debug.LogError("[OSVR-Unity] OSVR Server not detected. Start OSVR Server and restart the application.");
+                        Debug.LogError("[OSVR-Unity] ClientKit:: OSVR Server not detected. Start OSVR Server and restart the application.");
                     }
                 }
                 else if (_osvrServerError)
                 {
-                    Debug.Log("[OSVR-Unity] OSVR Server connection established. You can ignore previous errors about the server not being detected.");
+                    Debug.Log("[OSVR-Unity] ClientKit:: OSVR Server connection established. You can ignore previous errors about the server not being detected.");
                     _osvrServerError = false;
                 }
 
@@ -161,17 +161,18 @@ namespace OSVR
                         Destroy(this.gameObject);
                     }
                 }
+                EnsureStarted();
             }
 
             void Start()
             {
-                Debug.Log("[OSVR-Unity] In Start()");
+                Debug.Log("[OSVR-Unity] In ClientKit::Start()");
                 EnsureStarted();
             }
 
             void OnEnable()
             {
-                Debug.Log("[OSVR-Unity] In OnEnable()");
+                Debug.Log("[OSVR-Unity] In ClientKit::OnEnable()");
                 EnsureStarted();
             }
 
@@ -181,10 +182,11 @@ namespace OSVR
                 _contextObject.update();
             }
 
-            void LateUpdate()
+            //is there any merit to using lateupdate? 
+           /* void LateUpdate()
             {
                 _contextObject.update();
-            }
+            }*/
 
             void Stop()
             {
@@ -194,7 +196,7 @@ namespace OSVR
                 {
                     if (null != _contextObject)
                     {
-                        Debug.Log("[OSVR-Unity] Shutting down OSVR.");
+                        Debug.Log("[OSVR-Unity] ClientKit::Shutting down OSVR.");
                         _contextObject.Dispose();
                         _contextObject = null;
 #if UNITY_STANDALONE_WIN || UNITY_ANDROID

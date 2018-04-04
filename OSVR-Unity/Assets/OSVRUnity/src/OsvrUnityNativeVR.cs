@@ -65,6 +65,8 @@ namespace OSVR
             private RenderTexture StereoTargetRenderTextureLeft_buffer2;
             private RenderTexture StereoTargetRenderTextureRight_buffer2;
 
+            private IEnumerator _endOfFrameCoroutine;
+            private WaitForEndOfFrame _waitForEndOfFrame;
 
             private ClientKit _clientKit;
             private OSVR.ClientKit.DisplayConfig _displayConfig;
@@ -119,7 +121,41 @@ namespace OSVR
                         Debug.LogError("[OSVR-Unity] Two-camera VR setup cannot find 2nd camera. Add a 2nd camera as a sibling of the main camera.");
                     }
                 }
+                _waitForEndOfFrame = new WaitForEndOfFrame();
+                _endOfFrameCoroutine = EndOfFrame();
+
             }
+            void OnEnable()
+            {
+
+            }
+
+            void OnDisable()
+            { 
+                    StopCoroutine(_endOfFrameCoroutine);
+
+            }
+            // This couroutine is called every frame.
+            IEnumerator EndOfFrame()
+            {
+                while (true)
+                {
+                    yield return _waitForEndOfFrame;
+                    if (_displayConfigInitialized && RenderManager != null && _renderManagerConfigFound)
+                    {
+                        GL.IssuePluginEvent(RenderManager.GetRenderEventFunction(), OsvrRenderManager.RENDER_EVENT);
+                        SwapRenderTextures();
+
+                    }
+                }
+            }
+
+            void OnPostRender()
+            {
+                GL.Flush();
+
+            }
+
             void Start()
             {
                 _clientKit = ClientKit.instance;
@@ -135,14 +171,17 @@ namespace OSVR
             void SetVRAppSettings()
             {
                 //Disable autovr camera tracking since the camera's transform is set by RenderManager poses. 
-#if UNITY_2017
-                if(_clientKit.context.CheckStatus())
-                {
-                    VRDevice.DisableAutoVRCameraTracking(_camera0, true);
-                }
 
+#if UNITY_2017_2_OR_NEWER
+                UnityEngine.XR.XRDevice.DisableAutoXRCameraTracking(_camera0, true);                
+                UnityEngine.XR.XRSettings.showDeviceView = false;
+#elif UNITY_2017_1
+                 UnityEngine.VR.VRDevice.DisableAutoVRCameraTracking(_camera0, true);
+                 UnityEngine.VR.VRSettings.showDeviceView = false;
+#else
+                UnityEngine.VR.VRSettings.showDeviceView = false;
 #endif
-                VRSettings.showDeviceView = false;
+
 
                 //Application.targetFrameRate = 90;
                 Application.targetFrameRate = -1;
@@ -157,8 +196,11 @@ namespace OSVR
             // and that a RenderManager config file is being used.
             void CreateRenderManager()
             {
+                Debug.Log("[OSVR-Unity] OsvrUnityNativeVR::CreateRenderManager");
+
                 //check if we are configured to use RenderManager or not
                 string renderManagerPath = _clientKit.context.getStringParameter("/renderManagerConfig");
+                Debug.LogError("[OSVR-Unity] RenderManager Path = " + renderManagerPath);
                 _renderManagerConfigFound = !(renderManagerPath == null || renderManagerPath.Equals(""));
                 if (_renderManagerConfigFound)
                 {
@@ -182,7 +224,12 @@ namespace OSVR
                     else
                     {
 #if UNITY_ANDROID
+                        Debug.Log("[OSVR-Unity] Passing client context to OSVR-Unity-Rendering plugin.");
+                        RenderManager.SetOsvrClientContext();
+
+                        Debug.Log("[OSVR-Unity] Sending event to create RenderManager in OSVR-Unity-Rendering plugin.");
                         //we have to create RenderManager on the rendering thread on Android, but not on Windows
+                        //which means we have to use GL.IssuePluginEvent rather than calling a function in the plugin directly by name
                         GL.IssuePluginEvent(RenderManager.GetRenderEventFunction(), OsvrRenderManager.CREATE_RENDERMANAGER_EVENT);
 #else
                         // attempt to create a RenderManager in the plugin                                              
@@ -191,7 +238,12 @@ namespace OSVR
                         {
                             Debug.LogError("[OSVR-Unity] Failed to create RenderManager.");
                             _renderManagerConfigFound = false;
-                            VRSettings.enabled = false; //disable VR mode
+
+#if UNITY_2017_2_0_OR_NEWER
+                            UnityEngine.XR.XRSettings.enabled = false; //disable VR mode     
+#else
+                            UnityEngine.VR.VRSettings.enabled = false; //disable VR mode     
+#endif
                         }
 #endif
 
@@ -205,8 +257,10 @@ namespace OSVR
 
             // Get a DisplayConfig object from the server via ClientKit.
             // Setup stereo rendering with DisplayConfig data.
-            IEnumerator Init()
+            void InitDisplayConfig()
             {
+                Debug.Log("[OSVR-Unity] OsvrUnityNativeVR::InitDisplayConfig");
+
                 //get the DisplayConfig object from ClientKit
                 if (_clientKit == null || _clientKit.context == null)
                 {
@@ -215,46 +269,58 @@ namespace OSVR
                         Debug.LogError("[OSVR-Unity] ClientContext is null. Can't setup display.");
                         _osvrClientKitError = true;
                     }
-                    yield return null;
+                     return;
                 }
-                SetVRAppSettings();
 
                 _displayConfig = _clientKit.context.GetDisplayConfig();
                 if (_displayConfig == null)
                 {
-                    yield return null;
+                     return;
                 }
+
                 _displayConfigInitialized = true;
 
-                if (!_renderManagerConfigFound || RenderManager == null)
-                {
-                    yield return null;
-                }
+         }
+          private bool rmInit = false;  
+        void InitRenderManager()
+        {
+                Debug.Log("[OSVR-Unity] OsvrUnityNativeVR::InitRenderManager");
 
 #if !UNITY_ANDROID
                 //@todo figure out why the function below crashes with Android multithreading
                  SetupStereoCamerarig();
 #endif
 
-                SetResolution();
-                CreateRenderTextures();
 
                 //create RenderBuffers in RenderManager
-                if (_renderManagerConfigFound && RenderManager != null)
-                {
+            if (_renderManagerConfigFound && RenderManager != null && !rmInit)
+            {
+                SetVRAppSettings();
+                SetResolution();
+                CreateRenderTextures();
 #if UNITY_ANDROID
-                    //we have to create renderbufffers on the rendering thread on Android, but not on Windows
-                    GL.IssuePluginEvent(RenderManager.GetRenderEventFunction(), OsvrRenderManager.CREATE_RENDERBUFFERS_EVENT);
+                //we have to create renderbufffers on the rendering thread on Android, but not on Windows
+                GL.IssuePluginEvent(RenderManager.GetRenderEventFunction(), OsvrRenderManager.CREATE_RENDERBUFFERS_EVENT);
 #else
                     RenderManager.CreateBuffers();
 #endif
+                SetRenderParams();
+                StartCoroutine(_endOfFrameCoroutine);
+                rmInit = true;
+            }
+            else
+            {
+                    Debug.LogError("[OSVR-Unity] RenderManager Not Initialized.");
+                    if(!_renderManagerConfigFound)
+                    {
+                        Debug.LogError("[OSVR-Unity] RenderManager Config Not Found.");
+
+                    }
+
+                    CreateRenderManager();
 
                 }
-
-                SetRenderParams();
-
             }
-
             /* 
              * We currently are only able to set the projection matrix of each eye with a two camera setup, via camera.projectionMatrix.
             * For configurations where the projection matrix for each eye is identical, we use the one-camera setup.
@@ -332,7 +398,6 @@ namespace OSVR
                     TotalDisplayWidth += (uint)surfaceDisplayDimensions.Width; //add up the width of each eye
                     TotalDisplayHeight = (uint)surfaceDisplayDimensions.Height; //store the height -- this shouldn't change
                 }
-
                 //Set the resolution. Don't force fullscreen if we have multiple display inputs
                 //We only need to do this if we aren't using RenderManager, because it adjusts the window size for us
                 //@todo figure out why this causes problems with direct mode, perhaps overfill factor?
@@ -510,25 +575,19 @@ namespace OSVR
                 frameCount++;
             }
 
-            void OnPreCull()
-            {
-                if (_displayConfigInitialized && RenderManager != null && _renderManagerConfigFound)
-                {
-
-                    SwapRenderTextures();
-                }
-            }
-
-
             void LateUpdate()
             {
                 // sometimes it takes a few frames to get a DisplayConfig from ClientKit
                 // keep trying until we have initialized
                 if (!_displayConfigInitialized)
                 {
-                    StartCoroutine(Init());
+                    InitDisplayConfig();
                 }
-                else if (_displayConfigInitialized && RenderManager != null && _renderManagerConfigFound)
+                else if(_displayConfigInitialized && !rmInit)
+                {
+                    InitRenderManager();
+                }
+                if (_displayConfigInitialized && rmInit && RenderManager != null && _renderManagerConfigFound)
                 {
                     GL.IssuePluginEvent(RenderManager.GetRenderEventFunction(), OsvrRenderManager.UPDATE_RENDERINFO_EVENT);
                     if (stereoRigSetup == StereoRigSetup.OneCameraBothEyes)
@@ -540,7 +599,7 @@ namespace OSVR
                     {
                         UpdateEyePoses();
                     }
-                    GL.IssuePluginEvent(RenderManager.GetRenderEventFunction(), OsvrRenderManager.RENDER_EVENT);
+                   // GL.IssuePluginEvent(RenderManager.GetRenderEventFunction(), OsvrRenderManager.RENDER_EVENT);
                     // SwapRenderTextures();
                 }
             }
@@ -598,39 +657,43 @@ namespace OSVR
 
             // Updates the position and rotation of the eye
             // Optionally, update the viewer associated with this eye
+            private Vector3 pos0;
+            private Vector3 pos1;
+            private Vector3 pos2;
+            private Quaternion rot0;
+            private Quaternion rot1;
+            private Quaternion slerpedRot0;
+            private OSVR.ClientKit.Pose3 eyePose0;
+            private OSVR.ClientKit.Pose3 eyePose1;
             public void UpdateEyePoses()
             {
-                OSVR.ClientKit.Pose3 eyePose0 = RenderManager.GetRenderManagerEyePose((byte)0);
-                OSVR.ClientKit.Pose3 eyePose1 = RenderManager.GetRenderManagerEyePose((byte)1);
-
+                eyePose0 = RenderManager.GetRenderManagerEyePose((byte)0);
+                eyePose1 = RenderManager.GetRenderManagerEyePose((byte)1);
 
                 // Convert from OSVR space into Unity space.
-                Vector3 pos0 = OSVR.Unity.Math.ConvertPosition(eyePose0.translation);
-                Quaternion rot0 = OSVR.Unity.Math.ConvertOrientation(eyePose0.rotation);
+                pos0 = OSVR.Unity.Math.ConvertPosition(eyePose0.translation);
+                rot0 = OSVR.Unity.Math.ConvertOrientation(eyePose0.rotation);
 
-                Vector3 pos1 = OSVR.Unity.Math.ConvertPosition(eyePose1.translation);
-                Quaternion rot1 = OSVR.Unity.Math.ConvertOrientation(eyePose1.rotation);
+                pos1 = OSVR.Unity.Math.ConvertPosition(eyePose1.translation);
+                rot1 = OSVR.Unity.Math.ConvertOrientation(eyePose1.rotation);
 
                 if (stereoRigSetup == StereoRigSetup.OneCameraBothEyes && _camera0CachedTransform != null)
                 {
-                    Quaternion slerpedRot = Quaternion.Slerp(rot0, rot1, 0.5f);
-                    Vector3 pos = new Vector3((pos0.x + pos1.x) * 0.5f, (pos0.y + pos1.y) * 0.5f, (pos0.z + pos1.z) * 0.5f);
+                    slerpedRot0 = Quaternion.Slerp(rot0, rot1, 0.5f);
+                    pos2 = new Vector3((pos0.x + pos1.x) * 0.5f, (pos0.y + pos1.y) * 0.5f, (pos0.z + pos1.z) * 0.5f);
 
                     // Invert the transformation
-                    _camera0CachedTransform.localRotation = Quaternion.Inverse(slerpedRot);
-                    Vector3 invPos = -pos;
-                    _camera0CachedTransform.localPosition = Quaternion.Inverse(slerpedRot) * invPos;
+                    _camera0CachedTransform.localRotation = Quaternion.Inverse(slerpedRot0);
+                    _camera0CachedTransform.localPosition = Quaternion.Inverse(slerpedRot0) * -pos2;
                 }
                 else if (_camera0CachedTransform != null && _camera1CachedTransform != null)//two-camera setup
                 {
                     //this script is attached to the left eye, with a right-eye sibling gameobject
                     _camera0CachedTransform.localRotation = Quaternion.Inverse(rot0);
-                    Vector3 invPos = -pos0;
-                    _camera0CachedTransform.localPosition = Quaternion.Inverse(rot0) * invPos;
+                    _camera0CachedTransform.localPosition = Quaternion.Inverse(rot0) * -pos0;
 
                     _camera1CachedTransform.localRotation = Quaternion.Inverse(rot1);
-                    invPos = -pos1;
-                    _camera1CachedTransform.localPosition = Quaternion.Inverse(rot1) * invPos;
+                    _camera1CachedTransform.localPosition = Quaternion.Inverse(rot1) * -pos1;
                 }
 
             }
@@ -639,24 +702,22 @@ namespace OSVR
             // Optionally, update the viewer associated with this head
             public void UpdateHeadPose()
             {
-                OSVR.ClientKit.Pose3 eyePose0 = RenderManager.GetRenderManagerEyePose((byte)0);
-                OSVR.ClientKit.Pose3 eyePose1 = RenderManager.GetRenderManagerEyePose((byte)1);
-
+                eyePose0 = RenderManager.GetRenderManagerEyePose((byte)0);
+                eyePose1 = RenderManager.GetRenderManagerEyePose((byte)1);
 
                 // Convert from OSVR space into Unity space.
-                Vector3 pos0 = OSVR.Unity.Math.ConvertPosition(eyePose0.translation);
-                Quaternion rot0 = OSVR.Unity.Math.ConvertOrientation(eyePose0.rotation);
+                pos0 = OSVR.Unity.Math.ConvertPosition(eyePose0.translation);
+                rot0 = OSVR.Unity.Math.ConvertOrientation(eyePose0.rotation);
 
-                Vector3 pos1 = OSVR.Unity.Math.ConvertPosition(eyePose1.translation);
-                Quaternion rot1 = OSVR.Unity.Math.ConvertOrientation(eyePose1.rotation);
+                pos1 = OSVR.Unity.Math.ConvertPosition(eyePose1.translation);
+                rot1 = OSVR.Unity.Math.ConvertOrientation(eyePose1.rotation);
 
-                Quaternion slerpedRot = Quaternion.Slerp(rot0, rot1, 0.5f);
-                Vector3 pos = new Vector3((pos0.x + pos1.x) * 0.5f, (pos0.y + pos1.y) * 0.5f, (pos0.z + pos1.z) * 0.5f);
+                slerpedRot0 = Quaternion.Slerp(rot0, rot1, 0.5f);
+                pos2 = new Vector3((pos0.x + pos1.x) * 0.5f, (pos0.y + pos1.y) * 0.5f, (pos0.z + pos1.z) * 0.5f);
 
                 // Invert the transformation
-                _camera0CachedTransform.localRotation = Quaternion.Inverse(slerpedRot);
-                Vector3 invPos = -pos;
-                _camera0CachedTransform.localPosition = Quaternion.Inverse(slerpedRot) * invPos;
+                _camera0CachedTransform.localRotation = Quaternion.Inverse(slerpedRot0);
+                _camera0CachedTransform.localPosition = Quaternion.Inverse(slerpedRot0) * -pos2;
 
             }
 

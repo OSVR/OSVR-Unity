@@ -86,6 +86,11 @@ namespace OSVR
             private static extern Byte
                 CreateRenderManagerFromUnity(OSVR.ClientKit.SafeClientContextHandle /*OSVR_ClientContext*/ ctx);
 
+            //Pass a ClientContext to the Unity rendering plugin
+            [DllImport(PluginName)]
+            private static extern Byte
+                SetOsvrClientContextFromUnity(OSVR.ClientKit.SafeClientContextHandle /*OSVR_ClientContext*/ ctx);
+
             [DllImport(PluginName)]
             private static extern OSVR.ClientKit.Pose3
                 GetEyePose(int eye);
@@ -199,6 +204,11 @@ namespace OSVR
                 }
 
                 return CreateRenderManager(ClientKit.instance.context);
+            }
+
+            public int SetOsvrClientContext()
+            {
+                return SetOsvrClientContextFromUnity(ClientKit.instance.context.ContextHandle);
             }
 
             //Create and Register RenderBuffers in RenderManager
