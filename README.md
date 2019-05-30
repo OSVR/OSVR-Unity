@@ -17,6 +17,8 @@ OSVR-Unity uses the OSVR-RenderManager library for direct-mode rendering, lens c
 
 These libraries are copied over to the Plugins directory in our CI build, and are not included in the source.
 
+If you want to build support for this into the plugin, you need to copy the osvrUnityRenderingPlugin.dll that is built with that project into the Managed-OSVR-Unity subdirectory for each build type (x86_64 and x86) before running the install-managed-osvr.cmd script below.  You also need to copy all of the DLLs from the OSVR-RenderManager build directory into these locations as well as the DLLs from the OSVR-Core build (it may be that some of these are not needed, but skipping this copy step has in the past produced plug-ins that could not load the Rendermanager plug-in because of missing dependencies).
+
 ## OSVR Unity Integration
 [Step-by-step getting started guide](https://github.com/OSVR/OSVR-Unity/blob/master/GettingStarted.md)
 

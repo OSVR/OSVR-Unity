@@ -29,7 +29,7 @@
 using OSVR.Unity;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.VR;
+using UnityEngine.XR;
 using System;
 
 namespace OSVR
@@ -128,11 +128,11 @@ namespace OSVR
 #if UNITY_2017
                 if(_clientKit.context.CheckStatus())
                 {
-                    VRDevice.DisableAutoVRCameraTracking(_camera0, true);
+                    XRDevice.DisableAutoVRCameraTracking(_camera0, true);
                 }
 
 #endif
-                VRSettings.showDeviceView = false;
+                XRSettings.showDeviceView = false;
 
                 //Application.targetFrameRate = 90;
                 Application.targetFrameRate = -1;
@@ -177,7 +177,7 @@ namespace OSVR
                         {
                             Debug.LogError("[OSVR-Unity] Failed to create RenderManager.");
                             _renderManagerConfigFound = false;
-                            VRSettings.enabled = false; //disable VR mode
+                            XRSettings.enabled = false; //disable VR mode
                         }
                     }
                 }
@@ -268,13 +268,13 @@ namespace OSVR
             private void SetRenderScale()
             {
                 //@todo
-                //VRSettings.renderScale = overfill_factor;
+                //XRSettings.renderScale = overfill_factor;
             }
 
             private void SetRenderViewportScale()
             {
                 //@todo
-                //VRSettings.renderViewportScale = overfill_factor;
+                //XRSettings.renderViewportScale = overfill_factor;
             }
 
             //Set RenderManager rendering parameters: near and far clip plane distance, projection matrices
@@ -534,21 +534,21 @@ namespace OSVR
 
                     //Retrieves the number of dropped frames reported by the VR SDK.
                     int droppedFrames;
-                    if (VRStats.TryGetDroppedFrameCount(out droppedFrames))
+                    if (XRStats.TryGetDroppedFrameCount(out droppedFrames))
                     {
                         GUI.Label(new Rect(0, 0, 200, 200), "Dropped frames: " + droppedFrames);
                     }
 
                     //Retrieves the number of times the current frame has been drawn to the device as reported by the VR SDK.
                     int framePresentCount;
-                    if (VRStats.TryGetFramePresentCount(out framePresentCount))
+                    if (XRStats.TryGetFramePresentCount(out framePresentCount))
                     {
                         GUI.Label(new Rect(0, 200, 200, 200), "Frame Present Count: " + framePresentCount);
                     }
 
                     //Retrieves the time spent by the GPU last frame, in seconds, as reported by the VR SDK.
                     float gpuTimeSpentLastFrame;
-                    if (VRStats.TryGetGPUTimeLastFrame(out gpuTimeSpentLastFrame))
+                    if (XRStats.TryGetGPUTimeLastFrame(out gpuTimeSpentLastFrame))
                     {
                         GUI.Label(new Rect(0, 400, 200, 200), "GPU Time spent last frame: " + gpuTimeSpentLastFrame);
                     }
